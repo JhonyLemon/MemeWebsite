@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DATABASE:memewebsite}
+    username: ${DB_USER:meem}
+    password: ${DB_PASSWORD:meem}
+  security:
+    user:
+      name: ${SECURITY_USER:meem}
+      password: ${SECURITY_USER:meem}
+server:
+  servlet:
+    context-path: /api
+
+
+
+
+
+
+
+
+
+

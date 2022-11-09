@@ -1,0 +1,12 @@
+version: '3.8'
+services:
+  postgresql:
+    image: postgres:14.4
+    environment:
+      POSTGRES_DB: memewebsite
+      POSTGRES_USER: meem
+      POSTGRES_PASSWORD: meem
+    volumes:
+      - memewebsite:/var/lib/postgresql/data
+volumes:
+  memewebsite:

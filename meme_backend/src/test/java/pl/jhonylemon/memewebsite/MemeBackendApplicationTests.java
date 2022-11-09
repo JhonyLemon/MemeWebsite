@@ -1,4 +1,4 @@
-package pl.jhonylemon.meme_backend;
+package pl.jhonylemon.memewebsite;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
