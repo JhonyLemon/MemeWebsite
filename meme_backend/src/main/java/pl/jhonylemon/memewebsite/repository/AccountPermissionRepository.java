@@ -23,6 +23,9 @@ public interface AccountPermissionRepository extends JpaRepository<AccountPermis
     @Query("select a from AccountPermission a where a.permission like 'USER_DELETE'")
     Optional<AccountPermission> userDeletePermission();
 
+    @Query("select a from AccountPermission a where a.permission like 'MODERATOR_ADD'")
+    Optional<AccountPermission> moderatorAddPermission();
+
     @Query("select a from AccountPermission a where a.permission like 'MODERATOR_EDIT'")
     Optional<AccountPermission> moderatorEditPermission();
     @Query("select a from AccountPermission a where a.permission like 'MODERATOR_READ'")
@@ -39,6 +42,9 @@ public interface AccountPermissionRepository extends JpaRepository<AccountPermis
 
     @Query("select a from AccountPermission a where a.permission like 'ADMIN_DELETE'")
     Optional<AccountPermission> adminDeletePermission();
+
+    @Query("select a from AccountPermission a where a.permission like 'ADMIN_ADD'")
+    Optional<AccountPermission> adminAddPermission();
 
 }
 

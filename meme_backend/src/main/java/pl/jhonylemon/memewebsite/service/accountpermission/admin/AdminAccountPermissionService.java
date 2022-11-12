@@ -57,6 +57,14 @@ public class AdminAccountPermissionService {
         );
     }
 
+    public AccountPermissionGetDto moderatorWritePermission(){
+        return accountPermissionMapper.accountPermissionToGetDto(
+                accountPermissionRepository
+                        .moderatorAddPermission()
+                        .orElseThrow(()->{throw new AccountPermissionNotFoundException();
+                        })
+        );
+    }
 
     public AccountPermissionGetDto moderatorEditPermission(){
         return accountPermissionMapper.accountPermissionToGetDto(
@@ -108,6 +116,15 @@ public class AdminAccountPermissionService {
         return accountPermissionMapper.accountPermissionToGetDto(
                 accountPermissionRepository
                         .adminDeletePermission()
+                        .orElseThrow(()->{throw new AccountPermissionNotFoundException();
+                        })
+        );
+    }
+
+    public AccountPermissionGetDto adminWritePermission(){
+        return accountPermissionMapper.accountPermissionToGetDto(
+                accountPermissionRepository
+                        .adminAddPermission()
                         .orElseThrow(()->{throw new AccountPermissionNotFoundException();
                         })
         );

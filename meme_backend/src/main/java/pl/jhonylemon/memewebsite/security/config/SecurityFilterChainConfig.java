@@ -12,6 +12,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import pl.jhonylemon.memewebsite.security.component.JwtProperties;
 import pl.jhonylemon.memewebsite.security.filter.JwtAuthenticationFilter;
 import pl.jhonylemon.memewebsite.security.filter.JwtAuthorizationFilter;
+import pl.jhonylemon.memewebsite.service.accountpermission.admin.AdminAccountPermissionService;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
@@ -21,6 +22,7 @@ public class SecurityFilterChainConfig {
     private final JwtProperties jwtConfiguration;
     private final Algorithm secretKeyAccessToken;
     private final Algorithm secretKeyRefreshToken;
+    private final AdminAccountPermissionService accountPermissionService;
 
     private final AuthenticationManager authenticationManager;
 
@@ -28,10 +30,11 @@ public class SecurityFilterChainConfig {
             JwtProperties jwtConfiguration,
             @Qualifier("secretKeyAccessToken") Algorithm secretKeyAccessToken,
             @Qualifier("secretKeyRefreshToken") Algorithm secretKeyRefreshToken,
-            AuthenticationManager authenticationManager) {
+            AdminAccountPermissionService accountPermissionService, AuthenticationManager authenticationManager) {
         this.jwtConfiguration = jwtConfiguration;
         this.secretKeyAccessToken = secretKeyAccessToken;
         this.secretKeyRefreshToken = secretKeyRefreshToken;
+        this.accountPermissionService = accountPermissionService;
         this.authenticationManager = authenticationManager;
     }
 
@@ -47,6 +50,20 @@ public class SecurityFilterChainConfig {
                 .antMatchers(HttpMethod.POST, "/login").permitAll()
                 .antMatchers("/guest/**").permitAll()
                 .antMatchers("/v3/api-docs/**","/swagger-ui/**","/swagger-ui.html").permitAll()
+                .antMatchers(HttpMethod.POST,"/user/**").hasAnyAuthority(accountPermissionService.userWritePermission().getPermission())
+                .antMatchers(HttpMethod.PUT,"/user/**").hasAnyAuthority(accountPermissionService.userEditPermission().getPermission())
+                .antMatchers(HttpMethod.DELETE,"/user/**").hasAnyAuthority(accountPermissionService.userDeletePermission().getPermission())
+                .antMatchers(HttpMethod.GET,"/user/**").hasAnyAuthority(accountPermissionService.userReadPermission().getPermission())
+
+                .antMatchers(HttpMethod.POST,"/moderator/**").hasAnyAuthority(accountPermissionService.moderatorWritePermission().getPermission())
+                .antMatchers(HttpMethod.PUT,"/moderator/**").hasAnyAuthority(accountPermissionService.moderatorEditPermission().getPermission())
+                .antMatchers(HttpMethod.DELETE,"/moderator/**").hasAnyAuthority(accountPermissionService.moderatorDeletePermission().getPermission())
+                .antMatchers(HttpMethod.GET,"/moderator/**").hasAnyAuthority(accountPermissionService.moderatorReadPermission().getPermission())
+
+                .antMatchers(HttpMethod.POST,"/admin/**").hasAnyAuthority(accountPermissionService.adminWritePermission().getPermission())
+                .antMatchers(HttpMethod.PUT,"/admin/**").hasAnyAuthority(accountPermissionService.adminEditPermission().getPermission())
+                .antMatchers(HttpMethod.DELETE,"/admin/**").hasAnyAuthority(accountPermissionService.adminDeletePermission().getPermission())
+                .antMatchers(HttpMethod.GET,"/admin/**").hasAnyAuthority(accountPermissionService.adminReadPermission().getPermission())
                 .anyRequest().authenticated();
         return http.build();
     }
