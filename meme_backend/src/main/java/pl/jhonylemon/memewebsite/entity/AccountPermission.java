@@ -1,6 +1,7 @@
 package pl.jhonylemon.memewebsite.entity;
 
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AccountPermission {
+public class AccountPermission implements GrantedAuthority {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
@@ -22,5 +23,13 @@ public class AccountPermission {
     private String permission;
 
     @ManyToMany(mappedBy = "permissions", cascade = CascadeType.DETACH)
-    private List<AccountRole> roles;
+    private List<Account> accounts;
+
+    @Column(name = "DEFAULT_PERMISSION")
+    private Boolean defaultPermission;
+
+    @Override
+    public String getAuthority() {
+        return permission;
+    }
 }

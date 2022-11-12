@@ -14,4 +14,9 @@ public class BusinessException extends RuntimeException {
         this.message = message;
         this.status = status;
     }
+    public BusinessException() {
+        super("Unexpected error occurred");
+        this.message = "Unexpected error occurred";
+        this.status = HttpStatus.INTERNAL_SERVER_ERROR;
+    }
 }

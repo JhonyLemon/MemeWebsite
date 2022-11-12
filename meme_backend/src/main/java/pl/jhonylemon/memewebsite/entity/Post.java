@@ -46,4 +46,11 @@ public class Post {
 
     @OneToMany(mappedBy = "post")
     private List<Comment> comments;
+
+    @JoinColumn(name = "ACCOUNT_ID")
+    @ManyToOne()
+    private Account account;
+
+    @OneToMany(mappedBy = "post")
+    private List<PostStatistic> postStatistics;
 }

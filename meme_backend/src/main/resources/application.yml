@@ -10,8 +10,13 @@ spring:
 server:
   servlet:
     context-path: /api
-
-
+jwt:
+  secretKeyAccessToken: superUberSecretAccessTokenKey123superUberSecretAccessTokenKey123superUberSecretAccessTokenKey123superUberSecretAccessTokenKey123
+  secretKeyRefreshToken: superUberSecretRefreshTokenKey123superUberSecretRefreshTokenKey123superUberSecretRefreshTokenKey123superUberSecretRefreshTokenKey123
+  tokenPrefix: "Bearer "
+  claim: permissions
+  accessTokenExpirationAfterDays: 10
+  refreshTokenExpirationAfterDays: 30
 
 
 
