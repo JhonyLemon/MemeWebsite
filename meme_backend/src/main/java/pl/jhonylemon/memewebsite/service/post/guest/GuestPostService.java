@@ -50,9 +50,11 @@ public class GuestPostService {
             throw new PostNotFoundException();
         }
 
-        PostGetFullDto postGetFullDto = postMapper.postToGetFullDto(postRepository.findById(id).orElseThrow(()->{
+        Post post = postRepository.findById(id).orElseThrow(()->{
             throw new PostInvalidParamException();
-        }));
+        });
+
+        PostGetFullDto postGetFullDto = postMapper.postToGetFullDto(post);
 
         postGetFullDto.getComments().removeIf(c->c.getReplyToId()!=null);
 

@@ -93,6 +93,31 @@ public class UserPostService {
             throw new AuthorizationFailedException();
         }
 
+        if(postPutDto.getVisible()!=null){
+            post.setVisible(postPutDto.getVisible());
+        }
+        if(postPutDto.getTags()!=null){
+            post.setTags(tagRepository.findAllById(postPutDto.getTags()));
+        }
+        if(postPutDto.getDescriptions()!=null && postPutDto.getFiles()!=null && postPutDto.getFiles().size()==postPutDto.getDescriptions().size()){
+            List<PostFile> files = new ArrayList<>();
+            try {
+                for (int i = 0; i < postPutDto.getFiles().size(); i++) {
+                    files.add(PostFile.builder()
+                            .description(postPutDto.getDescriptions().get(i))
+                            .file(postPutDto.getFiles().get(i).getBytes())
+                            .fileName(postPutDto.getFiles().get(i).getName())
+                            .mimeType(postPutDto.getFiles().get(i).getContentType())
+                            .build());
+                }
+            }catch (Exception e){
+                throw new PostInvalidParamException();
+            }
+            post.setFiles(files);
+        }
+        if(postPutDto.getTitle()!=null){
+            post.setTitle(postPutDto.getTitle());
+        }
         return postMapper.postToGetFullDto(post);
     }
 

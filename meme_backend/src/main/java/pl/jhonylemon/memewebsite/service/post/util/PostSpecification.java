@@ -5,32 +5,25 @@ import pl.jhonylemon.memewebsite.dto.DateRangeDto;
 import pl.jhonylemon.memewebsite.dto.LongRangeDto;
 import pl.jhonylemon.memewebsite.entity.Post;
 
+import javax.persistence.criteria.CriteriaQuery;
+
 public class PostSpecification {
 
     private PostSpecification() {}
+
+//    private LongRangeDto comments;
+//    private LongRangeDto upVotes;
+//    private LongRangeDto downVotes;
+//    private LongRangeDto favorites;
 
     public static Specification<Post> hasCreationDate(DateRangeDto creationDate) {
         return (root, query, criteriaBuilder) -> {
             if (creationDate != null) {
                 return criteriaBuilder.between(
-                        root.join("account").get("creationDate"),
+                        root.get("creationDate"),
                         creationDate.getMin(),
                         creationDate.getMax()
                 );
-            } else {
-                return criteriaBuilder.conjunction();
-            }
-        };
-    }
-
-    public static Specification<Post> hasNumberOfPosts(LongRangeDto posts) {
-        return (root, query, criteriaBuilder) -> {
-            if (posts != null) {
-                return criteriaBuilder.between(
-                        criteriaBuilder.size(root.join("account").get("posts")),
-                                posts.getMin().intValue(),
-                                posts.getMax().intValue()
-                        );
             } else {
                 return criteriaBuilder.conjunction();
             }
@@ -41,7 +34,7 @@ public class PostSpecification {
         return (root, query, criteriaBuilder) -> {
             if (comments != null) {
                 return criteriaBuilder.between(
-                        criteriaBuilder.size(root.join("account").get("comments")),
+                        criteriaBuilder.size(root.get("comments")),
                         comments.getMin().intValue(),
                         comments.getMax().intValue()
                 );
@@ -54,10 +47,22 @@ public class PostSpecification {
     public static Specification<Post> hasNumberOfUpVotes(LongRangeDto upvotes) {
         return (root, query, criteriaBuilder) -> {
             if (upvotes != null) {
-                return criteriaBuilder.between(
-                        criteriaBuilder.size(root.join("account").get("comments")),
-                        upvotes.getMin().intValue(),
-                        upvotes.getMax().intValue()
+
+
+
+                return criteriaBuilder.and(
+                        criteriaBuilder
+                                .lessThanOrEqualTo(
+                                        criteriaBuilder.count(
+                                                criteriaBuilder.equal(root.joinList("postStatistics").get("vote"),true)
+                                        ),
+                                        upvotes.getMin()),
+                        criteriaBuilder
+                                .greaterThanOrEqualTo(
+                                        criteriaBuilder.count(
+                                                criteriaBuilder.equal(root.joinList("postStatistics").get("vote"),true)
+                                        ),
+                                        upvotes.getMax())
                 );
             } else {
                 return criteriaBuilder.conjunction();
@@ -79,40 +84,30 @@ public class PostSpecification {
         };
     }
 
-    public static Specification<Post> hasAccountName(String accountName) {
+    public static Specification<Post> hasNumberOfFavorites(LongRangeDto downvotes) {
         return (root, query, criteriaBuilder) -> {
-            if (accountName != null) {
-                return criteriaBuilder
-                        .like(criteriaBuilder
-                                .lower(root
-                                        .join("account")
-                                        .get("name")), getStringInLikeOperationFormat(accountName));
+            if (downvotes != null) {
+                return criteriaBuilder.between(
+                        criteriaBuilder.size(root.join("account").get("comments")),
+                        downvotes.getMin().intValue(),
+                        downvotes.getMax().intValue()
+                );
             } else {
                 return criteriaBuilder.conjunction();
             }
         };
     }
 
-    public static Specification<Post> hasAccountEnabled(Boolean enabled) {
-        return (root, query, criteriaBuilder) -> {
-            if (enabled != null) {
-                return criteriaBuilder
-                        .equal(root
-                                .join("account")
-                                .get("enabled"),enabled);
-            } else {
-                return criteriaBuilder.conjunction();
-            }
-        };
+    public static Specification<Post> isPublic() {
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(root.get("visible"),true);
     }
 
-    public static Specification<Post> hasAccountBanned(Boolean banned) {
+    public static Specification<Post> hasTitleLike(String title) {
         return (root, query, criteriaBuilder) -> {
-            if (banned != null) {
+            if (title != null) {
                 return criteriaBuilder
-                        .equal(root
-                                .join("account")
-                                .get("banned"),banned);
+                        .like(root.get("title"), getStringInLikeOperationFormat(title));
             } else {
                 return criteriaBuilder.conjunction();
             }

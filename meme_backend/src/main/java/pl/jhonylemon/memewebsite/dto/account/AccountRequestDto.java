@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import pl.jhonylemon.memewebsite.dto.PagingAndSortingRequestDto;
 
 @Getter
 @Setter
@@ -12,7 +11,7 @@ import pl.jhonylemon.memewebsite.dto.PagingAndSortingRequestDto;
 @AllArgsConstructor
 public class AccountRequestDto {
 
-    private PagingAndSortingRequestDto pagingAndSorting;
+    private AccountPagingAndSortingRequestDto pagingAndSorting;
     private AccountFilterDto filters;
 
     public boolean hasPagingAndSorting() {
@@ -20,7 +19,7 @@ public class AccountRequestDto {
     }
 
     public void setDefaultPagingAndSorting() {
-        pagingAndSorting = new PagingAndSortingRequestDto();
+        pagingAndSorting = new AccountPagingAndSortingRequestDto();
     }
 
 }

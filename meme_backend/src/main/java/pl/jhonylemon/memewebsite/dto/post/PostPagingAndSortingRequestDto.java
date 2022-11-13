@@ -1,16 +1,16 @@
-package pl.jhonylemon.memewebsite.dto;
+package pl.jhonylemon.memewebsite.dto.post;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import pl.jhonylemon.memewebsite.enums.SortBy;
+import pl.jhonylemon.memewebsite.enums.post.PostSortBy;
 import pl.jhonylemon.memewebsite.enums.SortDirection;
 
 @Getter
 @Setter
 @NoArgsConstructor
-public class PagingAndSortingRequestDto {
+public class PostPagingAndSortingRequestDto {
     private int page = 0;
     private int size = 50;
     private String sortBy;
@@ -22,7 +22,7 @@ public class PagingAndSortingRequestDto {
     }
 
     public void setDefaultSorterValues() {
-        sortBy = sortBy == null ? SortBy.ID.getRequestName() : sortBy;
+        sortBy = sortBy == null ? PostSortBy.ID.getRequestName() : sortBy;
         sortDirection = sortDirection == null ? SortDirection.ASC.getRequestName() : sortDirection;
     }
 

@@ -4,11 +4,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
-import pl.jhonylemon.memewebsite.dto.PagingAndSortingRequestDto;
+import pl.jhonylemon.memewebsite.dto.tag.TagPagingAndSortingRequestDto;
 import pl.jhonylemon.memewebsite.dto.tag.TagFilterDto;
 import pl.jhonylemon.memewebsite.dto.tag.TagRequestDto;
 import pl.jhonylemon.memewebsite.entity.Tag;
-import pl.jhonylemon.memewebsite.enums.SortBy;
+import pl.jhonylemon.memewebsite.enums.tag.TagSortBy;
 import pl.jhonylemon.memewebsite.enums.SortDirection;
 import pl.jhonylemon.memewebsite.exception.BusinessException;
 
@@ -16,17 +16,17 @@ import static pl.jhonylemon.memewebsite.service.tag.util.TagSpecification.hasTag
 
 
 public class TagUtil {
-    public static PageRequest createPageRequest(PagingAndSortingRequestDto requestDto) {
+    public static PageRequest createPageRequest(TagPagingAndSortingRequestDto requestDto) {
         return PageRequest.of(requestDto.getPage(), requestDto.getSize(),
                 getSorter(requestDto));
     }
 
-    private static Sort getSorter(PagingAndSortingRequestDto requestDto) {
+    private static Sort getSorter(TagPagingAndSortingRequestDto requestDto) {
         if (requestDto.isRequestNotComplete()) {
             requestDto.setDefaultSorterValues();
         }
 
-        SortBy sortBy = SortBy.fromRequestName(requestDto.getSortBy());
+        TagSortBy sortBy = TagSortBy.fromRequestName(requestDto.getSortBy());
         SortDirection sortDirection = SortDirection.fromRequestName(requestDto.getSortDirection());
 
         return sortDirection.equals(SortDirection.ASC) ?

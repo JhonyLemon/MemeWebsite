@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "POST_FILE")
+@Table(name = "TAG")
 @Getter
 @Setter
 @NoArgsConstructor

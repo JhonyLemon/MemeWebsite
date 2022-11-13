@@ -41,8 +41,17 @@ public class UserPostController {
         return ResponseEntity.ok().build();
     }
     @PutMapping(path = ApiPaths.Post.POST_UPDATE)
-    public ResponseEntity<PostGetFullDto> updatePostSelf(@PathVariable Long id,@RequestBody PostPutDto postPutDto){
-        return ResponseEntity.ok().body(postService.updatePostSelf(id,postPutDto));
+    public ResponseEntity<PostGetFullDto> updatePostSelf(
+            @PathVariable Long id,
+            @RequestPart(value = "files") List<MultipartFile> files,
+            @RequestParam(value = "title") String title,
+            @RequestParam(value = "descriptions") List<String> descriptions,
+            @RequestParam(value = "tags") List<Long> tags,
+            @RequestParam(value = "visible") Boolean visible
+    ){
+        return ResponseEntity.ok().body(postService.updatePostSelf(id,new PostPutDto(
+                files,title,descriptions,tags,visible
+        )));
     }
 
 }
