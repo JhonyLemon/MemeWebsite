@@ -35,13 +35,12 @@ public class UserCommentStatisticService {
         if(commentId==null || commentId<1){
             throw new PostStatisticInvalidParamException();
         }
-        if(vote==null){
-            throw new PostStatisticInvalidParamException();
-        }
+
         Optional<CommentStatistic> postStatistic = commentStatisticRepository.findByComment_IdAndAccount_Id(commentId,userId);
 
         if(postStatistic.isPresent()) {
-            postStatistic.get().setVote(vote);
+            postStatistic.get().setUpVote(vote != null && (vote));
+            postStatistic.get().setDownVote(vote != null && (!vote));
         }else {
             Account account = accountRepository.findById(userId).orElseThrow(()->{
                 throw new AccountNotFoundException();
@@ -53,7 +52,8 @@ public class UserCommentStatisticService {
             CommentStatistic postStat = CommentStatistic.builder()
                     .comment(comment)
                     .account(account)
-                    .vote(vote)
+                    .upVote(vote != null && (vote))
+                    .downVote(vote != null && (!vote))
                     .build();
             commentStatisticRepository.save(postStat);
         }

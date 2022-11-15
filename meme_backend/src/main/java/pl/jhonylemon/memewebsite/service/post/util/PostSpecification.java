@@ -5,16 +5,12 @@ import pl.jhonylemon.memewebsite.dto.DateRangeDto;
 import pl.jhonylemon.memewebsite.dto.LongRangeDto;
 import pl.jhonylemon.memewebsite.entity.Post;
 
-import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.*;
+import java.util.List;
 
 public class PostSpecification {
 
     private PostSpecification() {}
-
-//    private LongRangeDto comments;
-//    private LongRangeDto upVotes;
-//    private LongRangeDto downVotes;
-//    private LongRangeDto favorites;
 
     public static Specification<Post> hasCreationDate(DateRangeDto creationDate) {
         return (root, query, criteriaBuilder) -> {
@@ -44,26 +40,29 @@ public class PostSpecification {
         };
     }
 
+    public static Specification<Post> hasTags(List<Long> tags) {
+        return (root, query, criteriaBuilder) -> {
+            if (tags != null) {
+                return criteriaBuilder.in(root.join("tags").get("id")).value(tags);
+            } else {
+                return criteriaBuilder.conjunction();
+            }
+        };
+    }
+
     public static Specification<Post> hasNumberOfUpVotes(LongRangeDto upvotes) {
         return (root, query, criteriaBuilder) -> {
             if (upvotes != null) {
 
+                Join j = root.join("postStatistics");
 
+                query
+                        .where(criteriaBuilder.equal(j.get("upVote"),true))
+                        .having(criteriaBuilder.between(criteriaBuilder.count(j.get("upVote")),upvotes.getMin(), upvotes.getMax()))
+                        .groupBy(root.get("id"));
 
-                return criteriaBuilder.and(
-                        criteriaBuilder
-                                .lessThanOrEqualTo(
-                                        criteriaBuilder.count(
-                                                criteriaBuilder.equal(root.joinList("postStatistics").get("vote"),true)
-                                        ),
-                                        upvotes.getMin()),
-                        criteriaBuilder
-                                .greaterThanOrEqualTo(
-                                        criteriaBuilder.count(
-                                                criteriaBuilder.equal(root.joinList("postStatistics").get("vote"),true)
-                                        ),
-                                        upvotes.getMax())
-                );
+                return query.getRestriction();
+
             } else {
                 return criteriaBuilder.conjunction();
             }
@@ -73,25 +72,31 @@ public class PostSpecification {
     public static Specification<Post> hasNumberOfDownVotes(LongRangeDto downvotes) {
         return (root, query, criteriaBuilder) -> {
             if (downvotes != null) {
-                return criteriaBuilder.between(
-                        criteriaBuilder.size(root.join("account").get("comments")),
-                        downvotes.getMin().intValue(),
-                        downvotes.getMax().intValue()
-                );
+                Join j = root.join("postStatistics");
+
+                query
+                        .where(criteriaBuilder.equal(j.get("downVote"),true))
+                        .having(criteriaBuilder.between(criteriaBuilder.count(j.get("downVote")),downvotes.getMin(), downvotes.getMax()))
+                        .groupBy(root.get("id"));
+
+                return query.getRestriction();
             } else {
                 return criteriaBuilder.conjunction();
             }
         };
     }
 
-    public static Specification<Post> hasNumberOfFavorites(LongRangeDto downvotes) {
+    public static Specification<Post> hasNumberOfFavorites(LongRangeDto favorites) {
         return (root, query, criteriaBuilder) -> {
-            if (downvotes != null) {
-                return criteriaBuilder.between(
-                        criteriaBuilder.size(root.join("account").get("comments")),
-                        downvotes.getMin().intValue(),
-                        downvotes.getMax().intValue()
-                );
+            if (favorites != null) {
+                Join j = root.join("postStatistics");
+
+                query
+                        .where(criteriaBuilder.equal(j.get("favorite"),true))
+                        .having(criteriaBuilder.between(criteriaBuilder.count(j.get("favorite")),favorites.getMin(), favorites.getMax()))
+                        .groupBy(root.get("id"));
+
+                return query.getRestriction();
             } else {
                 return criteriaBuilder.conjunction();
             }

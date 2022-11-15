@@ -38,10 +38,17 @@ public class ApiPaths {
     public static class Post {
         public static final String POST_PATH = "/post";
         public static final String POST_GET = "/{id}";
-        public static final String POST_GET_ALL_PAGINATED = "/all";//TODO should allow to filter by favorited account and account posts
+        public static final String POST_GET_ALL_PAGINATED = "/all";
         public static final String POST_CREATE = "/{id}/create";
         public static final String POST_UPDATE = "/{id}/update";
         public static final String POST_DELETE = "/{id}/delete";
+    }
+
+    public static class PostFile {
+        public static final String POST_PATH = "/postfile";
+        public static final String POST_GET_FULL = "/{id}/full";
+        public static final String POST_GET_SHORT = "/{id}/short";
+        public static final String POST_GET_FILE = "/{id}/file";
     }
 
     public static class ProfilePicture {

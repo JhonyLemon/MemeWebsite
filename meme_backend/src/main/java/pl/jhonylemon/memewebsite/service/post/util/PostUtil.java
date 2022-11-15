@@ -43,6 +43,7 @@ public class PostUtil {
                         .and(hasNumberOfUpVotes(postFilterDto.getUpVotes()))
                         .and(hasNumberOfDownVotes(postFilterDto.getDownVotes()))
                         .and(hasNumberOfFavorites(postFilterDto.getFavorites()))
+                        .and(hasTags(postFilterDto.getTags()))
                 : isPublic();
     }
 

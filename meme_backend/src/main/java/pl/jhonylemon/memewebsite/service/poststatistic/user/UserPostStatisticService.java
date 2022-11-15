@@ -52,7 +52,8 @@ public class UserPostStatisticService {
                     .account(account)
                     .seen(true)
                     .favorite(false)
-                    .vote(null)
+                    .upVote(false)
+                    .downVote(false)
                     .build();
             postStatisticRepository.save(postStat);
         }
@@ -88,7 +89,8 @@ public class UserPostStatisticService {
                     .account(account)
                     .seen(true)
                     .favorite(favorite)
-                    .vote(null)
+                    .upVote(false)
+                    .downVote(false)
                     .build();
             postStatisticRepository.save(postStat);
         }
@@ -104,13 +106,12 @@ public class UserPostStatisticService {
         if(postId==null || postId<1){
             throw new PostStatisticInvalidParamException();
         }
-        if(vote==null){
-            throw new PostStatisticInvalidParamException();
-        }
+
         Optional<PostStatistic> postStatistic = postStatisticRepository.findByPost_IdAndAccount_Id(postId,userId);
 
         if(postStatistic.isPresent()) {
-            postStatistic.get().setVote(vote);
+            postStatistic.get().setUpVote(vote != null && (vote));
+            postStatistic.get().setDownVote(vote != null && (!vote));
         }else {
             Account account = accountRepository.findById(userId).orElseThrow(()->{
                 throw new AccountNotFoundException();
@@ -124,7 +125,8 @@ public class UserPostStatisticService {
                     .account(account)
                     .seen(true)
                     .favorite(false)
-                    .vote(vote)
+                    .upVote(vote != null && (vote))
+                    .downVote(vote != null && (!vote))
                     .build();
             postStatisticRepository.save(postStat);
         }

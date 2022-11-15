@@ -1,6 +1,7 @@
 package pl.jhonylemon.memewebsite.service.account.guest;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import pl.jhonylemon.memewebsite.dto.account.*;
@@ -15,10 +16,14 @@ import pl.jhonylemon.memewebsite.mapper.AccountMapper;
 import pl.jhonylemon.memewebsite.repository.AccountPermissionRepository;
 import pl.jhonylemon.memewebsite.repository.AccountRepository;
 import pl.jhonylemon.memewebsite.repository.ProfilePictureRepository;
+import pl.jhonylemon.memewebsite.service.account.util.AccountUtil;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+
+import static pl.jhonylemon.memewebsite.service.account.util.AccountUtil.validateRequest;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +34,24 @@ public class GuestAccountService {
     private final PasswordEncoder passwordEncoder;
     private final AccountPermissionRepository accountPermissionRepository;
     private final ProfilePictureRepository profilePictureRepository;
+
+    public AccountPageGetDto getAllAccounts(AccountRequestDto accountRequestDto) {
+        validateRequest(accountRequestDto);
+
+        Page<Account> accounts = accountRepository
+                .findAll(AccountUtil.getSpecification(accountRequestDto.getFilters()),
+                        AccountUtil.createPageRequest(accountRequestDto.getPagingAndSorting()));
+
+        List<AccountGetFullDto> accountGetFullDtos = new ArrayList<>();
+
+        accounts.forEach(a-> accountGetFullDtos.add(accountMapper.accountToFullGetDto(a)));
+
+        return new AccountPageGetDto(
+                accountGetFullDtos,
+                accounts.getTotalPages(),
+                accounts.getTotalElements(),
+                accountRequestDto.getFilters());
+    }
 
     @Transactional
     public AccountGetFullDto createAccount(AccountPostDto accountPostDto) {

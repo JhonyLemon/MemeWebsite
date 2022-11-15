@@ -25,14 +25,14 @@ public interface CommentStatisticMapper {
                 .ifPresent(commentStatisticGetDto::setCommentId);
         commentStatisticGetDto.setDownVoteCount(
                 commentStatisticList.stream()
-                        .map(CommentStatistic::getVote)
+                        .map(CommentStatistic::getDownVote)
                         .filter(Objects::nonNull)
-                        .filter(s->!s)
+                        .filter(s->s)
                         .count()
         );
         commentStatisticGetDto.setUpVoteCount(
                 commentStatisticList.stream()
-                        .map(CommentStatistic::getVote)
+                        .map(CommentStatistic::getUpVote)
                         .filter(Objects::nonNull)
                         .filter(s->s)
                         .count()

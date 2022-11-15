@@ -28,8 +28,11 @@ public class PostStatistic {
     @Column(name = "SEEN")
     private Boolean seen;
 
-    @Column(name = "VOTE")
-    private Boolean vote;
+    @Column(name = "UP_VOTE")
+    private Boolean upVote;
+
+    @Column(name = "DOWN_VOTE")
+    private Boolean downVote;
 
     @Column(name = "FAVORITE")
     private Boolean favorite;

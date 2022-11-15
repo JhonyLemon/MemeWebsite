@@ -9,11 +9,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostFileGetDto {
+public class PostFileShortGetDto {
     private Long id;
     private Long postId;
     private String fileName;
-    private byte[] file;
     private String mimeType;
     private String description;
 }

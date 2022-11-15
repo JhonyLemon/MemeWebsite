@@ -38,14 +38,14 @@ public interface PostStatisticMapper {
         );
         postStatisticGetDto.setDownVoteCount(
                 postStatisticList.stream()
-                        .map(PostStatistic::getVote)
+                        .map(PostStatistic::getDownVote)
                         .filter(Objects::nonNull)
-                        .filter(s->!s)
+                        .filter(s->s)
                         .count()
         );
         postStatisticGetDto.setUpVoteCount(
                 postStatisticList.stream()
-                        .map(PostStatistic::getVote)
+                        .map(PostStatistic::getUpVote)
                         .filter(Objects::nonNull)
                         .filter(s->s)
                         .count()

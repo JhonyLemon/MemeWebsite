@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pl.jhonylemon.memewebsite.dto.account.AccountGetFullDto;
-import pl.jhonylemon.memewebsite.dto.postfile.PostFileGetDto;
 import pl.jhonylemon.memewebsite.dto.poststatistic.PostStatisticGetDto;
 
 @Getter
@@ -13,7 +12,7 @@ import pl.jhonylemon.memewebsite.dto.poststatistic.PostStatisticGetDto;
 public class PostGetShortDto {
     private Long id;
     private String title;
-    private PostFileGetDto file;
+    private Long firstFileId;
     private AccountGetFullDto account;
     private PostStatisticGetDto postStatistics;
 }

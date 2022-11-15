@@ -7,6 +7,7 @@ import org.mapstruct.ReportingPolicy;
 import pl.jhonylemon.memewebsite.dto.post.PostGetFullDto;
 import pl.jhonylemon.memewebsite.dto.post.PostGetShortDto;
 import pl.jhonylemon.memewebsite.entity.Post;
+import pl.jhonylemon.memewebsite.entity.PostFile;
 
 @Mapper(componentModel = "spring",
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
@@ -16,13 +17,18 @@ import pl.jhonylemon.memewebsite.entity.Post;
                 PostStatisticMapper.class,
                 TagMapper.class,
                 CommentMapper.class
+        },
+        imports = {
+            PostFile.class,
+            java.util.stream.Collectors.class
         }
 )
 public interface PostMapper {
 
-    @Mapping(target = "file", expression = "java(new PostFileGetDto(post.getFiles().get(0).getId(),post.getId(),post.getFiles().get(0).getFileName(),post.getFiles().get(0).getFile(),post.getFiles().get(0).getMimeType(),post.getFiles().get(0).getDescription()))")
+    @Mapping(target = "firstFileId", expression = "java(post.getFiles().get(0).getId())")
     PostGetShortDto postToGetShortDto(Post post);
 
+    @Mapping(target = "filesId", expression ="java(post.getFiles().stream().map(PostFile::getId).collect(Collectors.toList()))")
     PostGetFullDto postToGetFullDto(Post post);
 
 }

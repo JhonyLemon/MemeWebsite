@@ -26,6 +26,9 @@ public class CommentStatistic {
     @ManyToOne()
     private Account account;
 
-    @Column(name = "VOTE")
-    private Boolean vote;
+    @Column(name = "UP_VOTE")
+    private Boolean upVote;
+
+    @Column(name = "DOWN_VOTE")
+    private Boolean downVote;
 }

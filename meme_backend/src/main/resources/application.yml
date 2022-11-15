@@ -7,6 +7,10 @@ spring:
     user:
       name: ${SECURITY_USER:meem}
       password: ${SECURITY_USER:meem}
+  jpa:
+    show-sql: true
+    properties:
+      hibernate.format_sql: true
 server:
   servlet:
     context-path: /api
@@ -17,6 +21,7 @@ jwt:
   claim: permissions
   accessTokenExpirationAfterDays: 10
   refreshTokenExpirationAfterDays: 30
+
 
 
 
