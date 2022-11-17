@@ -14,6 +14,7 @@ import pl.jhonylemon.memewebsite.exception.account.AccountNotFoundException;
 import pl.jhonylemon.memewebsite.exception.authorization.AuthorizationFailedException;
 import pl.jhonylemon.memewebsite.exception.profilepicture.ProfilePictureNotFoundException;
 import pl.jhonylemon.memewebsite.mapper.AccountMapper;
+import pl.jhonylemon.memewebsite.repository.AccountPermissionRepository;
 import pl.jhonylemon.memewebsite.repository.AccountRepository;
 import pl.jhonylemon.memewebsite.repository.ProfilePictureRepository;
 import pl.jhonylemon.memewebsite.service.account.guest.GuestAccountService;
@@ -148,6 +149,10 @@ public class UserAccountService {
             throw new AccountNotFoundException();
         });
         if (!authAccount.getId().equals(account.getId())) {
+            throw new AuthorizationFailedException();
+        }
+
+        if(account.getPermissions().stream().anyMatch(p->p.getPermission().contains("ADMIN"))) {
             throw new AuthorizationFailedException();
         }
 

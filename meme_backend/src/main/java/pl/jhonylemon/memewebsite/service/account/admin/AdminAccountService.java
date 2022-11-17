@@ -1,6 +1,7 @@
 package pl.jhonylemon.memewebsite.service.account.admin;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import pl.jhonylemon.memewebsite.dto.account.*;
@@ -13,10 +14,12 @@ import pl.jhonylemon.memewebsite.entity.AccountPermission;
 import pl.jhonylemon.memewebsite.exception.account.AccountInvalidParamException;
 import pl.jhonylemon.memewebsite.exception.account.AccountNotFoundException;
 import pl.jhonylemon.memewebsite.exception.accountpermission.AccountPermissionNotFoundException;
+import pl.jhonylemon.memewebsite.exception.authorization.AuthorizationFailedException;
 import pl.jhonylemon.memewebsite.mapper.AccountMapper;
 import pl.jhonylemon.memewebsite.mapper.AccountPermissionMapper;
 import pl.jhonylemon.memewebsite.repository.AccountPermissionRepository;
 import pl.jhonylemon.memewebsite.repository.AccountRepository;
+import pl.jhonylemon.memewebsite.service.account.guest.GuestAccountService;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -31,6 +34,7 @@ public class AdminAccountService {
     private final AccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
     private final AccountPermissionRepository accountPermissionRepository;
+    private final GuestAccountService guestAccountService;
 
     @Transactional
     public AccountGetFullDto updateAccountPassword(Long id,AccountPutPasswordDto accountPutPasswordDto) {
@@ -54,9 +58,20 @@ public class AdminAccountService {
         if(id==null || id<1){
             throw new AccountInvalidParamException();
         }
+
+        AccountGetShortDto authAccount = guestAccountService.getAccount(
+                (String) SecurityContextHolder.getContext()
+                        .getAuthentication()
+                        .getPrincipal()
+        );
+
         Account account = accountRepository.findById(id).orElseThrow(() -> {
             throw new AccountNotFoundException();
         });
+
+        if (authAccount.getId().equals(account.getId())) {
+            throw new AuthorizationFailedException();
+        }
         accountRepository.delete(account);
     }
 
