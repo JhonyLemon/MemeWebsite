@@ -146,33 +146,6 @@
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
-<!--            <plugin>-->
-<!--                <groupId>org.openapitools</groupId>-->
-<!--                <artifactId>openapi-generator-maven-plugin</artifactId>-->
-<!--                <version>${openapi.generator.maven.plugin.version}</version>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>build-model-api</id>-->
-<!--                        <goals>-->
-<!--                            <goal>generate</goal>-->
-<!--                        </goals>-->
-<!--                        <configuration>-->
-<!--                            <generatorName>spring</generatorName>-->
-<!--                            <inputSpec>${project.basedir}/src/main/resources/openapi/api.yml</inputSpec>-->
-<!--                            <output>${project.build.directory}/generated-sources</output>-->
-<!--                            <apiPackage>${project.groupId}.${project.artifactId}.api</apiPackage>-->
-<!--                            <modelPackage>${project.groupId}.${project.artifactId}.model</modelPackage>-->
-<!--                            <modelNameSuffix>ModelApi</modelNameSuffix>-->
-<!--                            <configOptions>-->
-<!--                                <interfaceOnly>true</interfaceOnly>-->
-<!--                            </configOptions>-->
-<!--                            <globalProperties>-->
-<!--                                <skipFormModel>false</skipFormModel>-->
-<!--                            </globalProperties>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
         </plugins>
     </build>
 
