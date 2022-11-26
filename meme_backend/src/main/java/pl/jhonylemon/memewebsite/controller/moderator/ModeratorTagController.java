@@ -11,6 +11,7 @@ import pl.jhonylemon.memewebsite.service.tag.moderator.ModeratorTagService;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = ApiPaths.Moderator.MODERATOR_PATH+ApiPaths.Tag.TAG_PATH)
+@CrossOrigin
 public class ModeratorTagController {
 
     private final ModeratorTagService tagService;

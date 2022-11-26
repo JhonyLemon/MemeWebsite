@@ -12,10 +12,11 @@ import pl.jhonylemon.memewebsite.service.comment.user.UserCommentService;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = ApiPaths.User.USER_PATH+ApiPaths.Comment.COMMENT_PATH)
+@CrossOrigin
 public class UserCommentController {
 
-    private UserCommentService commentService;
-    private CommentMapper commentMapper;
+    private final UserCommentService commentService;
+    private final CommentMapper commentMapper;
 
     @PostMapping(path = ApiPaths.Comment.COMMENT_REPLY)
     public ResponseEntity<CommentGetDto> reply(@PathVariable Long postId,@PathVariable Long commentId, @RequestBody CommentPostDto commentPostDto){

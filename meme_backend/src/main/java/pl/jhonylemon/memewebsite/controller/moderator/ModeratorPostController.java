@@ -15,6 +15,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = ApiPaths.Moderator.MODERATOR_PATH+ApiPaths.Post.POST_PATH)
+@CrossOrigin
 public class ModeratorPostController {
 
     private final ModeratorPostService postService;
@@ -28,11 +29,11 @@ public class ModeratorPostController {
     @PutMapping(path = ApiPaths.Post.POST_UPDATE)
     public ResponseEntity<PostGetFullDto> updatePost(
             @PathVariable Long id,
-            @RequestPart(value = "files") List<MultipartFile> files,
-            @RequestParam(value = "title") String title,
-            @RequestParam(value = "descriptions") List<String> descriptions,
-            @RequestParam(value = "tags") List<Long> tags,
-            @RequestParam(value = "visible") Boolean visible
+            @RequestPart(value = "files",required = false) List<MultipartFile> files,
+            @RequestParam(value = "title",required = false) String title,
+            @RequestParam(value = "descriptions",required = false) List<String> descriptions,
+            @RequestParam(value = "tags",required = false) List<Long> tags,
+            @RequestParam(value = "visible",required = false) Boolean visible
     ){
         return ResponseEntity.ok().body(postService.updatePost(id,new PostPutDto(
                 files,title,descriptions,tags,visible

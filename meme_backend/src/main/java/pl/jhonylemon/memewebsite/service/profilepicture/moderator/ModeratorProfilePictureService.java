@@ -62,12 +62,16 @@ public class ModeratorProfilePictureService {
         if(profilePicture.getDefaultProfile()){
             throw new ProfilePictureInvalidParamException();
         }
-        ProfilePicture defaulProfile = profilePictureRepository.findByDefaultProfileTrue().orElseThrow(()->{
+        ProfilePicture defaultProfile = profilePictureRepository.findByDefaultProfileTrue().orElseThrow(()->{
             throw new ProfilePictureNotFoundException();
         });
 
-        profilePicture.getAccounts().forEach(p->p.setProfilePicture(defaulProfile));
-        profilePicture.getAccounts().clear();
+        if(profilePicture.getAccounts()!=null){
+            if(!profilePicture.getAccounts().isEmpty()){
+                profilePicture.getAccounts().forEach(p->p.setProfilePicture(defaultProfile));
+                profilePicture.getAccounts().clear();
+            }
+        }
         profilePictureRepository.delete(profilePicture);
     }
 

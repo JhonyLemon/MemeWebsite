@@ -2,12 +2,12 @@ package pl.jhonylemon.memewebsite.service.account.admin;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import pl.jhonylemon.memewebsite.dto.account.*;
 import pl.jhonylemon.memewebsite.dto.account.AccountGetFullDto;
 import pl.jhonylemon.memewebsite.dto.accountpermission.AccountPermissionGetDto;
-import pl.jhonylemon.memewebsite.dto.accountpermission.AccountPermissionPostDto;
 import pl.jhonylemon.memewebsite.dto.accountpermission.AccountPermissionPutDto;
 import pl.jhonylemon.memewebsite.entity.Account;
 import pl.jhonylemon.memewebsite.entity.AccountPermission;
@@ -60,9 +60,10 @@ public class AdminAccountService {
         }
 
         AccountGetShortDto authAccount = guestAccountService.getAccount(
-                (String) SecurityContextHolder.getContext()
+                ((User)SecurityContextHolder.getContext()
                         .getAuthentication()
-                        .getPrincipal()
+                        .getPrincipal())
+                        .getUsername()
         );
 
         Account account = accountRepository.findById(id).orElseThrow(() -> {
@@ -151,14 +152,11 @@ public class AdminAccountService {
     }
 
     @Transactional
-    public List<AccountPermissionGetDto> addAccountPermission(Long id,AccountPermissionPostDto accountPermissionPutDto) {
-        if(accountPermissionPutDto==null){
-            throw new AccountInvalidParamException();
-        }
+    public List<AccountPermissionGetDto> addAccountPermission(Long id,Long permissionId) {
         if(id==null || id<1){
             throw new AccountInvalidParamException();
         }
-        if(accountPermissionPutDto.getPermissionId()==null || accountPermissionPutDto.getPermissionId()<1){
+        if(permissionId==null || permissionId<1){
             throw new AccountInvalidParamException();
         }
         Account account = accountRepository.findById(id).orElseThrow(() -> {
@@ -166,7 +164,7 @@ public class AdminAccountService {
         });
 
         AccountPermission newAccountPermission = accountPermissionRepository
-                .findById(accountPermissionPutDto.getPermissionId())
+                .findById(permissionId)
                 .orElseThrow(()->{throw new AccountPermissionNotFoundException();
                 });
         account.getPermissions().add(newAccountPermission);
@@ -176,14 +174,11 @@ public class AdminAccountService {
     }
 
     @Transactional
-    public List<AccountPermissionGetDto> deleteAccountPermission(Long id,AccountPermissionPostDto accountPermissionPutDto) {
-        if(accountPermissionPutDto==null){
-            throw new AccountInvalidParamException();
-        }
+    public List<AccountPermissionGetDto> deleteAccountPermission(Long id,Long permissionId) {
         if(id==null || id<1){
             throw new AccountInvalidParamException();
         }
-        if(accountPermissionPutDto.getPermissionId()==null || accountPermissionPutDto.getPermissionId()<1){
+        if(permissionId==null || permissionId<1){
             throw new AccountInvalidParamException();
         }
         Account account = accountRepository.findById(id).orElseThrow(() -> {
@@ -191,7 +186,7 @@ public class AdminAccountService {
         });
 
         AccountPermission accountPermission = accountPermissionRepository
-                .findById(accountPermissionPutDto.getPermissionId())
+                .findById(permissionId)
                 .orElseThrow(()->{throw new AccountPermissionNotFoundException();
                 });
         accountPermission.getAccounts().remove(account);

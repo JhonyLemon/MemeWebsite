@@ -1,11 +1,10 @@
 package pl.jhonylemon.memewebsite.controller.guest;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pl.jhonylemon.memewebsite.controller.routes.ApiPaths;
 import pl.jhonylemon.memewebsite.dto.postfile.PostFileFullGetDto;
 import pl.jhonylemon.memewebsite.dto.postfile.PostFileShortGetDto;
@@ -15,6 +14,7 @@ import pl.jhonylemon.memewebsite.service.postfile.guest.GuestPostFileService;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = ApiPaths.Guest.GUEST_PATH+ApiPaths.PostFile.POST_PATH)
+@CrossOrigin
 public class GuestPostFileController {
 
     private final GuestPostFileService postFileService;
@@ -32,7 +32,11 @@ public class GuestPostFileController {
 
     @GetMapping(path = ApiPaths.PostFile.POST_GET_FILE)
     public ResponseEntity<byte[]> getPostFileFile(@PathVariable Long id){
-        return ResponseEntity.ok().body(postFileService.getPostFileFileById(id));
+        PostFileFullGetDto postFileDto = postFileService.getFullPostFileById(id);
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(postFileDto.getMimeType()))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + postFileDto.getFileName() + "\"")
+                .body(postFileDto.getFile());
     }
 
 

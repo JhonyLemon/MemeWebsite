@@ -13,6 +13,7 @@ import pl.jhonylemon.memewebsite.service.tag.guest.GuestTagService;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = ApiPaths.Guest.GUEST_PATH+ApiPaths.Tag.TAG_PATH)
+@CrossOrigin
 public class GuestTagController {
 
     private final GuestTagService tagService;

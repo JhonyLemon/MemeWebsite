@@ -12,6 +12,7 @@ import pl.jhonylemon.memewebsite.service.account.user.UserAccountService;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(path = ApiPaths.User.USER_PATH+ApiPaths.Account.ACCOUNT_PATH)
+@CrossOrigin
 public class UserAccountController {
 
     private final UserAccountService accountService;

@@ -13,6 +13,7 @@ import pl.jhonylemon.memewebsite.service.post.guest.GuestPostService;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = ApiPaths.Guest.GUEST_PATH+ApiPaths.Post.POST_PATH)
+@CrossOrigin
 public class GuestPostController {
 
     private final GuestPostService postService;

@@ -11,6 +11,7 @@ import pl.jhonylemon.memewebsite.service.account.moderator.ModeratorAccountServi
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(path = ApiPaths.Moderator.MODERATOR_PATH+ApiPaths.Account.ACCOUNT_PATH)
+@CrossOrigin
 public class ModeratorAccountController {
 
     private final ModeratorAccountService accountService;

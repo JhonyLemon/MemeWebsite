@@ -18,6 +18,12 @@ public interface CommentStatisticMapper {
     default CommentStatisticGetDto commentStatisticGetDto(List<CommentStatistic> commentStatisticList){
         CommentStatisticGetDto commentStatisticGetDto = new CommentStatisticGetDto();
 
+        if(commentStatisticList==null){
+            commentStatisticGetDto.setUpVoteCount(0L);
+            commentStatisticGetDto.setDownVoteCount(0L);
+            return commentStatisticGetDto;
+        }
+
         commentStatisticList.stream()
                 .findAny()
                 .map(CommentStatistic::getComment)

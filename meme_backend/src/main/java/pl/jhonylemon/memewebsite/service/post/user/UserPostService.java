@@ -2,6 +2,7 @@ package pl.jhonylemon.memewebsite.service.post.user;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import pl.jhonylemon.memewebsite.dto.account.AccountGetShortDto;
 import pl.jhonylemon.memewebsite.dto.post.*;
@@ -21,6 +22,7 @@ import pl.jhonylemon.memewebsite.repository.TagRepository;
 import pl.jhonylemon.memewebsite.service.account.guest.GuestAccountService;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,7 +48,7 @@ public class UserPostService {
             throw new AccountNotFoundException();
         });
 
-        List<Tag> tags = tagRepository.findAllById(postPostDto.getTags());
+        List<Tag> tags = postPostDto.getTags()==null ? new ArrayList<>() : tagRepository.findAllById(postPostDto.getTags());
 
         List<PostFile> files = new ArrayList<>();
 
@@ -68,6 +70,8 @@ public class UserPostService {
                 .account(account)
                 .title(postPostDto.getTitle())
                 .files(files)
+                .creationDate(LocalDate.now())
+                .visible(postPostDto.getVisible())
                 .build();
 
         postRepository.save(post);
@@ -84,9 +88,10 @@ public class UserPostService {
         });
 
         AccountGetShortDto authAccount = guestAccountService.getAccount(
-                (String) SecurityContextHolder.getContext()
+                ((User)SecurityContextHolder.getContext()
                         .getAuthentication()
-                        .getPrincipal()
+                        .getPrincipal())
+                        .getUsername()
         );
 
         if (!authAccount.getId().equals(post.getAccount().getId())) {
@@ -131,9 +136,10 @@ public class UserPostService {
         });
 
         AccountGetShortDto authAccount = guestAccountService.getAccount(
-                (String) SecurityContextHolder.getContext()
+                ((User)SecurityContextHolder.getContext()
                         .getAuthentication()
-                        .getPrincipal()
+                        .getPrincipal())
+                        .getUsername()
         );
 
         if (!authAccount.getId().equals(post.getAccount().getId())) {

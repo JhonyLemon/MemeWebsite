@@ -16,6 +16,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = ApiPaths.User.USER_PATH+ApiPaths.Post.POST_PATH)
+@CrossOrigin
 public class UserPostController {
 
     private final UserPostService postService;
@@ -27,8 +28,8 @@ public class UserPostController {
             @RequestPart(value = "files") List<MultipartFile> files,
             @RequestParam(value = "title") String title,
             @RequestParam(value = "descriptions") List<String> descriptions,
-            @RequestParam(value = "tags") List<Long> tags,
-            @RequestParam(value = "visible") Boolean visible
+            @RequestParam(value = "tags",required = false) List<Long> tags,
+            @RequestParam(value = "visible",defaultValue = "true",required = false) Boolean visible
     ) {
         return ResponseEntity.ok().body(postService.createPost(id,new PostPostDto(
                 files,title,descriptions,tags,visible
@@ -43,11 +44,11 @@ public class UserPostController {
     @PutMapping(path = ApiPaths.Post.POST_UPDATE)
     public ResponseEntity<PostGetFullDto> updatePostSelf(
             @PathVariable Long id,
-            @RequestPart(value = "files") List<MultipartFile> files,
-            @RequestParam(value = "title") String title,
-            @RequestParam(value = "descriptions") List<String> descriptions,
-            @RequestParam(value = "tags") List<Long> tags,
-            @RequestParam(value = "visible") Boolean visible
+            @RequestPart(value = "files",required = false) List<MultipartFile> files,
+            @RequestParam(value = "title",required = false) String title,
+            @RequestParam(value = "descriptions",required = false) List<String> descriptions,
+            @RequestParam(value = "tags",required = false) List<Long> tags,
+            @RequestParam(value = "visible",required = false) Boolean visible
     ){
         return ResponseEntity.ok().body(postService.updatePostSelf(id,new PostPutDto(
                 files,title,descriptions,tags,visible

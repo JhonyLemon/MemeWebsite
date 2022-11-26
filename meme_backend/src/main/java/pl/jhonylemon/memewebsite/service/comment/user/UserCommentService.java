@@ -2,6 +2,7 @@ package pl.jhonylemon.memewebsite.service.comment.user;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import pl.jhonylemon.memewebsite.dto.account.AccountGetShortDto;
 import pl.jhonylemon.memewebsite.dto.comment.CommentGetDto;
@@ -61,9 +62,10 @@ public class UserCommentService {
                 });
 
         AccountGetShortDto authAccount = guestAccountService.getAccount(
-                (String) SecurityContextHolder.getContext()
+                ((User)SecurityContextHolder.getContext()
                         .getAuthentication()
-                        .getPrincipal()
+                        .getPrincipal())
+                        .getUsername()
         );
 
         if (!authAccount.getId().equals(account.getId())) {

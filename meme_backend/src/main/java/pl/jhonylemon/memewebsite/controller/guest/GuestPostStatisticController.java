@@ -2,10 +2,7 @@ package pl.jhonylemon.memewebsite.controller.guest;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pl.jhonylemon.memewebsite.controller.routes.ApiPaths;
 
 import pl.jhonylemon.memewebsite.dto.poststatistic.PostStatisticGetDto;
@@ -15,6 +12,7 @@ import pl.jhonylemon.memewebsite.service.poststatistic.guest.GuestPostStatisticS
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = ApiPaths.Guest.GUEST_PATH+ApiPaths.PostStatistic.POST_STATISTIC_PATH)
+@CrossOrigin
 public class GuestPostStatisticController {
 
     private final GuestPostStatisticService postStatisticService;

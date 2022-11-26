@@ -31,7 +31,7 @@ public class ModeratorCommentService {
         Comment comment = commentRepository.findById(id).orElseThrow(()->{
             throw new CommentNotFoundException();
         });
-        if(comment.getChildComments().isEmpty()){
+        if(comment.getChildComments() == null){
             comment.setComment("");
             comment.setAccount(null);
         }else{

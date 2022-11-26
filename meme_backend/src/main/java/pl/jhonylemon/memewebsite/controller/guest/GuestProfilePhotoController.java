@@ -2,10 +2,7 @@ package pl.jhonylemon.memewebsite.controller.guest;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pl.jhonylemon.memewebsite.controller.routes.ApiPaths;
 import pl.jhonylemon.memewebsite.dto.profilepicture.ProfilePictureGetDto;
 import pl.jhonylemon.memewebsite.mapper.ProfilePictureMapper;
@@ -16,6 +13,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = ApiPaths.Guest.GUEST_PATH+ApiPaths.ProfilePicture.PROFILE_PICTURE_PATH)
+@CrossOrigin
 public class GuestProfilePhotoController {
 
     private final ProfilePictureMapper profilePictureMapper;

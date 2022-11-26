@@ -373,7 +373,7 @@ VALUES
     (371,'#foryoupage'),
     (372,'#fyp');
 
-
+ALTER TABLE TAG ALTER COLUMN ID RESTART WITH 373;
 
 
 

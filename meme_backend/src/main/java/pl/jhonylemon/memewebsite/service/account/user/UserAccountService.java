@@ -2,6 +2,7 @@ package pl.jhonylemon.memewebsite.service.account.user;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import pl.jhonylemon.memewebsite.dto.account.*;
@@ -14,7 +15,6 @@ import pl.jhonylemon.memewebsite.exception.account.AccountNotFoundException;
 import pl.jhonylemon.memewebsite.exception.authorization.AuthorizationFailedException;
 import pl.jhonylemon.memewebsite.exception.profilepicture.ProfilePictureNotFoundException;
 import pl.jhonylemon.memewebsite.mapper.AccountMapper;
-import pl.jhonylemon.memewebsite.repository.AccountPermissionRepository;
 import pl.jhonylemon.memewebsite.repository.AccountRepository;
 import pl.jhonylemon.memewebsite.repository.ProfilePictureRepository;
 import pl.jhonylemon.memewebsite.service.account.guest.GuestAccountService;
@@ -36,9 +36,10 @@ public class UserAccountService {
         return accountMapper
                 .accountToFullGetDto(
                         accountRepository.findByEmail(
-                                        (String) SecurityContextHolder.getContext()
+                                        ((User)SecurityContextHolder.getContext()
                                                 .getAuthentication()
                                                 .getPrincipal())
+                                                .getUsername())
                                 .orElseThrow(() -> {
                                     throw new AccountNotFoundException();
                                 })
@@ -52,9 +53,10 @@ public class UserAccountService {
         }
 
         AccountGetShortDto authAccount = guestAccountService.getAccount(
-                (String) SecurityContextHolder.getContext()
+                ((User)SecurityContextHolder.getContext()
                         .getAuthentication()
-                        .getPrincipal()
+                        .getPrincipal())
+                        .getUsername()
         );
 
         Account account = accountRepository.findById(id).orElseThrow(() -> {
@@ -78,9 +80,10 @@ public class UserAccountService {
             throw new AccountInvalidParamException();
         }
         AccountGetShortDto authAccount = guestAccountService.getAccount(
-                (String) SecurityContextHolder.getContext()
+                ((User)SecurityContextHolder.getContext()
                         .getAuthentication()
-                        .getPrincipal()
+                        .getPrincipal())
+                        .getUsername()
         );
 
         Account account = accountRepository.findById(id).orElseThrow(() -> {
@@ -108,9 +111,10 @@ public class UserAccountService {
         }
 
         AccountGetShortDto authAccount = guestAccountService.getAccount(
-                (String) SecurityContextHolder.getContext()
+                ((User)SecurityContextHolder.getContext()
                         .getAuthentication()
-                        .getPrincipal()
+                        .getPrincipal())
+                        .getUsername()
         );
 
         Account account = accountRepository.findById(id).orElseThrow(() -> {
@@ -140,9 +144,10 @@ public class UserAccountService {
         }
 
         AccountGetShortDto authAccount = guestAccountService.getAccount(
-                (String) SecurityContextHolder.getContext()
+                ((User)SecurityContextHolder.getContext()
                         .getAuthentication()
-                        .getPrincipal()
+                        .getPrincipal())
+                        .getUsername()
         );
 
         Account account = accountRepository.findById(id).orElseThrow(() -> {

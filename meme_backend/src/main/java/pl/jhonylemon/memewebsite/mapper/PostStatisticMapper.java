@@ -17,6 +17,15 @@ public interface PostStatisticMapper {
 
     default PostStatisticGetDto postStatisticToGetDto(List<PostStatistic> postStatisticList){
         PostStatisticGetDto postStatisticGetDto = new PostStatisticGetDto();
+
+        if(postStatisticList==null){
+            postStatisticGetDto.setUpVoteCount(0L);
+            postStatisticGetDto.setSeenCount(0L);
+            postStatisticGetDto.setDownVoteCount(0L);
+            postStatisticGetDto.setFavoriteCount(0L);
+            return postStatisticGetDto;
+        }
+
         postStatisticList.stream()
                 .findAny()
                 .map(PostStatistic::getPost)

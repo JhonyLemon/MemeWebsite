@@ -33,14 +33,4 @@ public class GuestPostFileService {
             throw new PostFileNotFoundException();
         }));
     }
-
-    public byte[] getPostFileFileById(Long id){
-        if(id == null || id < 1 ){
-            throw new PostFileInvalidParamException();
-        }
-       return postFileRepository.findById(id).orElseThrow(()->{
-            throw new PostFileNotFoundException();
-        }).getFile();
-    }
-
 }

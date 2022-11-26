@@ -12,6 +12,7 @@ import pl.jhonylemon.memewebsite.service.profilepicture.moderator.ModeratorProfi
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = ApiPaths.Moderator.MODERATOR_PATH+ApiPaths.ProfilePicture.PROFILE_PICTURE_PATH)
+@CrossOrigin
 public class ModeratorProfilePhotoController {
 
     private final ModeratorProfilePictureService profilePictureService;

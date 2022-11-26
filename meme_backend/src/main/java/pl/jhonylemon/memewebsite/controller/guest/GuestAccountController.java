@@ -11,6 +11,7 @@ import pl.jhonylemon.memewebsite.service.account.guest.GuestAccountService;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(path = ApiPaths.Guest.GUEST_PATH +ApiPaths.Account.ACCOUNT_PATH)
+@CrossOrigin
 public class GuestAccountController{
 
     private final GuestAccountService accountService;
