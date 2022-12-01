@@ -1,6 +1,7 @@
 package pl.jhonylemon.memewebsite.entity;
 
 import lombok.*;
+import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -26,10 +27,15 @@ public class Post {
     private LocalDate creationDate;
 
     @Column(name = "VISIBLE")
-    private Boolean visible;
+    @Accessors(fluent = true)
+    private Boolean isVisible;
+
+    @Column(name = "PUBLISHED")
+    @Accessors(fluent = true)
+    private Boolean isPublished;
 
     @OneToMany(mappedBy = "post")
-    private List<PostFile> files;
+    private List<PostObject> files;
 
     @ManyToMany(
             fetch = FetchType.LAZY,

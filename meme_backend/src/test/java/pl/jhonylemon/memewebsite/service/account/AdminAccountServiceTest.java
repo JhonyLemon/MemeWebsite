@@ -14,6 +14,7 @@ import pl.jhonylemon.memewebsite.dto.account.AccountPutPasswordDto;
 import pl.jhonylemon.memewebsite.entity.Account;
 import pl.jhonylemon.memewebsite.repository.AccountPermissionRepository;
 import pl.jhonylemon.memewebsite.repository.AccountRepository;
+import pl.jhonylemon.memewebsite.repository.AccountRoleRepository;
 import pl.jhonylemon.memewebsite.repository.ProfilePictureRepository;
 import pl.jhonylemon.memewebsite.service.account.admin.AdminAccountService;
 
@@ -40,6 +41,8 @@ class AdminAccountServiceTest {
 
     @Autowired
     AccountPermissionRepository accountPermissionRepository;
+    @Autowired
+    public AccountRoleRepository accountRoleRepository;
 
     @Autowired
     PasswordEncoder encoder;
@@ -56,7 +59,7 @@ class AdminAccountServiceTest {
                 .banned(false)
                 .creationDate(LocalDate.now())
                 .id(1L)
-                .permissions(accountPermissionRepository.findByDefaultPermissionTrue())
+                .accountRole(accountRoleRepository.findByDefaultRoleTrue().orElse(null))
                 .build();
 
         when(accountRepository.findById(1L)).thenReturn(Optional.of(account));

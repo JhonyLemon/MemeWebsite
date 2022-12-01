@@ -1,4 +1,4 @@
-package pl.jhonylemon.memewebsite.dto.postfile;
+package pl.jhonylemon.memewebsite.dto.postobject;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,11 +9,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostFileFullGetDto {
+public class PostObjectShortGetDto {
     private Long id;
     private Long postId;
     private String fileName;
-    private byte[] file;
     private String mimeType;
-    private String description;
+    private String charset;
 }

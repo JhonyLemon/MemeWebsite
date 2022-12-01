@@ -4,18 +4,37 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostPutDto {
-    private List<MultipartFile> files;
     private String title;
-    private List<String> descriptions;
     private List<Long> tags;
+
     private Boolean visible;
+    private Map<Long,Long> order;
+
+    public boolean isTittleValid(){
+        return title!=null && !title.isEmpty();
+    }
+
+    public boolean isTagsValid(){
+        return tags!=null;
+    }
+
+    public boolean isVisibleValid(){
+        return visible!=null;
+    }
+
+    public boolean isOrderValid(){
+        return order!=null && !order.isEmpty();
+    }
+
+
+
 }

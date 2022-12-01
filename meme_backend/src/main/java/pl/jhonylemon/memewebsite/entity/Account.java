@@ -41,18 +41,9 @@ public class Account implements UserDetails {
     @Column(name = "BANNED")
     private Boolean banned;
 
-    @ManyToMany(
-            fetch = FetchType.EAGER,
-            cascade = {
-                    CascadeType.DETACH,
-                    CascadeType.PERSIST
-            }
-    )
-    @JoinTable(
-            name = "ACCOUNT_ACCOUNT_PERMISSION",
-            joinColumns = @JoinColumn(name = "ACCOUNT_ID"),
-            inverseJoinColumns = @JoinColumn(name = "PERMISSION_ID"))
-    private List<AccountPermission> permissions;
+    @ManyToOne()
+    @JoinColumn(name = "ACCOUNT_ROLE_ID")
+    private AccountRole accountRole;
 
     @OneToMany(mappedBy = "account")
     private List<Comment> comments;
@@ -73,7 +64,7 @@ public class Account implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return permissions;
+        return accountRole.getPermissions();
     }
 
     @Override

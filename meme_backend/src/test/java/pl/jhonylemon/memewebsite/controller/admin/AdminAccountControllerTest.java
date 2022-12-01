@@ -20,6 +20,7 @@ import pl.jhonylemon.memewebsite.dto.accountpermission.AccountPermissionPutDto;
 import pl.jhonylemon.memewebsite.entity.Account;
 import pl.jhonylemon.memewebsite.repository.AccountPermissionRepository;
 import pl.jhonylemon.memewebsite.repository.AccountRepository;
+import pl.jhonylemon.memewebsite.repository.AccountRoleRepository;
 import pl.jhonylemon.memewebsite.repository.ProfilePictureRepository;
 
 import java.time.LocalDate;
@@ -44,6 +45,9 @@ class AdminAccountControllerTest {
     @Autowired
     public AccountPermissionRepository accountPermissionRepository;
 
+    @Autowired
+    public AccountRoleRepository accountRoleRepository;
+
     ObjectMapper objectMapper;
 
     @BeforeAll
@@ -67,6 +71,7 @@ class AdminAccountControllerTest {
                 .email("Gacek@gmail.com")
                 .enabled(true)
                 .banned(false)
+                .accountRole(accountRoleRepository.findByDefaultRoleTrue().orElse(null))
                 .creationDate(LocalDate.now())
                 .build();
 
@@ -103,6 +108,7 @@ class AdminAccountControllerTest {
                 .email("Gacek@gmail.com")
                 .enabled(true)
                 .banned(false)
+                .accountRole(accountRoleRepository.findByDefaultRoleTrue().orElse(null))
                 .creationDate(LocalDate.now())
                 .build();
 
@@ -115,6 +121,7 @@ class AdminAccountControllerTest {
                 .email("Gacek1@gmail.com")
                 .enabled(true)
                 .banned(false)
+                .accountRole(accountRoleRepository.findByDefaultRoleTrue().orElse(null))
                 .creationDate(LocalDate.now())
                 .build();
 
@@ -147,6 +154,7 @@ class AdminAccountControllerTest {
                 .email("Gacek@gmail.com")
                 .enabled(true)
                 .banned(false)
+                .accountRole(accountRoleRepository.findByDefaultRoleTrue().orElse(null))
                 .creationDate(LocalDate.now())
                 .build();
 
@@ -180,14 +188,14 @@ class AdminAccountControllerTest {
                 .enabled(true)
                 .banned(false)
                 .creationDate(LocalDate.now())
-                .permissions(accountPermissionRepository.findByDefaultPermissionTrue())
+                .accountRole(accountRoleRepository.findByDefaultRoleTrue().orElse(null))
                 .build();
 
         accountRepository.save(account);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get(ApiPaths.Admin.ADMIN_PATH + ApiPaths.Account.ACCOUNT_PATH +
-                                ApiPaths.Account.ACCOUNT_GET_PERMISSION, account.getId())
+                                ApiPaths.Account.ACCOUNT_GET_ROLE, account.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk());
@@ -204,7 +212,7 @@ class AdminAccountControllerTest {
             username = "Gacek@gmail.com",
             password = "123456789"
     )
-    void changeAccountPermissionTest_Success() throws Exception {
+    void changeAccountRoleTest_Success() throws Exception {
         Account account = Account.builder()
                 .profilePicture(profilePictureRepository.findByDefaultProfileTrue().orElse(null))
                 .password("123456789")
@@ -213,84 +221,14 @@ class AdminAccountControllerTest {
                 .enabled(true)
                 .banned(false)
                 .creationDate(LocalDate.now())
-                .permissions(accountPermissionRepository.findByDefaultPermissionTrue())
+                .accountRole(accountRoleRepository.findByDefaultRoleTrue().orElse(null))
                 .build();
 
         accountRepository.save(account);
-
-        AccountPermissionPutDto accountPermissionPutDto  = new AccountPermissionPutDto();
-        accountPermissionPutDto.setOldPermissionId(9L);
-        accountPermissionPutDto.setNewPermissionId(8L);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .put(ApiPaths.Admin.ADMIN_PATH + ApiPaths.Account.ACCOUNT_PATH +
-                                ApiPaths.Account.ACCOUNT_UPDATE_PERMISSION, account.getId())
-                        .content(objectMapper.writeValueAsString(accountPermissionPutDto))
-                        .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    @WithMockUser(
-            authorities = {
-                    "ADMIN_ADD",
-                    "ADMIN_READ",
-                    "ADMIN_EDIT",
-                    "ADMIN_DELETE"
-            },
-            username = "Gacek@gmail.com",
-            password = "123456789"
-    )
-    void addAccountPermissionTest_Success() throws Exception {
-        Account account = Account.builder()
-                .profilePicture(profilePictureRepository.findByDefaultProfileTrue().orElse(null))
-                .password("123456789")
-                .name("Gacek")
-                .email("Gacek@gmail.com")
-                .enabled(true)
-                .banned(false)
-                .creationDate(LocalDate.now())
-                .permissions(accountPermissionRepository.findByDefaultPermissionTrue())
-                .build();
-
-        accountRepository.save(account);
-
-        mockMvc.perform(MockMvcRequestBuilders
-                        .post(ApiPaths.Admin.ADMIN_PATH + ApiPaths.Account.ACCOUNT_PATH +
-                                ApiPaths.Account.ACCOUNT_ADD_PERMISSION, account.getId(),8L)
-                        .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    @WithMockUser(
-            authorities = {
-                    "ADMIN_ADD",
-                    "ADMIN_READ",
-                    "ADMIN_EDIT",
-                    "ADMIN_DELETE"
-            },
-            username = "Gacek@gmail.com",
-            password = "123456789"
-    )
-    void deleteAccountPermissionTest_Success() throws Exception {
-        Account account = Account.builder()
-                .profilePicture(profilePictureRepository.findByDefaultProfileTrue().orElse(null))
-                .password("123456789")
-                .name("Gacek")
-                .email("Gacek@gmail.com")
-                .enabled(true)
-                .banned(false)
-                .creationDate(LocalDate.now())
-                .permissions(accountPermissionRepository.findByDefaultPermissionTrue())
-                .build();
-
-        accountRepository.save(account);
-        mockMvc.perform(MockMvcRequestBuilders
-                        .delete(ApiPaths.Admin.ADMIN_PATH + ApiPaths.Account.ACCOUNT_PATH +
-                                ApiPaths.Account.ACCOUNT_DELETE_PERMISSION, account.getId(),9L)
+                                ApiPaths.Account.ACCOUNT_UPDATE_ROLE, account.getId(),1L)
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk());

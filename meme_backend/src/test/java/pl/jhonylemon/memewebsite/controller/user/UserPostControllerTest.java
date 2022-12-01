@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.ResourceUtils;
 import pl.jhonylemon.memewebsite.controller.routes.ApiPaths;
-import pl.jhonylemon.memewebsite.dto.comment.CommentPostDto;
+import pl.jhonylemon.memewebsite.dto.post.PostPostDto;
 import pl.jhonylemon.memewebsite.dto.post.PostPutDto;
 import pl.jhonylemon.memewebsite.entity.Account;
 import pl.jhonylemon.memewebsite.entity.Post;
@@ -54,7 +54,9 @@ class UserPostControllerTest {
     @Autowired
     PostRepository postRepository;
     @Autowired
-    PostFileRepository postFileRepository;
+    PostObjectRepository postObjectRepository;
+    @Autowired
+    public AccountRoleRepository accountRoleRepository;
 
     @BeforeAll
     void beforeAll() {
@@ -72,6 +74,7 @@ class UserPostControllerTest {
             password = "123456789"
     )
     @Test
+    @Transactional
     void createPostTest_Success() throws Exception {
 
         Account account = Account.builder()
@@ -81,32 +84,23 @@ class UserPostControllerTest {
                 .email("Gacek@gmail.com")
                 .enabled(true)
                 .banned(false)
-                .permissions(accountPermissionRepository.findByDefaultPermissionTrue())
+                .accountRole(accountRoleRepository.findByDefaultRoleTrue().orElse(null))
                 .creationDate(LocalDate.now())
                 .build();
 
         accountRepository.save(account);
 
-        MockMultipartFile photo = new MockMultipartFile(
-                "files",
-                "profile.png",
-                MediaType.IMAGE_PNG_VALUE,
-                new FileInputStream(
-                        ResourceUtils
-                                .getFile("classpath:photo/profile.png")
-                ).readAllBytes()
-        );
+        PostPostDto postPostDto = new PostPostDto();
+
+        postPostDto.setTitle("gggg");
+        postPostDto.setTags(new ArrayList<>());
+        postPostDto.setVisible(true);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .multipart(ApiPaths.User.USER_PATH + ApiPaths.Post.POST_PATH +
-                        ApiPaths.Post.POST_CREATE,account.getId())
-                        .file(photo)
-                        .params(new LinkedMultiValueMap<>(Map.of(
-                                "title", List.of("Hue"),
-                                "descriptions",List.of("FajnyPost"),
-                                "visible",List.of("true"),
-                                "tags",List.of()
-                        )))
+                        .post(ApiPaths.User.USER_PATH + ApiPaths.Post.POST_PATH +
+                                ApiPaths.Post.POST_CREATE)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(postPostDto))
                 )
                 .andExpect(status().isOk());
     }
@@ -122,6 +116,7 @@ class UserPostControllerTest {
             password = "123456789"
     )
     @Test
+    @Transactional
     void deletePostSelfTest_Success() throws Exception {
         Account account = Account.builder()
                 .profilePicture(profilePictureRepository.findByDefaultProfileTrue().orElse(null))
@@ -130,7 +125,7 @@ class UserPostControllerTest {
                 .email("Gacek@gmail.com")
                 .enabled(true)
                 .banned(false)
-                .permissions(accountPermissionRepository.findByDefaultPermissionTrue())
+                .accountRole(accountRoleRepository.findByDefaultRoleTrue().orElse(null))
                 .creationDate(LocalDate.now())
                 .build();
 
@@ -141,8 +136,9 @@ class UserPostControllerTest {
                 .title("HEHEHE")
                 .tags(new ArrayList<>())
                 .creationDate(LocalDate.now())
-                .visible(true)
-                .files(List.of(postFileRepository.findById(1L).orElse(null)))
+                .isVisible(true)
+                .isPublished(true)
+                .files(List.of(postObjectRepository.findById(1L).orElse(null)))
                 .build();
 
         postRepository.save(post);
@@ -166,6 +162,7 @@ class UserPostControllerTest {
             password = "123456789"
     )
     @Test
+    @Transactional
     void updatePostSelfTest_Success() throws Exception {
         Account account = Account.builder()
                 .profilePicture(profilePictureRepository.findByDefaultProfileTrue().orElse(null))
@@ -174,7 +171,7 @@ class UserPostControllerTest {
                 .email("Gacek@gmail.com")
                 .enabled(true)
                 .banned(false)
-                .permissions(accountPermissionRepository.findByDefaultPermissionTrue())
+                .accountRole(accountRoleRepository.findByDefaultRoleTrue().orElse(null))
                 .creationDate(LocalDate.now())
                 .build();
 
@@ -185,26 +182,29 @@ class UserPostControllerTest {
                 .title("HEHEHE")
                 .tags(new ArrayList<>())
                 .creationDate(LocalDate.now())
-                .visible(true)
-                .files(List.of(postFileRepository.findById(1L).orElse(null)))
+                .isVisible(true)
+                .isPublished(true)
+                .files(List.of(postObjectRepository.findById(1L).orElse(null)))
                 .build();
 
         postRepository.save(post);
 
 
-        MockMultipartHttpServletRequestBuilder builder = MockMvcRequestBuilders
-                .multipart(ApiPaths.User.USER_PATH + ApiPaths.Post.POST_PATH +
-                        ApiPaths.Post.POST_UPDATE,post.getId());
+        PostPutDto postPutDto = new PostPutDto();
+        postPutDto.setTitle("hfhfh");
+        postPutDto.setOrder(Map.of(
+                1L,1L,
+                2L,2L
+        ));
+        postPutDto.setVisible(true);
+        postPutDto.setTags(new ArrayList<>());
 
-        builder.with(request -> {
-            request.setMethod(HttpMethod.PUT.name());
-            return request;
-        });
-
-        mockMvc.perform(builder
-                .params(new LinkedMultiValueMap<>(Map.of(
-                        "title", List.of("Hue")
-                ))))
+        mockMvc.perform(MockMvcRequestBuilders
+                        .put(ApiPaths.User.USER_PATH + ApiPaths.Post.POST_PATH +
+                                ApiPaths.Post.POST_UPDATE, post.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(postPutDto))
+                )
                 .andExpect(status().isOk());
     }
 

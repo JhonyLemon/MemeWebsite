@@ -12,7 +12,7 @@ import pl.jhonylemon.memewebsite.entity.Account;
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         uses = {
-        AccountPermissionMapper.class,
+        AccountRoleMapper.class,
         ProfilePictureMapper.class
         }
 )

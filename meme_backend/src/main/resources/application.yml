@@ -21,6 +21,15 @@ jwt:
   claim: permissions
   accessTokenExpirationAfterDays: 10
   refreshTokenExpirationAfterDays: 30
+post:
+  maxObjects: 50
+  maxTextObject: 500
+  maxFileObject: 209715200
+  maxUnPublishedPosts: 1
+  allowedTypes: text/html, text/plain, image/gif, image/jpeg, image/png, image/tiff, image/webp, video/mp4, video/mpeg, video/ogg, video/webm
+comment:
+  maxCommentSize: 200
+
 
 
 

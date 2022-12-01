@@ -62,7 +62,7 @@ public class AuthenticationService {
                     )
                     .withClaim(
                             jwtProperties.getClaim(),
-                            account.getPermissions().stream()
+                            account.getAccountRole().getPermissions().stream()
                                     .map(AccountPermission::getPermission)
                                     .collect(Collectors.toList())
                     ).sign(secretKeyAccessToken);

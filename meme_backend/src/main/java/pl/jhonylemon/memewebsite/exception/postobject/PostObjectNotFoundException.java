@@ -1,14 +1,14 @@
-package pl.jhonylemon.memewebsite.exception.postfile;
+package pl.jhonylemon.memewebsite.exception.postobject;
 
 import org.springframework.http.HttpStatus;
 import pl.jhonylemon.memewebsite.exception.BusinessException;
 
-public class PostFileNotFoundException extends BusinessException {
-    public PostFileNotFoundException(String message) {
+public class PostObjectNotFoundException extends BusinessException {
+    public PostObjectNotFoundException(String message) {
         super(HttpStatus.BAD_REQUEST, message);
     }
 
-    public PostFileNotFoundException() {
+    public PostObjectNotFoundException() {
         super(HttpStatus.BAD_REQUEST, "Post file not found");
     }
 }

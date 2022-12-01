@@ -17,6 +17,10 @@ import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequ
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import pl.jhonylemon.memewebsite.controller.routes.ApiPaths;
+import pl.jhonylemon.memewebsite.dto.post.PostPutDto;
+
+import java.util.ArrayList;
+import java.util.Map;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -60,17 +64,21 @@ class ModeratorPostControllerTest {
     @Test
     void updatePostTest_Success() throws Exception {
 
-        MockMultipartHttpServletRequestBuilder builder = MockMvcRequestBuilders
-                .multipart(ApiPaths.Moderator.MODERATOR_PATH + ApiPaths.Post.POST_PATH +
-                        ApiPaths.Post.POST_UPDATE, 1L);
+        PostPutDto postPutDto = new PostPutDto();
+        postPutDto.setTitle("hfhfh");
+        postPutDto.setOrder(Map.of(
+                1L,1L,
+                2L,2L
+        ));
+        postPutDto.setVisible(true);
+        postPutDto.setTags(new ArrayList<>());
 
-        builder.with(request -> {
-            request.setMethod(HttpMethod.PUT.name());
-            return request;
-        });
-
-        mockMvc.perform(builder
-                        .param("title","jheheh"))
+        mockMvc.perform(MockMvcRequestBuilders
+                        .put(ApiPaths.Moderator.MODERATOR_PATH + ApiPaths.Post.POST_PATH +
+                                ApiPaths.Post.POST_UPDATE, 3L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(postPutDto))
+                )
                 .andExpect(status().isOk());
     }
 

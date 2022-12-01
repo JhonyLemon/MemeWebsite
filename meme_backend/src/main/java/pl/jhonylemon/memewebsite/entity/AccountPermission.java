@@ -23,10 +23,7 @@ public class AccountPermission implements GrantedAuthority {
     private String permission;
 
     @ManyToMany(mappedBy = "permissions", cascade = CascadeType.DETACH)
-    private List<Account> accounts;
-
-    @Column(name = "DEFAULT_PERMISSION")
-    private Boolean defaultPermission;
+    private List<AccountRole> accountRoles;
 
     @Override
     public String getAuthority() {

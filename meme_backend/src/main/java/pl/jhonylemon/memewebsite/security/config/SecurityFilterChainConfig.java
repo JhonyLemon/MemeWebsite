@@ -50,20 +50,20 @@ public class SecurityFilterChainConfig {
                 .antMatchers(HttpMethod.POST, "/login").permitAll()
                 .antMatchers("/guest/**").permitAll()
                 .antMatchers("/v3/api-docs/**","/swagger-ui/**","/swagger-ui.html").permitAll()
-                .antMatchers(HttpMethod.POST,"/user/**").hasAnyAuthority(accountPermissionService.userWritePermission().getPermission())
-                .antMatchers(HttpMethod.PUT,"/user/**").hasAnyAuthority(accountPermissionService.userEditPermission().getPermission())
-                .antMatchers(HttpMethod.DELETE,"/user/**").hasAnyAuthority(accountPermissionService.userDeletePermission().getPermission())
-                .antMatchers(HttpMethod.GET,"/user/**").hasAnyAuthority(accountPermissionService.userReadPermission().getPermission())
+                .antMatchers(HttpMethod.POST,"/user/**").hasAnyAuthority("USER_ADD")
+                .antMatchers(HttpMethod.PUT,"/user/**").hasAnyAuthority("USER_EDIT")
+                .antMatchers(HttpMethod.DELETE,"/user/**").hasAnyAuthority("USER_DELETE")
+                .antMatchers(HttpMethod.GET,"/user/**").hasAnyAuthority("USER_READ")
 
-                .antMatchers(HttpMethod.POST,"/moderator/**").hasAnyAuthority(accountPermissionService.moderatorWritePermission().getPermission())
-                .antMatchers(HttpMethod.PUT,"/moderator/**").hasAnyAuthority(accountPermissionService.moderatorEditPermission().getPermission())
-                .antMatchers(HttpMethod.DELETE,"/moderator/**").hasAnyAuthority(accountPermissionService.moderatorDeletePermission().getPermission())
-                .antMatchers(HttpMethod.GET,"/moderator/**").hasAnyAuthority(accountPermissionService.moderatorReadPermission().getPermission())
+                .antMatchers(HttpMethod.POST,"/moderator/**").hasAnyAuthority("MODERATOR_ADD")
+                .antMatchers(HttpMethod.PUT,"/moderator/**").hasAnyAuthority("MODERATOR_EDIT")
+                .antMatchers(HttpMethod.DELETE,"/moderator/**").hasAnyAuthority("MODERATOR_DELETE")
+                .antMatchers(HttpMethod.GET,"/moderator/**").hasAnyAuthority("MODERATOR_READ")
 
-                .antMatchers(HttpMethod.POST,"/admin/**").hasAnyAuthority(accountPermissionService.adminWritePermission().getPermission())
-                .antMatchers(HttpMethod.PUT,"/admin/**").hasAnyAuthority(accountPermissionService.adminEditPermission().getPermission())
-                .antMatchers(HttpMethod.DELETE,"/admin/**").hasAnyAuthority(accountPermissionService.adminDeletePermission().getPermission())
-                .antMatchers(HttpMethod.GET,"/admin/**").hasAnyAuthority(accountPermissionService.adminReadPermission().getPermission())
+                .antMatchers(HttpMethod.POST,"/admin/**").hasAnyAuthority("ADMIN_ADD")
+                .antMatchers(HttpMethod.PUT,"/admin/**").hasAnyAuthority("ADMIN_EDIT")
+                .antMatchers(HttpMethod.DELETE,"/admin/**").hasAnyAuthority("ADMIN_DELETE")
+                .antMatchers(HttpMethod.GET,"/admin/**").hasAnyAuthority("ADMIN_READ")
                 .anyRequest().authenticated();
         return http.build();
     }

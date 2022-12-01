@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
 @Transactional
-class GuestPostFileControllerTest {
+class GuestPostObjectControllerTest {
 
 
     @Autowired
@@ -35,32 +35,11 @@ class GuestPostFileControllerTest {
         objectMapper = new ObjectMapper();
     }
 
-
-    @Test
-    void getFullPostFileTest_Success() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders
-                        .get(ApiPaths.Guest.GUEST_PATH + ApiPaths.PostFile.POST_PATH +
-                                ApiPaths.PostFile.POST_GET_FULL, 1L)
-                        .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    void getShortPostFileTest_Success() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders
-                        .get(ApiPaths.Guest.GUEST_PATH + ApiPaths.PostFile.POST_PATH +
-                                ApiPaths.PostFile.POST_GET_SHORT, 1L)
-                        .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andExpect(status().isOk());
-    }
-
     @Test
     void getPostFileFileTest_Success() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
-                        .get(ApiPaths.Guest.GUEST_PATH + ApiPaths.PostFile.POST_PATH +
-                                ApiPaths.PostFile.POST_GET_FILE, 1L)
+                        .get(ApiPaths.Guest.GUEST_PATH + ApiPaths.PostObject.POST_OBJECT_PATH +
+                                ApiPaths.PostObject.POST_OBJECT_GET_FILE, 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk());

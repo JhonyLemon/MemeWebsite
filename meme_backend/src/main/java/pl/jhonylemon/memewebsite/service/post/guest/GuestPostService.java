@@ -2,13 +2,14 @@ package pl.jhonylemon.memewebsite.service.post.guest;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import pl.jhonylemon.memewebsite.dto.post.*;
 import pl.jhonylemon.memewebsite.entity.Post;
 import pl.jhonylemon.memewebsite.exception.post.PostInvalidParamException;
 import pl.jhonylemon.memewebsite.exception.post.PostNotFoundException;
 import pl.jhonylemon.memewebsite.mapper.PostMapper;
-import pl.jhonylemon.memewebsite.repository.PostFileRepository;
+import pl.jhonylemon.memewebsite.repository.PostObjectRepository;
 import pl.jhonylemon.memewebsite.repository.PostRepository;
 import pl.jhonylemon.memewebsite.repository.TagRepository;
 import pl.jhonylemon.memewebsite.service.post.util.PostUtil;
@@ -24,7 +25,7 @@ public class GuestPostService {
 
     private final PostMapper postMapper;
     private final PostRepository postRepository;
-    private final PostFileRepository postFileRepository;
+    private final PostObjectRepository postObjectRepository;
     private final TagRepository tagRepository;
 
     public PostPageGetDto getAllPosts(PostRequestDto postRequestDto){
@@ -36,7 +37,14 @@ public class GuestPostService {
 
         List<PostGetShortDto> accountGetFullDtos = new ArrayList<>();
 
-        posts.forEach(p-> accountGetFullDtos.add(postMapper.postToGetShortDto(p)));
+        posts.forEach(p-> {
+            PostGetShortDto postGetShortDto = postMapper.postToGetShortDto(p);
+            postGetShortDto.setFirstFileId(postObjectRepository
+                    .findFirstByPostId(postGetShortDto.getId(), PageRequest.of(0,1))
+                    .stream().findFirst().orElse(null));
+            accountGetFullDtos.add(postGetShortDto);
+        });
+
 
         return new PostPageGetDto(
                 accountGetFullDtos,
@@ -47,14 +55,20 @@ public class GuestPostService {
 
     public PostGetFullDto getPost(Long id){
         if(id == null || id<1){
-            throw new PostNotFoundException();
+            throw new PostInvalidParamException();
         }
 
         Post post = postRepository.findById(id).orElseThrow(()->{
-            throw new PostInvalidParamException();
+            throw new PostNotFoundException();
         });
 
+        if(!post.isPublished()){
+            throw new PostInvalidParamException();
+        }
+
         PostGetFullDto postGetFullDto = postMapper.postToGetFullDto(post);
+
+        postGetFullDto.setFilesId(postObjectRepository.findPostObjectsByPostId(post.getId()));
 
         postGetFullDto.getComments().removeIf(c->c.getReplyToId()!=null);
 

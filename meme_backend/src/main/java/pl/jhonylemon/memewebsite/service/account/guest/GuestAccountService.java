@@ -7,14 +7,15 @@ import org.springframework.stereotype.Service;
 import pl.jhonylemon.memewebsite.dto.account.*;
 import pl.jhonylemon.memewebsite.dto.account.AccountGetFullDto;
 import pl.jhonylemon.memewebsite.entity.Account;
-import pl.jhonylemon.memewebsite.entity.AccountPermission;
+import pl.jhonylemon.memewebsite.entity.AccountRole;
 import pl.jhonylemon.memewebsite.exception.account.AccountEmailTakenException;
 import pl.jhonylemon.memewebsite.exception.account.AccountInvalidParamException;
 import pl.jhonylemon.memewebsite.exception.account.AccountNotFoundException;
+import pl.jhonylemon.memewebsite.exception.accountrole.AccountRoleNotFoundException;
 import pl.jhonylemon.memewebsite.exception.profilepicture.ProfilePictureNotFoundException;
 import pl.jhonylemon.memewebsite.mapper.AccountMapper;
-import pl.jhonylemon.memewebsite.repository.AccountPermissionRepository;
 import pl.jhonylemon.memewebsite.repository.AccountRepository;
+import pl.jhonylemon.memewebsite.repository.AccountRoleRepository;
 import pl.jhonylemon.memewebsite.repository.ProfilePictureRepository;
 import pl.jhonylemon.memewebsite.service.account.util.AccountUtil;
 
@@ -32,7 +33,7 @@ public class GuestAccountService {
     private final AccountMapper accountMapper;
     private final AccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
-    private final AccountPermissionRepository accountPermissionRepository;
+    private final AccountRoleRepository accountRoleRepository;
     private final ProfilePictureRepository profilePictureRepository;
 
     public AccountPageGetDto getAllAccounts(AccountRequestDto accountRequestDto) {
@@ -68,7 +69,9 @@ public class GuestAccountService {
             throw new AccountEmailTakenException();
         }
 
-        List<AccountPermission> permissions = accountPermissionRepository.findByDefaultPermissionTrue();
+        AccountRole role = accountRoleRepository.findByDefaultRoleTrue().orElseThrow(()->{
+            throw new AccountRoleNotFoundException();
+        });
 
         Account account = Account.builder()
                 .name(accountPostDto.getName())
@@ -77,7 +80,7 @@ public class GuestAccountService {
                 .password(passwordEncoder.encode(accountPostDto.getPassword()))
                 .enabled(true)
                 .banned(false)
-                .permissions(permissions)
+                .accountRole(role)
                 .profilePicture(
                         accountPostDto.getProfilePictureId() == null ?
                                 profilePictureRepository.findByDefaultProfileTrue().orElseThrow(() -> {

@@ -157,7 +157,7 @@ public class UserAccountService {
             throw new AuthorizationFailedException();
         }
 
-        if(account.getPermissions().stream().anyMatch(p->p.getPermission().contains("ADMIN"))) {
+        if(accountRepository.isAccountAdmin(account.getId())) {
             throw new AuthorizationFailedException();
         }
 

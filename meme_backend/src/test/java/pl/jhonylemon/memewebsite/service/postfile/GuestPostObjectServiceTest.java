@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
 @Transactional
-class GuestPostFileServiceTest {
+class GuestPostObjectServiceTest {
 
     @Test
     void getFullPostFileByIdTest_Success(){

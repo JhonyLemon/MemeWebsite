@@ -1,6 +1,8 @@
 package pl.jhonylemon.memewebsite.controller.guest;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.jhonylemon.memewebsite.controller.routes.ApiPaths;
@@ -20,8 +22,15 @@ public class GuestProfilePhotoController {
     private final GuestProfilePictureService profilePictureService;
 
     @GetMapping(path = ApiPaths.ProfilePicture.PROFILE_PICTURE_GET)
-    public ResponseEntity<ProfilePictureGetDto> getProfilePicture(@PathVariable Long id){
-        return ResponseEntity.ok().body(profilePictureService.getProfilePicture(id));
+    public ResponseEntity<byte[]> getProfilePicture(@PathVariable Long id){
+        ProfilePictureGetDto profilePictureGetDto = profilePictureService.getProfilePicture(id);
+        MediaType type = MediaType.parseMediaType(profilePictureGetDto.getMimeType());
+        String contentDisposition = "attachment;";
+
+        return ResponseEntity.ok()
+                .contentType(type)
+                .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition)
+                .body(profilePictureGetDto.getFile());
     }
     @GetMapping(path = ApiPaths.ProfilePicture.PROFILE_PICTURE_GET_ALL)
     public ResponseEntity<List<ProfilePictureGetDto>> getAllProfilePictures(){

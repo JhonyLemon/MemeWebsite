@@ -105,7 +105,12 @@ public class PostSpecification {
 
     public static Specification<Post> isPublic() {
         return (root, query, criteriaBuilder) ->
-                criteriaBuilder.equal(root.get("visible"),true);
+                criteriaBuilder.equal(root.get("isVisible"),true);
+    }
+
+    public static Specification<Post> isPublished() {
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(root.get("isPublished"),true);
     }
 
     public static Specification<Post> hasTitleLike(String title) {

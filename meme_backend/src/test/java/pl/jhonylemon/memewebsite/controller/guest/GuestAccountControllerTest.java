@@ -19,6 +19,7 @@ import pl.jhonylemon.memewebsite.dto.account.*;
 import pl.jhonylemon.memewebsite.entity.Account;
 import pl.jhonylemon.memewebsite.repository.AccountPermissionRepository;
 import pl.jhonylemon.memewebsite.repository.AccountRepository;
+import pl.jhonylemon.memewebsite.repository.AccountRoleRepository;
 import pl.jhonylemon.memewebsite.repository.ProfilePictureRepository;
 
 import java.time.LocalDate;
@@ -42,6 +43,8 @@ class GuestAccountControllerTest {
 
     @Autowired
     public AccountPermissionRepository accountPermissionRepository;
+    @Autowired
+    public AccountRoleRepository accountRoleRepository;
 
     ObjectMapper objectMapper;
 
@@ -111,6 +114,7 @@ class GuestAccountControllerTest {
                 .email("Gacek@gmail.com")
                 .enabled(true)
                 .banned(false)
+                .accountRole(accountRoleRepository.findByDefaultRoleTrue().orElse(null))
                 .creationDate(LocalDate.now())
                 .build();
 

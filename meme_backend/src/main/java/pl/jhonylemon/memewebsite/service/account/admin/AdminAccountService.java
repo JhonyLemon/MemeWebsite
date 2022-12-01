@@ -7,23 +7,20 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import pl.jhonylemon.memewebsite.dto.account.*;
 import pl.jhonylemon.memewebsite.dto.account.AccountGetFullDto;
-import pl.jhonylemon.memewebsite.dto.accountpermission.AccountPermissionGetDto;
-import pl.jhonylemon.memewebsite.dto.accountpermission.AccountPermissionPutDto;
+import pl.jhonylemon.memewebsite.dto.accountrole.AccountRoleGetDto;
 import pl.jhonylemon.memewebsite.entity.Account;
-import pl.jhonylemon.memewebsite.entity.AccountPermission;
 import pl.jhonylemon.memewebsite.exception.account.AccountInvalidParamException;
 import pl.jhonylemon.memewebsite.exception.account.AccountNotFoundException;
-import pl.jhonylemon.memewebsite.exception.accountpermission.AccountPermissionNotFoundException;
+import pl.jhonylemon.memewebsite.exception.accountrole.AccountRoleNotFoundException;
 import pl.jhonylemon.memewebsite.exception.authorization.AuthorizationFailedException;
 import pl.jhonylemon.memewebsite.mapper.AccountMapper;
 import pl.jhonylemon.memewebsite.mapper.AccountPermissionMapper;
-import pl.jhonylemon.memewebsite.repository.AccountPermissionRepository;
+import pl.jhonylemon.memewebsite.mapper.AccountRoleMapper;
 import pl.jhonylemon.memewebsite.repository.AccountRepository;
+import pl.jhonylemon.memewebsite.repository.AccountRoleRepository;
 import pl.jhonylemon.memewebsite.service.account.guest.GuestAccountService;
 
 import javax.transaction.Transactional;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,9 +28,10 @@ public class AdminAccountService {
 
     private final AccountMapper accountMapper;
     private final AccountPermissionMapper accountPermissionMapper;
+    private final AccountRoleMapper accountRoleMapper;
     private final AccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
-    private final AccountPermissionRepository accountPermissionRepository;
+    private final AccountRoleRepository accountRoleRepository;
     private final GuestAccountService guestAccountService;
 
     @Transactional
@@ -98,7 +96,7 @@ public class AdminAccountService {
         return accountMapper.accountToFullGetDto(account);
     }
 
-    public List<AccountPermissionGetDto> getAccountPermission(Long id) {
+    public AccountRoleGetDto getAccountRole(Long id) {
         if(id==null || id<1){
             throw new AccountInvalidParamException();
         }
@@ -107,24 +105,15 @@ public class AdminAccountService {
                     throw new AccountNotFoundException();
                 });
 
-        return account.getPermissions()
-                .stream()
-                .map(accountPermissionMapper::accountPermissionToGetDto)
-                .collect(Collectors.toList());
+        return accountRoleMapper.accountRoleToGetDto(account.getAccountRole());
     }
 
     @Transactional
-    public List<AccountPermissionGetDto> changeAccountPermission(Long id,AccountPermissionPutDto accountPermissionPutDto) {
+    public AccountRoleGetDto changeAccountRole(Long id, Long newRoleId) {
         if(id==null || id<1){
             throw new AccountInvalidParamException();
         }
-        if(accountPermissionPutDto==null){
-            throw new AccountInvalidParamException();
-        }
-        if(accountPermissionPutDto.getNewPermissionId()==null || accountPermissionPutDto.getNewPermissionId()<1){
-            throw new AccountInvalidParamException();
-        }
-        if(accountPermissionPutDto.getOldPermissionId()==null || accountPermissionPutDto.getOldPermissionId()<1){
+        if(newRoleId==null || newRoleId<1){
             throw new AccountInvalidParamException();
         }
         Account account = accountRepository.findById(id)
@@ -132,68 +121,11 @@ public class AdminAccountService {
             throw new AccountNotFoundException();
         });
 
-        AccountPermission oldAccountPermission = accountPermissionRepository
-                .findById(accountPermissionPutDto.getOldPermissionId())
-                .orElseThrow(()->{throw new AccountPermissionNotFoundException();
-                });
-        oldAccountPermission.getAccounts().remove(account);
-        AccountPermission newAccountPermission = accountPermissionRepository
-                .findById(accountPermissionPutDto.getNewPermissionId())
-                .orElseThrow(()->{throw new AccountPermissionNotFoundException();
-                });
-        newAccountPermission.getAccounts().add(account);
+        account.getAccountRole().getAccounts().remove(account);
+        account.setAccountRole(accountRoleRepository.findById(newRoleId).orElseThrow(()->{
+            throw new AccountRoleNotFoundException();
+        }));
 
-        account.getPermissions().remove(oldAccountPermission);
-        account.getPermissions().add(newAccountPermission);
-
-        return account.getPermissions().stream()
-                .map(accountPermissionMapper::accountPermissionToGetDto)
-                .collect(Collectors.toList());
+        return accountRoleMapper.accountRoleToGetDto(account.getAccountRole());
     }
-
-    @Transactional
-    public List<AccountPermissionGetDto> addAccountPermission(Long id,Long permissionId) {
-        if(id==null || id<1){
-            throw new AccountInvalidParamException();
-        }
-        if(permissionId==null || permissionId<1){
-            throw new AccountInvalidParamException();
-        }
-        Account account = accountRepository.findById(id).orElseThrow(() -> {
-            throw new AccountNotFoundException();
-        });
-
-        AccountPermission newAccountPermission = accountPermissionRepository
-                .findById(permissionId)
-                .orElseThrow(()->{throw new AccountPermissionNotFoundException();
-                });
-        account.getPermissions().add(newAccountPermission);
-        return account.getPermissions().stream()
-                .map(accountPermissionMapper::accountPermissionToGetDto)
-                .collect(Collectors.toList());
-    }
-
-    @Transactional
-    public List<AccountPermissionGetDto> deleteAccountPermission(Long id,Long permissionId) {
-        if(id==null || id<1){
-            throw new AccountInvalidParamException();
-        }
-        if(permissionId==null || permissionId<1){
-            throw new AccountInvalidParamException();
-        }
-        Account account = accountRepository.findById(id).orElseThrow(() -> {
-            throw new AccountNotFoundException();
-        });
-
-        AccountPermission accountPermission = accountPermissionRepository
-                .findById(permissionId)
-                .orElseThrow(()->{throw new AccountPermissionNotFoundException();
-                });
-        accountPermission.getAccounts().remove(account);
-        account.getPermissions().remove(accountPermission);
-        return account.getPermissions().stream()
-                .map(accountPermissionMapper::accountPermissionToGetDto)
-                .collect(Collectors.toList());
-    }
-
 }

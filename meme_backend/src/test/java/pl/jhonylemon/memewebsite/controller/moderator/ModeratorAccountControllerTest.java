@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.jhonylemon.memewebsite.controller.routes.ApiPaths;
 import pl.jhonylemon.memewebsite.entity.Account;
 import pl.jhonylemon.memewebsite.repository.AccountRepository;
+import pl.jhonylemon.memewebsite.repository.AccountRoleRepository;
 import pl.jhonylemon.memewebsite.repository.ProfilePictureRepository;
 
 import java.time.LocalDate;
@@ -38,6 +39,8 @@ class ModeratorAccountControllerTest {
     public AccountRepository accountRepository;
     @Autowired
     public ProfilePictureRepository profilePictureRepository;
+    @Autowired
+    public AccountRoleRepository accountRoleRepository;
 
     @BeforeAll
     void beforeAll() {
@@ -59,6 +62,7 @@ class ModeratorAccountControllerTest {
                 .email("Gacek@gmail.com")
                 .enabled(true)
                 .banned(false)
+                .accountRole(accountRoleRepository.findByDefaultRoleTrue().orElse(null))
                 .creationDate(LocalDate.now())
                 .build();
 
@@ -86,6 +90,7 @@ class ModeratorAccountControllerTest {
                 .email("Gacek@gmail.com")
                 .enabled(true)
                 .banned(false)
+                .accountRole(accountRoleRepository.findByDefaultRoleTrue().orElse(null))
                 .creationDate(LocalDate.now())
                 .build();
 
@@ -114,6 +119,7 @@ class ModeratorAccountControllerTest {
                 .email("Gacek@gmail.com")
                 .enabled(true)
                 .banned(false)
+                .accountRole(accountRoleRepository.findByDefaultRoleTrue().orElse(null))
                 .creationDate(LocalDate.now())
                 .build();
 

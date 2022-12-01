@@ -1,9 +1,8 @@
 spring:
   datasource:
-    url: 'jdbc:h2:mem:db;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE'
-    username: sa
-    password: sa
-    driverClassName: org.h2.Driver
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DATABASE:memewebsite}
+    username: ${DB_USER:meem}
+    password: ${DB_PASSWORD:meem}
 jwt:
   secretKeyAccessToken: someWeakSecretPassword1234
   secretKeyRefreshToken: someWeakSecretPassword1234
@@ -11,4 +10,12 @@ jwt:
   claim: permissions
   accessTokenExpirationAfterDays: 10
   refreshTokenExpirationAfterDays: 30
+post:
+  maxObjects: 50
+  maxTextObject: 500
+  maxFileObject: 209715200
+  maxUnPublishedPosts: 1
+  allowedTypes: text/html, text/plain, image/gif, image/jpeg, image/png, image/tiff, image/webp, video/mp4, video/mpeg, video/ogg, video/webm
+comment:
+  maxCommentSize: 200
 

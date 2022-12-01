@@ -18,6 +18,7 @@ import pl.jhonylemon.memewebsite.controller.routes.ApiPaths;
 import pl.jhonylemon.memewebsite.entity.Account;
 import pl.jhonylemon.memewebsite.repository.AccountPermissionRepository;
 import pl.jhonylemon.memewebsite.repository.AccountRepository;
+import pl.jhonylemon.memewebsite.repository.AccountRoleRepository;
 import pl.jhonylemon.memewebsite.repository.ProfilePictureRepository;
 
 import java.time.LocalDate;
@@ -41,6 +42,8 @@ class UserPostStatisticControllerTest {
     ProfilePictureRepository profilePictureRepository;
     @Autowired
     AccountPermissionRepository accountPermissionRepository;
+    @Autowired
+    public AccountRoleRepository accountRoleRepository;
 
     @BeforeAll
     void beforeAll() {
@@ -66,7 +69,7 @@ class UserPostStatisticControllerTest {
                 .email("Gacek@gmail.com")
                 .enabled(true)
                 .banned(false)
-                .permissions(accountPermissionRepository.findByDefaultPermissionTrue())
+                .accountRole(accountRoleRepository.findByDefaultRoleTrue().orElse(null))
                 .creationDate(LocalDate.now())
                 .build();
 
@@ -99,7 +102,7 @@ class UserPostStatisticControllerTest {
                 .email("Gacek@gmail.com")
                 .enabled(true)
                 .banned(false)
-                .permissions(accountPermissionRepository.findByDefaultPermissionTrue())
+                .accountRole(accountRoleRepository.findByDefaultRoleTrue().orElse(null))
                 .creationDate(LocalDate.now())
                 .build();
 
@@ -132,7 +135,7 @@ class UserPostStatisticControllerTest {
                 .email("Gacek@gmail.com")
                 .enabled(true)
                 .banned(false)
-                .permissions(accountPermissionRepository.findByDefaultPermissionTrue())
+                .accountRole(accountRoleRepository.findByDefaultRoleTrue().orElse(null))
                 .creationDate(LocalDate.now())
                 .build();
 
