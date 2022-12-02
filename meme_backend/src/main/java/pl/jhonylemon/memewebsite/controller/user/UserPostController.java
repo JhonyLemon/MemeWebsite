@@ -40,7 +40,7 @@ public class UserPostController {
     }
 
     @PostMapping(path = ApiPaths.Post.POST_PUBLISH)
-    public ResponseEntity<PostGetFullDto> updatePostSelf(
+    public ResponseEntity<PostGetFullDto> updatePostSelfPublish(
             @PathVariable Long id
     ){
         return ResponseEntity.ok().body(postService.publishPost(id));
