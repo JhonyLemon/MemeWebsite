@@ -8,5 +8,13 @@ services:
       POSTGRES_PASSWORD: meem
     volumes:
       - memewebsite:/var/lib/postgresql/data
+  meme-backend:
+    image: adamn2000/meme_website_backend:latest
+    environment:
+      DB_HOST: "postgresql"
+      DATABASE: "memewebsite"
+      DB_PORT: 5432
+      DBUSER: "meem"
+      DBPASSWORD: "meem"
 volumes:
   memewebsite:
