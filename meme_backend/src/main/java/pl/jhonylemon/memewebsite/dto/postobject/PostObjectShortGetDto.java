@@ -14,5 +14,5 @@ public class PostObjectShortGetDto {
     private Long postId;
     private String fileName;
     private String mimeType;
-    private String charset;
+    private String description;
 }

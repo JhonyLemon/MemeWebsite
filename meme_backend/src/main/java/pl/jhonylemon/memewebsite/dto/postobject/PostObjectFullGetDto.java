@@ -15,5 +15,5 @@ public class PostObjectFullGetDto {
     private String fileName;
     private byte[] content;
     private String mimeType;
-    private String charset;
+    private String description;
 }

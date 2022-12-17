@@ -33,8 +33,8 @@ public class PostObject {
     @Column(name = "MIME_TYPE",nullable = false)
     private String mimeType;
 
-    @Column(name = "CHARSET")
-    private String charset;
+    @Column(name = "DESCRIPTION")
+    private String description;
 
     @Column(name = "ORDER_OF_OBJECT")
     private Long order;

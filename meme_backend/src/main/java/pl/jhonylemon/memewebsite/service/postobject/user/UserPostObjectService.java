@@ -15,7 +15,6 @@ import pl.jhonylemon.memewebsite.mapper.PostObjectMapper;
 import pl.jhonylemon.memewebsite.repository.PostObjectRepository;
 import pl.jhonylemon.memewebsite.repository.PostRepository;
 
-import javax.servlet.ServletRequest;
 import javax.transaction.Transactional;
 
 @Service
@@ -31,7 +30,7 @@ public class UserPostObjectService {
 
 
     @Transactional
-    public PostGetFullDto createPostObject(Long id, Long order, MultipartFile file) {
+    public PostGetFullDto createPostObject(Long id, Long order, MultipartFile file,String description) {
         if (id == null || id < 1) {
             throw new PostInvalidParamException();
         }
@@ -61,6 +60,7 @@ public class UserPostObjectService {
             postObject.setContent(file.getBytes());
             postObject.setFileName(file.getOriginalFilename());
             postObject.setMimeType(file.getContentType());
+            postObject.setDescription(description);
         } catch (Exception e) {
             throw new PostInvalidParamException();
         }
@@ -74,7 +74,7 @@ public class UserPostObjectService {
     }
 
     @Transactional
-    public PostGetFullDto updatePostObjectSelf(Long id, MultipartFile file) {
+    public PostGetFullDto updatePostObjectSelf(Long id, MultipartFile file,String description) {
         if (id == null || id < 1) {
             throw new PostInvalidParamException();
         }
@@ -91,6 +91,7 @@ public class UserPostObjectService {
             postObject.setContent(file.getBytes());
             postObject.setFileName(file.getOriginalFilename());
             postObject.setMimeType(file.getContentType());
+            postObject.setDescription(description);
         } catch (Exception e) {
             throw new PostInvalidParamException();
         }
@@ -121,90 +122,4 @@ public class UserPostObjectService {
 
         postObjectRepository.delete(postObject);
     }
-
-    @Transactional
-    public PostGetFullDto createPostObject(Long id, Long order, String content, ServletRequest request) {
-        if (id == null || id < 1) {
-            throw new PostInvalidParamException();
-        }
-
-        if (content.length() > postProperties.getMaxTextObject()) {
-            throw new PostInvalidParamException("Text too long");
-        }
-
-        if (!postProperties.getAllowedTypes().contains(request.getContentType())) {
-            throw new PostInvalidParamException("Unsupported media type");
-        }
-
-        Post post = postRepository.findById(id).orElseThrow(() -> {
-            throw new PostNotFoundException();
-        });
-
-        if (post.getFiles().size() >= postProperties.getMaxObjects()) {
-            throw new PostInvalidParamException("Max post size reached");
-        }
-
-        PostObject postObject = PostObject.builder()
-                .post(post)
-                .order(order)
-                .build();
-
-        try {
-            postObject.setContent(content.getBytes(request.getCharacterEncoding()));
-            postObject.setFileName(null);
-            postObject.setCharset(request.getCharacterEncoding());
-            postObject.setMimeType(request.getContentType());
-        } catch (Exception e) {
-            throw new PostInvalidParamException();
-        }
-
-        postObjectRepository.save(postObject);
-        PostGetFullDto postGetFullDto = postMapper
-                .postToGetFullDto(
-                        postRepository.findById(id).orElseThrow(() -> {
-                            throw new PostNotFoundException();
-                        }));
-
-        postGetFullDto.setFilesId(postObjectRepository.findPostObjectsByPostId(postGetFullDto.getId()));
-
-        return postGetFullDto;
-    }
-
-    @Transactional
-    public PostGetFullDto updatePostObject(Long id, String content, ServletRequest request) {
-        if (id == null || id < 1) {
-            throw new PostInvalidParamException();
-        }
-
-        if (content.length() > postProperties.getMaxTextObject()) {
-            throw new PostInvalidParamException("Text too long");
-        }
-
-        PostObject postObject = postObjectRepository.findById(id).orElseThrow(() -> {
-            throw new PostObjectNotFoundException();
-        });
-
-        try {
-            postObject.setContent(content.getBytes(request.getCharacterEncoding()));
-            postObject.setFileName(null);
-            postObject.setCharset(request.getCharacterEncoding());
-            postObject.setMimeType(request.getContentType());
-        } catch (Exception e) {
-            throw new PostInvalidParamException();
-        }
-
-        postObjectRepository.save(postObject);
-
-        PostGetFullDto postGetFullDto = postMapper
-                .postToGetFullDto(
-                        postRepository.findById(id).orElseThrow(() -> {
-                            throw new PostNotFoundException();
-                        }));
-
-        postGetFullDto.setFilesId(postObjectRepository.findPostObjectsByPostId(postGetFullDto.getId()));
-
-        return postGetFullDto;
-    }
-
-
 }

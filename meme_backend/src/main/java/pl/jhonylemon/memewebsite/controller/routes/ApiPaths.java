@@ -45,12 +45,11 @@ public class ApiPaths {
 
     public static class PostObject {
         public static final String POST_OBJECT_PATH = "/postobject";
-        public static final String POST_OBJECT_GET_FILE = "/{id}";
-        public static final String POST_OBJECT_CREATE_FILE = "/post/{id}/file/{order}";
-        public static final String POST_OBJECT_CREATE_TEXT = "/post/{id}/text/{order}";
-        public static final String POST_OBJECT_UPDATE_FILE = "/{id}/update/text";
-        public static final String POST_OBJECT_UPDATE_TEXT = "/{id}/update/file";
-        public static final String POST_OBJECT_DELETE = "/{id}/delete";
+        public static final String POST_OBJECT_GET = "/{id}";
+        public static final String POST_OBJECT_GET_FILE = "/{id}/file";
+        public static final String POST_OBJECT_CREATE = "/post/{id}/{order}";
+        public static final String POST_OBJECT_UPDATE = "/{id}";
+        public static final String POST_OBJECT_DELETE = "/{id}";
     }
 
     public static class ProfilePicture {

@@ -21,10 +21,6 @@ public class UserPostStatisticController {
     public ResponseEntity<PostStatisticGetDto> setVoteStatistic(@PathVariable Long userId, @PathVariable Long postId, @PathVariable Boolean vote){
         return ResponseEntity.ok().body(postStatisticService.setVoteStatistic(userId, postId, vote));
     }
-    @PostMapping(path = ApiPaths.PostStatistic.POST_STATISTIC_SET_SEEN)
-    public ResponseEntity<PostStatisticGetDto> setSeenStatistic(@PathVariable Long userId, @PathVariable Long postId){
-        return ResponseEntity.ok().body(postStatisticService.setSeenStatistic(userId, postId));
-    }
     @PostMapping(path = ApiPaths.PostStatistic.POST_STATISTIC_SET_FAVORITE)
     public ResponseEntity<PostStatisticGetDto> setFavoriteStatistic(@PathVariable Long userId, @PathVariable Long postId, @PathVariable Boolean favorite){
         return ResponseEntity.ok().body(postStatisticService.setFavoriteStatistic(userId, postId, favorite));

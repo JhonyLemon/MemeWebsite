@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import pl.jhonylemon.memewebsite.dto.post.*;
+import pl.jhonylemon.memewebsite.entity.Account;
 import pl.jhonylemon.memewebsite.entity.Post;
 import pl.jhonylemon.memewebsite.exception.post.PostInvalidParamException;
 import pl.jhonylemon.memewebsite.exception.post.PostNotFoundException;
@@ -12,7 +13,9 @@ import pl.jhonylemon.memewebsite.mapper.PostMapper;
 import pl.jhonylemon.memewebsite.repository.PostObjectRepository;
 import pl.jhonylemon.memewebsite.repository.PostRepository;
 import pl.jhonylemon.memewebsite.repository.TagRepository;
+import pl.jhonylemon.memewebsite.security.service.CustomUserDetailsService;
 import pl.jhonylemon.memewebsite.service.post.util.PostUtil;
+import pl.jhonylemon.memewebsite.service.poststatistic.user.UserPostStatisticService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +30,8 @@ public class GuestPostService {
     private final PostRepository postRepository;
     private final PostObjectRepository postObjectRepository;
     private final TagRepository tagRepository;
+    private final CustomUserDetailsService userDetailsService;
+    private final UserPostStatisticService userPostStatisticService;
 
     public PostPageGetDto getAllPosts(PostRequestDto postRequestDto){
         validateRequest(postRequestDto);
@@ -65,6 +70,11 @@ public class GuestPostService {
         if(!post.isPublished()){
             throw new PostInvalidParamException();
         }
+
+        try{
+          Account account = userDetailsService.currentUser();
+          userPostStatisticService.setSeenStatistic(account.getId(),id);
+        }catch (Exception ignored){}
 
         PostGetFullDto postGetFullDto = postMapper.postToGetFullDto(post);
 

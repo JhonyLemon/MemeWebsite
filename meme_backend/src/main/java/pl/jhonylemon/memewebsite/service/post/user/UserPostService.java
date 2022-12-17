@@ -77,7 +77,7 @@ public class UserPostService {
             throw new PostNotFoundException();
         });
 
-        if(post.getFiles().stream().noneMatch(postObject -> postObject.getCharset()==null)){
+        if(!post.getFiles().isEmpty()){
             throw new PostInvalidParamException("Post must contain at least one photo");
         }
 

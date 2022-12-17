@@ -10,8 +10,6 @@ import pl.jhonylemon.memewebsite.dto.post.PostGetFullDto;
 import pl.jhonylemon.memewebsite.mapper.PostMapper;
 import pl.jhonylemon.memewebsite.service.postobject.user.UserPostObjectService;
 
-import javax.servlet.ServletRequest;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = ApiPaths.User.USER_PATH+ApiPaths.PostObject.POST_OBJECT_PATH)
@@ -22,27 +20,18 @@ public class UserPostObjectController {
     private final PostMapper postMapper;
 
     @PostMapping(
-            path = ApiPaths.PostObject.POST_OBJECT_CREATE_FILE,
+            path = ApiPaths.PostObject.POST_OBJECT_CREATE,
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE
     )
-    public ResponseEntity<PostGetFullDto> createPostObjectFile(
+    public ResponseEntity<PostGetFullDto> createPostObject(
             @PathVariable() Long id,
             @PathVariable Long order,
-            @RequestPart(value = "file") MultipartFile file
+            @RequestPart(value = "file") MultipartFile file,
+            @RequestParam(value = "description",required = false) String description
     ) {
-        return ResponseEntity.ok().body(postObjectService.createPostObject(id,order,file));
+        return ResponseEntity.ok().body(postObjectService.createPostObject(id,order,file,description));
     }
 
-    @PostMapping(path = ApiPaths.PostObject.POST_OBJECT_CREATE_TEXT)
-    public ResponseEntity<PostGetFullDto> createPostObjectText(
-            @PathVariable() Long id,
-            @PathVariable Long order,
-            @RequestBody String content,
-            ServletRequest request
-    ) {
-        return ResponseEntity.ok().body(postObjectService
-                .createPostObject(id,order,content,request));
-    }
 
     @DeleteMapping(path = ApiPaths.PostObject.POST_OBJECT_DELETE)
     public ResponseEntity<Void> deletePostObjectSelf(@PathVariable Long id){
@@ -50,23 +39,15 @@ public class UserPostObjectController {
         return ResponseEntity.ok().build();
     }
     @PutMapping(
-            path = ApiPaths.PostObject.POST_OBJECT_UPDATE_FILE,
+            path = ApiPaths.PostObject.POST_OBJECT_UPDATE,
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE
     )
-    public ResponseEntity<PostGetFullDto> updatePostObjectFileSelf(
+    public ResponseEntity<PostGetFullDto> updatePostObject(
             @PathVariable Long id,
-            @RequestPart(value = "file") MultipartFile file
+            @RequestPart(value = "file") MultipartFile file,
+            @RequestParam(value = "description") String description
     ){
-        return ResponseEntity.ok().body(postObjectService.updatePostObjectSelf(id,file));
-    }
-    @PutMapping(path = ApiPaths.PostObject.POST_OBJECT_UPDATE_TEXT)
-    public ResponseEntity<PostGetFullDto> updatePostObjectTextSelf(
-            @PathVariable Long id,
-            @RequestBody String content,
-            ServletRequest request
-    ){
-        return ResponseEntity.ok().body(postObjectService
-                .updatePostObject(id,content,request));
+        return ResponseEntity.ok().body(postObjectService.updatePostObjectSelf(id,file,description));
     }
 
 }
