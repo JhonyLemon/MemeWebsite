@@ -8,11 +8,15 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import pl.jhonylemon.memewebsite.security.component.JwtProperties;
 import pl.jhonylemon.memewebsite.security.filter.JwtAuthenticationFilter;
 import pl.jhonylemon.memewebsite.security.filter.JwtAuthorizationFilter;
 import pl.jhonylemon.memewebsite.service.accountpermission.admin.AdminAccountPermissionService;
+
+import java.util.Collections;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
@@ -41,6 +45,8 @@ public class SecurityFilterChainConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
+                .cors().configurationSource(corsConfiguration())
+                .and()
                 .sessionManagement()
                 .sessionCreationPolicy(STATELESS)
                 .and()
@@ -67,4 +73,15 @@ public class SecurityFilterChainConfig {
                 .anyRequest().authenticated();
         return http.build();
     }
+
+    private static CorsConfigurationSource corsConfiguration() {
+        return request -> {
+            CorsConfiguration corsConfig = new CorsConfiguration().applyPermitDefaultValues();
+            corsConfig.setAllowedOrigins(Collections.singletonList("*"));
+            corsConfig.setAllowedHeaders(Collections.singletonList("*"));
+            corsConfig.setAllowedMethods(Collections.singletonList("*"));
+            return corsConfig;
+        };
+    }
+
 }
