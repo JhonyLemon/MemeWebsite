@@ -9,6 +9,7 @@ import pl.jhonylemon.memewebsite.entity.Account;
 import pl.jhonylemon.memewebsite.entity.Post;
 import pl.jhonylemon.memewebsite.exception.post.PostInvalidParamException;
 import pl.jhonylemon.memewebsite.exception.post.PostNotFoundException;
+import pl.jhonylemon.memewebsite.exception.postobject.PostObjectNotFoundException;
 import pl.jhonylemon.memewebsite.mapper.PostMapper;
 import pl.jhonylemon.memewebsite.repository.PostObjectRepository;
 import pl.jhonylemon.memewebsite.repository.PostRepository;
@@ -42,11 +43,19 @@ public class GuestPostService {
 
         List<PostGetShortDto> accountGetFullDtos = new ArrayList<>();
 
+
+
         posts.forEach(p-> {
             PostGetShortDto postGetShortDto = postMapper.postToGetShortDto(p);
-            postGetShortDto.setFirstFileId(postObjectRepository
+            postGetShortDto.setFirstFileContent(
+            postObjectRepository.findById(postObjectRepository
                     .findFirstByPostId(postGetShortDto.getId(), PageRequest.of(0,1))
-                    .stream().findFirst().orElse(null));
+                    .stream().findFirst()
+                    .orElseThrow(()->{
+                        throw new PostObjectNotFoundException();
+                    })).orElseThrow(()->{
+                throw new PostObjectNotFoundException();
+            }).getContent());
             accountGetFullDtos.add(postGetShortDto);
         });
 

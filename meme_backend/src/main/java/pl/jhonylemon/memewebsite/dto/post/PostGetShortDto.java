@@ -12,7 +12,7 @@ import pl.jhonylemon.memewebsite.dto.poststatistic.PostStatisticGetDto;
 public class PostGetShortDto {
     private Long id;
     private String title;
-    private Long firstFileId;
+    private byte[] firstFileContent;
     private AccountGetFullDto account;
     private PostStatisticGetDto postStatistics;
 }
