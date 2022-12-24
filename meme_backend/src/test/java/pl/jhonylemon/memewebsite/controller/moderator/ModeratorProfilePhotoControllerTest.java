@@ -18,10 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ResourceUtils;
 import pl.jhonylemon.memewebsite.controller.routes.ApiPaths;
 import pl.jhonylemon.memewebsite.entity.ProfilePicture;
-import pl.jhonylemon.memewebsite.repository.ProfilePictureRepository;
+import pl.jhonylemon.memewebsite.repository.ProfilePhotoRepository;
 
 import java.io.FileInputStream;
-import java.nio.file.Path;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -37,7 +36,7 @@ class ModeratorProfilePhotoControllerTest {
     ObjectMapper objectMapper;
 
     @Autowired
-    ProfilePictureRepository profilePictureRepository;
+    ProfilePhotoRepository profilePhotoRepository;
 
     @BeforeAll
     void beforeAll() {
@@ -106,7 +105,7 @@ class ModeratorProfilePhotoControllerTest {
                 .defaultProfile(false)
                 .build();
 
-        profilePictureRepository.save(profilePicture);
+        profilePhotoRepository.save(profilePicture);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .delete(ApiPaths.Moderator.MODERATOR_PATH + ApiPaths.ProfilePicture.PROFILE_PICTURE_PATH +

@@ -20,7 +20,7 @@ import pl.jhonylemon.memewebsite.entity.Account;
 import pl.jhonylemon.memewebsite.repository.AccountPermissionRepository;
 import pl.jhonylemon.memewebsite.repository.AccountRepository;
 import pl.jhonylemon.memewebsite.repository.AccountRoleRepository;
-import pl.jhonylemon.memewebsite.repository.ProfilePictureRepository;
+import pl.jhonylemon.memewebsite.repository.ProfilePhotoRepository;
 
 import java.time.LocalDate;
 
@@ -40,7 +40,7 @@ class UserCommentControllerTest {
     @Autowired
     AccountRepository accountRepository;
     @Autowired
-    ProfilePictureRepository profilePictureRepository;
+    ProfilePhotoRepository profilePhotoRepository;
     @Autowired
     AccountPermissionRepository accountPermissionRepository;
     @Autowired
@@ -65,7 +65,7 @@ class UserCommentControllerTest {
     void replyTest_Success() throws Exception {
 
         Account account = Account.builder()
-                .profilePicture(profilePictureRepository.findByDefaultProfileTrue().orElse(null))
+                .profilePicture(profilePhotoRepository.findByDefaultProfileTrue().orElse(null))
                 .password("123456789")
                 .name("Gacek")
                 .email("Gacek@gmail.com")
@@ -79,7 +79,7 @@ class UserCommentControllerTest {
 
         CommentPostDto commentPostDto = new CommentPostDto();
         commentPostDto.setComment("Lubie pociągi");
-        commentPostDto.setAccountId(account.getId());
+        commentPostDto.setCommentId(1L);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .post(ApiPaths.User.USER_PATH + ApiPaths.Comment.COMMENT_PATH +

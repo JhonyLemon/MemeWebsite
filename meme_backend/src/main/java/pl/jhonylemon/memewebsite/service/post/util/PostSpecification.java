@@ -116,8 +116,10 @@ public class PostSpecification {
     public static Specification<Post> hasTitleLike(String title) {
         return (root, query, criteriaBuilder) -> {
             if (title != null) {
-                return criteriaBuilder
-                        .like(root.get("title"), getStringInLikeOperationFormat(title));
+                return criteriaBuilder.like(
+                        criteriaBuilder.lower(root.get("title")),
+                        getStringInLikeOperationFormat(title)
+                );
             } else {
                 return criteriaBuilder.conjunction();
             }
@@ -125,6 +127,6 @@ public class PostSpecification {
     }
 
     private static String getStringInLikeOperationFormat(String string) {
-        return String.format("%%%s%%", string.toLowerCase());
+        return "%" + string.toLowerCase() + "%";
     }
 }

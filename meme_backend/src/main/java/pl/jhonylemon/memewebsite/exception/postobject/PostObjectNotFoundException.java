@@ -9,6 +9,6 @@ public class PostObjectNotFoundException extends BusinessException {
     }
 
     public PostObjectNotFoundException() {
-        super(HttpStatus.BAD_REQUEST, "Post file not found");
+        super(HttpStatus.BAD_REQUEST, "Post object not found");
     }
 }

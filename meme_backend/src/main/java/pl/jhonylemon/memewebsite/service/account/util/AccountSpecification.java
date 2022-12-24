@@ -13,7 +13,7 @@ public class AccountSpecification {
         return (root, query, criteriaBuilder) -> {
             if (creationDate != null) {
                 return criteriaBuilder.between(
-                        root.join("account").get("creationDate"),
+                        root.get("creationDate"),
                         creationDate.getMin(),
                         creationDate.getMax()
                 );
@@ -27,7 +27,7 @@ public class AccountSpecification {
         return (root, query, criteriaBuilder) -> {
             if (posts != null) {
                 return criteriaBuilder.between(
-                        criteriaBuilder.size(root.join("account").get("posts")),
+                        criteriaBuilder.size(root.get("posts")),
                                 posts.getMin().intValue(),
                                 posts.getMax().intValue()
                         );
@@ -41,7 +41,7 @@ public class AccountSpecification {
         return (root, query, criteriaBuilder) -> {
             if (comments != null) {
                 return criteriaBuilder.between(
-                        criteriaBuilder.size(root.join("account").get("comments")),
+                        criteriaBuilder.size(root.get("comments")),
                         comments.getMin().intValue(),
                         comments.getMax().intValue()
                 );
@@ -55,7 +55,7 @@ public class AccountSpecification {
         return (root, query, criteriaBuilder) -> {
             if (upvotes != null) {
                 return criteriaBuilder.between(
-                        criteriaBuilder.size(root.join("account").get("comments")),
+                        criteriaBuilder.size(root.get("comments")),
                         upvotes.getMin().intValue(),
                         upvotes.getMax().intValue()
                 );
@@ -69,7 +69,7 @@ public class AccountSpecification {
         return (root, query, criteriaBuilder) -> {
             if (downvotes != null) {
                 return criteriaBuilder.between(
-                        criteriaBuilder.size(root.join("account").get("comments")),
+                        criteriaBuilder.size(root.get("comments")),
                         downvotes.getMin().intValue(),
                         downvotes.getMax().intValue()
                 );
@@ -83,10 +83,10 @@ public class AccountSpecification {
         return (root, query, criteriaBuilder) -> {
             if (accountName != null) {
                 return criteriaBuilder
-                        .like(criteriaBuilder
-                                .lower(root
-                                        .join("account")
-                                        .get("name")), getStringInLikeOperationFormat(accountName));
+                        .like(
+                                criteriaBuilder.lower(root.get("name")),
+                                getStringInLikeOperationFormat(accountName)
+                        );
             } else {
                 return criteriaBuilder.conjunction();
             }
@@ -97,9 +97,7 @@ public class AccountSpecification {
         return (root, query, criteriaBuilder) -> {
             if (enabled != null) {
                 return criteriaBuilder
-                        .equal(root
-                                .join("account")
-                                .get("enabled"),enabled);
+                        .equal(root.get("enabled"),enabled);
             } else {
                 return criteriaBuilder.conjunction();
             }
@@ -111,7 +109,6 @@ public class AccountSpecification {
             if (banned != null) {
                 return criteriaBuilder
                         .equal(root
-                                .join("account")
                                 .get("banned"),banned);
             } else {
                 return criteriaBuilder.conjunction();
@@ -120,6 +117,6 @@ public class AccountSpecification {
     }
 
     private static String getStringInLikeOperationFormat(String string) {
-        return String.format("%%%s%%", string.toLowerCase());
+        return "%" + string.toLowerCase() + "%";
     }
 }

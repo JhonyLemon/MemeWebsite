@@ -9,14 +9,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
-import pl.jhonylemon.memewebsite.dto.account.AccountGetFullDto;
 import pl.jhonylemon.memewebsite.dto.account.AccountPutPasswordDto;
 import pl.jhonylemon.memewebsite.entity.Account;
 import pl.jhonylemon.memewebsite.repository.AccountPermissionRepository;
 import pl.jhonylemon.memewebsite.repository.AccountRepository;
 import pl.jhonylemon.memewebsite.repository.AccountRoleRepository;
-import pl.jhonylemon.memewebsite.repository.ProfilePictureRepository;
-import pl.jhonylemon.memewebsite.service.account.admin.AdminAccountService;
+import pl.jhonylemon.memewebsite.repository.ProfilePhotoRepository;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -34,10 +32,10 @@ class AdminAccountServiceTest {
     AccountRepository accountRepository;
 
     @Autowired
-    AdminAccountService accountService;
+    AccountService accountService;
 
     @Autowired
-    ProfilePictureRepository profilePictureRepository;
+    ProfilePhotoRepository profilePhotoRepository;
 
     @Autowired
     AccountPermissionRepository accountPermissionRepository;
@@ -51,7 +49,7 @@ class AdminAccountServiceTest {
     void updateAccountPasswordTest_Success() {
 
         Account account = Account.builder()
-                .profilePicture(profilePictureRepository.findByDefaultProfileTrue().orElse(null))
+                .profilePicture(profilePhotoRepository.findByDefaultProfileTrue().orElse(null))
                 .password(encoder.encode("123456789"))
                 .name("Gacek")
                 .email("Gacek@gmail.com")
@@ -68,9 +66,8 @@ class AdminAccountServiceTest {
         AccountPutPasswordDto accountPutPasswordDto = new AccountPutPasswordDto();
         accountPutPasswordDto.setNewPassword("987654321");
 
-        AccountGetFullDto accountGetFullDto = accountService.updateAccountPassword(1L,accountPutPasswordDto);
+        accountService.updateAccountPassword(1L,accountPutPasswordDto);
 
-        assertNotNull(accountGetFullDto);
         assertTrue(encoder.matches("987654321",account.getPassword()));
     }
 

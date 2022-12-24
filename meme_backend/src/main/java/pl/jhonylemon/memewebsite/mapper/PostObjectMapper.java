@@ -6,6 +6,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
 import pl.jhonylemon.memewebsite.dto.postobject.*;
 import pl.jhonylemon.memewebsite.entity.PostObject;
+import pl.jhonylemon.memewebsite.model.PostObjectFullGetModelApi;
 
 @Mapper(componentModel = "spring",
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
@@ -13,8 +14,11 @@ import pl.jhonylemon.memewebsite.entity.PostObject;
 public interface PostObjectMapper {
 
     @Mapping(source = "post.id", target = "postId")
-    PostObjectFullGetDto postFileToFullGetDto(PostObject postObject);
+    PostObjectFullGetDto postObjectToFullGetDto(PostObject postObject);
 
     @Mapping(source = "post.id", target = "postId")
-    PostObjectShortGetDto postFileToShortGetDto(PostObject postObject);
+    PostObjectShortGetDto postObjectToShortGetDto(PostObject postObject);
+
+    PostObjectFullGetModelApi postObjectModelApiToFullGetApi(PostObjectFullGetDto postObject);
+
 }

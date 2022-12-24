@@ -3,10 +3,9 @@ package pl.jhonylemon.memewebsite.dto.account;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import pl.jhonylemon.memewebsite.dto.accountpermission.AccountPermissionGetDto;
+import pl.jhonylemon.memewebsite.dto.accountrole.AccountRoleGetDto;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Getter
 @Setter
@@ -17,7 +16,7 @@ public class AccountGetFullDto {
     private String email;
     private LocalDate creationDate;
     private Long profilePhotoId;
-    private List<AccountPermissionGetDto> permissions;
+    private AccountRoleGetDto role;
     private Boolean enabled;
     private Boolean banned;
 }

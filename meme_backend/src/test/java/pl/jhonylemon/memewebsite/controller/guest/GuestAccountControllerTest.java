@@ -20,7 +20,7 @@ import pl.jhonylemon.memewebsite.entity.Account;
 import pl.jhonylemon.memewebsite.repository.AccountPermissionRepository;
 import pl.jhonylemon.memewebsite.repository.AccountRepository;
 import pl.jhonylemon.memewebsite.repository.AccountRoleRepository;
-import pl.jhonylemon.memewebsite.repository.ProfilePictureRepository;
+import pl.jhonylemon.memewebsite.repository.ProfilePhotoRepository;
 
 import java.time.LocalDate;
 
@@ -39,7 +39,7 @@ class GuestAccountControllerTest {
     @Autowired
     public AccountRepository accountRepository;
     @Autowired
-    public ProfilePictureRepository profilePictureRepository;
+    public ProfilePhotoRepository profilePhotoRepository;
 
     @Autowired
     public AccountPermissionRepository accountPermissionRepository;
@@ -108,7 +108,7 @@ class GuestAccountControllerTest {
     })
     void getAccountTest_Success() throws Exception {
         Account account = Account.builder()
-                .profilePicture(profilePictureRepository.findByDefaultProfileTrue().orElse(null))
+                .profilePicture(profilePhotoRepository.findByDefaultProfileTrue().orElse(null))
                 .password("123456789")
                 .name("Gacek")
                 .email("Gacek@gmail.com")

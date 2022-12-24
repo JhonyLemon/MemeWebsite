@@ -6,6 +6,7 @@ import org.mapstruct.ReportingPolicy;
 import pl.jhonylemon.memewebsite.dto.commentstatistic.CommentStatisticGetDto;
 import pl.jhonylemon.memewebsite.entity.Comment;
 import pl.jhonylemon.memewebsite.entity.CommentStatistic;
+import pl.jhonylemon.memewebsite.model.CommentStatisticGetModelApi;
 
 import java.util.List;
 import java.util.Objects;
@@ -45,5 +46,7 @@ public interface CommentStatisticMapper {
         );
         return  commentStatisticGetDto;
     }
+
+    CommentStatisticGetModelApi commentStatisticGetDtoToModelApi(CommentStatisticGetDto commentStatisticGetDto);
 
 }

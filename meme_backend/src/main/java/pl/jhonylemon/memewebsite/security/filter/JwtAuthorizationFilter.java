@@ -69,7 +69,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-       return request.getServletPath().contains("/guest") ||
+       return
                request.getServletPath().contains("/login") ||
                request.getServletPath().contains("/swagger-ui") ||
                request.getServletPath().contains("/v3/api-docs/");

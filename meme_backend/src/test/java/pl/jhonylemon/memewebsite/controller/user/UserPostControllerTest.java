@@ -9,16 +9,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.ResourceUtils;
 import pl.jhonylemon.memewebsite.controller.routes.ApiPaths;
 import pl.jhonylemon.memewebsite.dto.post.PostPostDto;
 import pl.jhonylemon.memewebsite.dto.post.PostPutDto;
@@ -26,7 +21,6 @@ import pl.jhonylemon.memewebsite.entity.Account;
 import pl.jhonylemon.memewebsite.entity.Post;
 import pl.jhonylemon.memewebsite.repository.*;
 
-import java.io.FileInputStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +41,7 @@ class UserPostControllerTest {
     @Autowired
     AccountRepository accountRepository;
     @Autowired
-    ProfilePictureRepository profilePictureRepository;
+    ProfilePhotoRepository profilePhotoRepository;
     @Autowired
     AccountPermissionRepository accountPermissionRepository;
 
@@ -78,7 +72,7 @@ class UserPostControllerTest {
     void createPostTest_Success() throws Exception {
 
         Account account = Account.builder()
-                .profilePicture(profilePictureRepository.findByDefaultProfileTrue().orElse(null))
+                .profilePicture(profilePhotoRepository.findByDefaultProfileTrue().orElse(null))
                 .password("123456789")
                 .name("Gacek")
                 .email("Gacek@gmail.com")
@@ -119,7 +113,7 @@ class UserPostControllerTest {
     @Transactional
     void deletePostSelfTest_Success() throws Exception {
         Account account = Account.builder()
-                .profilePicture(profilePictureRepository.findByDefaultProfileTrue().orElse(null))
+                .profilePicture(profilePhotoRepository.findByDefaultProfileTrue().orElse(null))
                 .password("123456789")
                 .name("Gacek")
                 .email("Gacek@gmail.com")
@@ -165,7 +159,7 @@ class UserPostControllerTest {
     @Transactional
     void updatePostSelfTest_Success() throws Exception {
         Account account = Account.builder()
-                .profilePicture(profilePictureRepository.findByDefaultProfileTrue().orElse(null))
+                .profilePicture(profilePhotoRepository.findByDefaultProfileTrue().orElse(null))
                 .password("123456789")
                 .name("Gacek")
                 .email("Gacek@gmail.com")

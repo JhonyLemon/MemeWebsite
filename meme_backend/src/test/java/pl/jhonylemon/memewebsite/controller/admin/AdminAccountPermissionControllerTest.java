@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.jhonylemon.memewebsite.controller.routes.ApiPaths;
 import pl.jhonylemon.memewebsite.repository.AccountPermissionRepository;
 import pl.jhonylemon.memewebsite.repository.AccountRepository;
-import pl.jhonylemon.memewebsite.repository.ProfilePictureRepository;
+import pl.jhonylemon.memewebsite.repository.ProfilePhotoRepository;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -34,7 +34,7 @@ class AdminAccountPermissionControllerTest {
     @Autowired
     public AccountRepository accountRepository;
     @Autowired
-    public ProfilePictureRepository profilePictureRepository;
+    public ProfilePhotoRepository profilePhotoRepository;
     @Autowired
     public AccountPermissionRepository accountPermissionRepository;
 

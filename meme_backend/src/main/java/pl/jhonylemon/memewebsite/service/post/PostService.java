@@ -1,0 +1,312 @@
+package pl.jhonylemon.memewebsite.service.post;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import pl.jhonylemon.memewebsite.component.PostProperties;
+import pl.jhonylemon.memewebsite.dto.post.*;
+import pl.jhonylemon.memewebsite.entity.Account;
+import pl.jhonylemon.memewebsite.entity.Post;
+import pl.jhonylemon.memewebsite.entity.PostObject;
+import pl.jhonylemon.memewebsite.entity.Tag;
+import pl.jhonylemon.memewebsite.enums.Permissions;
+import pl.jhonylemon.memewebsite.exception.account.AccountInvalidParamException;
+import pl.jhonylemon.memewebsite.exception.authentication.NotEnoughPermissionsException;
+import pl.jhonylemon.memewebsite.exception.post.PostInvalidParamException;
+import pl.jhonylemon.memewebsite.exception.post.PostNotFoundException;
+import pl.jhonylemon.memewebsite.exception.postobject.PostObjectNotFoundException;
+import pl.jhonylemon.memewebsite.mapper.PostMapper;
+import pl.jhonylemon.memewebsite.repository.PostObjectRepository;
+import pl.jhonylemon.memewebsite.repository.PostRepository;
+import pl.jhonylemon.memewebsite.repository.TagRepository;
+import pl.jhonylemon.memewebsite.security.service.CustomUserDetailsService;
+import pl.jhonylemon.memewebsite.service.post.util.PostUtil;
+import pl.jhonylemon.memewebsite.service.poststatistic.PostStatisticService;
+import pl.jhonylemon.memewebsite.util.Validator;
+
+import javax.transaction.Transactional;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import static pl.jhonylemon.memewebsite.service.post.util.PostUtil.validateRequest;
+
+@Service
+@RequiredArgsConstructor
+public class PostService {
+
+    private final PostMapper postMapper;
+    private final PostRepository postRepository;
+    private final PostObjectRepository postObjectRepository;
+    private final TagRepository tagRepository;
+    private final CustomUserDetailsService userDetailsService;
+    private final PostStatisticService postStatisticService;
+    private final PostProperties postProperties;
+
+    @Transactional
+    public PostGetFullDto createUnpublishedPost(PostPostDto postPostDto) {
+        if (!postPostDto.validateRequest()) {
+            throw new PostInvalidParamException();
+        }
+
+        Account account = userDetailsService.currentUser();
+
+        if (postRepository.findUnPublishedPostsCount() >= postProperties.getMaxUnPublishedPosts()) {
+            throw new PostInvalidParamException("Max unpublished posts reached");
+        }
+
+        List<Tag> tags = postPostDto.getTags() == null ? new ArrayList<>() : tagRepository.findAllById(postPostDto.getTags());
+
+        Post post = Post.builder()
+                .tags(tags)
+                .account(account)
+                .title(postPostDto.getTitle())
+                .creationDate(LocalDate.now())
+                .files(new ArrayList<>())
+                .isPublished(false)
+                .comments(new ArrayList<>())
+                .postStatistics(new ArrayList<>())
+                .isVisible(postPostDto.getVisible())
+                .build();
+
+        postRepository.save(post);
+
+        PostGetFullDto postGetFullDto = postMapper.postToGetFullDto(post);
+
+        postGetFullDto.setFilesId(postObjectRepository.findPostObjectsByPostId(post.getId()));
+
+        return postGetFullDto;
+    }
+
+    @Transactional
+    public void deletePost(Long id) {
+        if (!Validator.isIdValid(id)) {
+            throw new PostNotFoundException();
+        }
+        Post post = postRepository.findById(id).orElseThrow(() -> {
+            throw new PostInvalidParamException();
+        });
+
+        Account account = userDetailsService.currentUser();
+
+        Validator.checkPermission(userDetailsService.currentUserPermissions(), Map.of(
+                Permissions.MODERATOR_DELETE.getName(), () -> {
+                },
+                Permissions.USER_DELETE.getName(), () -> {
+                    if (!post.getAccount().getId().equals(account.getId())) {
+                        throw new NotEnoughPermissionsException();
+                    }
+                }
+        ));
+
+        postObjectRepository.deleteAll(post.getFiles());
+        post.getFiles().clear();
+        postRepository.delete(post);
+    }
+
+    public PostPageGetDto getAllPosts(PostRequestDto postToPostRequestDto) {
+        validateRequest(postToPostRequestDto);
+
+        Page<Post> posts = postRepository
+                .findAll(PostUtil.getSpecification(postToPostRequestDto.getFilters()),
+                        PostUtil.createPageRequest(postToPostRequestDto.getPagingAndSorting()));
+
+        List<PostGetShortDto> accountGetFullDtos = new ArrayList<>();
+
+
+        posts.forEach(p -> {
+            PostGetShortDto postGetShortDto = postMapper.postToGetShortDto(p);
+            postGetShortDto.setFirstFileContent(
+                    postObjectRepository.findById(postObjectRepository
+                            .findFirstByPostId(postGetShortDto.getId(), PageRequest.of(0, 1))
+                            .stream().findFirst()
+                            .orElseThrow(() -> {
+                                throw new PostObjectNotFoundException();
+                            })).orElseThrow(() -> {
+                        throw new PostObjectNotFoundException();
+                    }).getContent());
+            accountGetFullDtos.add(postGetShortDto);
+        });
+
+        return new PostPageGetDto(
+                accountGetFullDtos,
+                posts.getTotalPages(),
+                posts.getTotalElements(),
+                postToPostRequestDto.getFilters());
+    }
+
+    public PostGetFullDto getPost(Long id) {
+        if (!Validator.isIdValid(id)) {
+            throw new PostInvalidParamException();
+        }
+
+        Post post = postRepository.findById(id).orElseThrow(() -> {
+            throw new PostNotFoundException();
+        });
+
+        if (!post.isPublished()) {
+            throw new PostInvalidParamException();
+        }
+
+        try {
+            Account account = userDetailsService.currentUser();
+            postStatisticService.setSeenStatistic(account.getId(), id);
+        } catch (Exception ignored) {
+        }
+
+        PostGetFullDto postGetFullDto = postMapper.postToGetFullDto(post);
+
+        postGetFullDto.setFilesId(postObjectRepository.findPostObjectsByPostId(post.getId()));
+
+        postGetFullDto.getComments().removeIf(c -> c.getReplyToId() != null);
+
+        return postGetFullDto;
+    }
+
+    @Transactional
+    public PostGetFullDto updatePost(Long id, PostPutDto postModelApiTo) {
+        if (!Validator.isIdValid(id)) {
+            throw new PostInvalidParamException();
+        }
+        if (!postModelApiTo.isTittleValid()) {
+            throw new PostInvalidParamException();
+        }
+        if (!postModelApiTo.isTagsValid()) {
+            throw new PostInvalidParamException();
+        }
+        if (!postModelApiTo.isVisibleValid()) {
+            throw new PostInvalidParamException();
+        }
+        if (!postModelApiTo.isOrderValid()) {
+            throw new PostInvalidParamException();
+        }
+
+        Post post = postRepository.findById(id).orElseThrow(() -> {
+            throw new PostNotFoundException();
+        });
+
+        Account account = userDetailsService.currentUser();
+
+        Validator.checkPermission(userDetailsService.currentUserPermissions(), Map.of(
+                Permissions.MODERATOR_EDIT.getName(), () -> {
+                },
+                Permissions.USER_EDIT.getName(), () -> {
+                    if (!post.getAccount().getId().equals(account.getId())) {
+                        throw new NotEnoughPermissionsException();
+                    }
+                }
+        ));
+
+        post.isVisible(postModelApiTo.getVisible());
+        post.setTags(tagRepository.findAllById(postModelApiTo.getTags()));
+        post.setTitle(postModelApiTo.getTitle());
+
+        postModelApiTo.getOrder().forEach((k, v) -> {
+            for (PostObject postObject : post.getFiles()) {
+                if (postObject.getId().equals(k)) {
+                    postObject.setOrder(v);
+                    break;
+                }
+            }
+        });
+
+        PostGetFullDto postGetFullDto = postMapper.postToGetFullDto(post);
+
+        postGetFullDto.setFilesId(postObjectRepository.findPostObjectsByPostId(post.getId()));
+
+        return postGetFullDto;
+    }
+
+    @Transactional
+    public PostGetFullDto updatePostPublish(Long id) {
+        if (!Validator.isIdValid(id)) {
+            throw new AccountInvalidParamException();
+        }
+
+        Post post = postRepository.findUnPublishedPost().orElseThrow(() -> {
+            throw new PostNotFoundException();
+        });
+
+        if (!post.getFiles().isEmpty()) {
+            throw new PostInvalidParamException("Post must contain at least one photo");
+        }
+
+        post.isPublished(true);
+
+        PostGetFullDto postGetFullDto = postMapper.postToGetFullDto(post);
+
+        postGetFullDto.setFilesId(postObjectRepository.findPostObjectsByPostId(post.getId()));
+
+        return postGetFullDto;
+    }
+
+    public PostGetFullDto getUnpublishedPost() {
+        return postMapper.postToGetFullDto(
+                postRepository.findUnPublishedPost().orElseThrow(() -> {
+                    throw new PostNotFoundException();
+                }));
+    }
+
+    @Transactional
+    public PostGetFullDto createPublishedPost(String title, List<MultipartFile> files, Boolean visible, List<String> descriptions,List<Long> tags) {
+        if(!Validator.isStringValid(title)){
+           throw new PostInvalidParamException();
+        }
+        if(files==null || files.isEmpty()){
+            throw new PostInvalidParamException();
+        }
+        if(descriptions==null){
+            throw new PostInvalidParamException();
+        }
+        if(visible==null){
+            throw new PostInvalidParamException();
+        }
+
+        Account account = userDetailsService.currentUser();
+
+        List<Tag> tagsEntities = tags == null ? new ArrayList<>() : tagRepository.findAllById(tags);
+
+        Post post = Post.builder()
+                .tags(tagsEntities)
+                .account(account)
+                .title(title)
+                .creationDate(LocalDate.now())
+                .files(new ArrayList<>())
+                .isPublished(false)
+                .comments(new ArrayList<>())
+                .postStatistics(new ArrayList<>())
+                .isVisible(visible)
+                .build();
+
+        postRepository.save(post);
+
+        try {
+            for (int i = 0; i < files.size(); i++) {
+                MultipartFile file = files.get(i);
+                String description = descriptions.size() > i ? descriptions.get(i) : null;
+                PostObject object = PostObject.builder()
+                        .order(1L)
+                        .post(post)
+                        .description(description)
+                        .fileName(file.getOriginalFilename())
+                        .mimeType(file.getContentType())
+                        .content(file.getBytes())
+                        .build();
+                postObjectRepository.save(object);
+                post.getFiles().add(object);
+            }
+        }catch (Exception e){
+            throw new PostInvalidParamException();
+        }
+
+        PostGetFullDto postGetFullDto = postMapper.postToGetFullDto(post);
+
+        postGetFullDto.setFilesId(postObjectRepository.findPostObjectsByPostId(post.getId()));
+
+        return postGetFullDto;
+
+    }
+}

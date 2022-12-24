@@ -1,0 +1,2015 @@
+openapi: 3.0.1
+info:
+  title: Meme backend
+  version: 0.0.1
+tags:
+  - name: "PostObject"
+  - name: "Post"
+  - name: "Account"
+  - name: "Tag"
+  - name: "ProfilePhoto"
+  - name: "AccountRole"
+  - name: "AccountPermission"
+  - name: "PostStatistic"
+  - name: "CommentStatistic"
+  - name: "Comment"
+servers:
+  - url: http://localhost:8080/api
+    description: Generated server url
+paths:
+  /v1/postobject/{id}:
+    get:
+      summary: Returns post object
+      tags:
+        - "PostObject"
+      operationId: getPostObject
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            description: Post id
+            example: 1
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/PostObjectFullGet'
+    put:
+      summary: Updates one of the files/description in post
+      security:
+        - BearerAuth:
+            - USER_EDIT
+            - MODERATOR_EDIT
+      tags:
+        - "PostObject"
+      operationId: updatePostObject
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+            description: Id of post object
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              required:
+                - file
+                - description
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                description:
+                  type: string
+                  description: Description of file in post
+                  example: Description of file in post
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/PostObjectFullGet'
+    delete:
+      summary: Deletes post object by id
+      security:
+        - BearerAuth:
+            - USER_DELETE
+            - MODERATOR_DELETE
+      tags:
+        - "PostObject"
+      operationId: deletePostObject
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+            description: Id of post object
+      responses:
+        '200':
+          description: OK
+  /v1/post/{id}:
+    get:
+      summary: Returns post
+      tags:
+        - "Post"
+      operationId: getPost
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            description: Post id
+            example: 1
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/PostGetFull'
+    put:
+      summary: Updates post selected by id
+      security:
+        - BearerAuth:
+            - USER_EDIT
+            - MODERATOR_EDIT
+      tags:
+        - "Post"
+      operationId: updatePost
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+            description: Id of post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostPut'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/PostGetFull'
+    post:
+      summary: Publishes post
+      security:
+        - BearerAuth:
+            - USER_ADD
+      tags:
+        - "Post"
+      operationId: updatePostPublish
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+            description: Id of post
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/PostGetFull'
+    delete:
+      summary: Deletes post by given id
+      security:
+        - BearerAuth:
+            - MODERATOR_DELETE
+            - USER_DELETE
+      tags:
+        - "Post"
+      operationId: deletePost
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            description: Post id
+            example: 1
+      responses:
+        '200':
+          description: OK
+  /v1/account/photo/{photoId}:
+    put:
+      summary: Updates account photo
+      security:
+        - BearerAuth:
+            - USER_EDIT
+      tags:
+        - "Account"
+      operationId: updateAccountProfilePictureSelf
+      parameters:
+        - name: photoId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+            description: Id of profile photo
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/AccountGetFull'
+  /v1/account/{id}/photo/{photoId}:
+    put:
+      summary: Updates account photo
+      security:
+        - BearerAuth:
+            - MODERATOR_EDIT
+      tags:
+        - "Account"
+      operationId: updateAccountProfilePicture
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+            description: Id of account
+        - name: photoId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/AccountGetFull'
+  /v1/account/password:
+    put:
+      summary: Updates account password
+      security:
+        - BearerAuth:
+            - USER_EDIT
+      tags:
+        - "Account"
+      operationId: updateAccountPasswordSelf
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountPutPasswordUser'
+        required: true
+      responses:
+        '200':
+          description: OK
+  /v1/account/{id}/password:
+    put:
+      summary: Updates account password
+      security:
+        - BearerAuth:
+            - ADMIN_EDIT
+      tags:
+        - "Account"
+      operationId: updateAccountPassword
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+            description: Id of account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountPutPasswordAdmin'
+        required: true
+      responses:
+        '200':
+          description: OK
+  /v1/account/name/{name}:
+    put:
+      summary: Updates account password
+      security:
+        - BearerAuth:
+            - USER_EDIT
+      tags:
+        - "Account"
+      operationId: updateAccountNameSelf
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+            example: BigBen
+            description: New user name
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/AccountGetFull'
+  /v1/account/{id}/name/{name}:
+    put:
+      summary: Updates account password
+      security:
+        - BearerAuth:
+            - MODERATOR_EDIT
+      tags:
+        - "Account"
+      operationId: updateAccountName
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+            description: Id of account
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+            example: BigBen
+            description: New user name
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/AccountGetFull'
+  /v1/tag/{id}/{tag}:
+    put:
+      summary: Updates tag
+      security:
+        - BearerAuth:
+            - MODERATOR_EDIT
+      tags:
+        - "Tag"
+      operationId: changeTag
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+            description: Tag id
+        - name: tag
+          in: path
+          required: true
+          schema:
+            type: string
+            example: Cat
+            description: Tag value
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/TagGet'
+  /v1/profilepicture/{id}:
+    get:
+      summary: Returns profile picture by given id
+      tags:
+        - "ProfilePhoto"
+      operationId: getProfilePicture
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ProfilePictureGet'
+    put:
+      summary: Updates profile picture
+      security:
+        - BearerAuth:
+            - MODERATOR_EDIT
+      tags:
+        - "ProfilePhoto"
+      operationId: changeDefaultProfilePicture
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+            description: Profile picture id
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ProfilePictureGet'
+    delete:
+      summary: Removes profile picture
+      security:
+        - BearerAuth:
+            - MODERATOR_EDIT
+      tags:
+        - "ProfilePhoto"
+      operationId: removeProfilePicture
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+            description: Profile picture id
+      responses:
+        '200':
+          description: OK
+  /v1/account/{id}/ban/{ban}:
+    put:
+      summary: Updates account banned flag
+      security:
+        - BearerAuth:
+            - MODERATOR_EDIT
+      tags:
+        - "Account"
+      operationId: banAccount
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+            description: Account id
+        - name: ban
+          in: path
+          required: true
+          schema:
+            type: boolean
+            example: true
+            description: Banned value
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/AccountGetFull'
+  /v1/accountrole/{id}:
+    get:
+      summary: Get role for given id
+      security:
+        - BearerAuth:
+            - ADMIN_READ
+      tags:
+        - "AccountRole"
+      operationId: getRole
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+            description: Account role id
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/AccountRoleGet'
+    put:
+      summary: Get role for given id
+      security:
+        - BearerAuth:
+            - ADMIN_EDIT
+      tags:
+        - "AccountRole"
+      operationId: putRole
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+            description: Account role id
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountRolePut'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/AccountRoleGet'
+    delete:
+      summary: Remove role for given id
+      security:
+        - BearerAuth:
+            - ADMIN_DELETE
+      tags:
+        - "AccountRole"
+      operationId: deleteRole
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+            description: Account role id
+      responses:
+        '200':
+          description: OK
+  /v1/accountrole/{id}/default:
+    put:
+      summary: Sets new default role
+      security:
+        - BearerAuth:
+            - ADMIN_EDIT
+      tags:
+        - "AccountRole"
+      operationId: putDefaultRole
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+            description: Account role id
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/AccountRoleGet'
+  /v1/account/{id}/role/{newRoleId}:
+    put:
+      summary: Sets new role for given account
+      security:
+        - BearerAuth:
+            - ADMIN_EDIT
+      tags:
+        - "Account"
+      operationId: changeAccountRole
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+            description: Account id
+        - name: newRoleId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+            description: Account role id
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/AccountRoleGet'
+  /v1/poststatistic/{postId}/vote/{vote}:
+    put:
+      summary: Gives vote for post could be positive or negative
+      security:
+        - BearerAuth:
+            - USER_EDIT
+      tags:
+        - "PostStatistic"
+      operationId: setVoteStatistic
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+            description: Post id
+        - name: vote
+          in: path
+          required: true
+          schema:
+            type: boolean
+            example: true
+            description: Vote
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/PostStatisticGet'
+  /v1/poststatistic/{postId}/favorite/{favorite}:
+    put:
+      summary: Gives favorite for post
+      security:
+        - BearerAuth:
+            - USER_EDIT
+      tags:
+        - "PostStatistic"
+      operationId: setFavoriteStatistic
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+            description: Post id
+        - name: favorite
+          in: path
+          required: true
+          schema:
+            type: boolean
+            example: true
+            description: Favorite
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/PostStatisticGet'
+  /v1/post/{id}/postobject/{order}:
+    post:
+      summary: Creates new postobject for unpublished post
+      security:
+        - BearerAuth:
+            - USER_ADD
+      tags:
+        - "PostObject"
+      operationId: createPostObject
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+            description: Post id
+        - name: order
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+            description: Weight of post object
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              required:
+                - file
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: File of post object
+                description:
+                  type: string
+                  description: Description of file
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/PostObjectFullGet'
+  /v2/post:
+    post:
+      summary: Creates new post
+      security:
+        - BearerAuth:
+            - USER_ADD
+      tags:
+        - "Post"
+      operationId: createPublishedPost
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              required:
+                - files
+                - title
+              type: object
+              properties:
+                title:
+                  description: Title of post
+                  type: string
+                visible:
+                  description: Determines if post is visible publicly
+                  type: boolean
+                files:
+                  description: Files of post
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                description:
+                  description: Descriptions of file
+                  type: array
+                  items:
+                    type: string
+                tags:
+                  description: Tags for post
+                  type: array
+                  items:
+                    type: integer
+                    format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/PostGetFull'
+  /v1/post:
+    get:
+      summary: Returns unpublished if any exists post
+      security:
+        - BearerAuth:
+            - USER_READ
+      tags:
+        - "Post"
+      operationId: getUnpublishedPost
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/PostGetFull'
+    post:
+      summary: Creates new unpublished post
+      security:
+        - BearerAuth:
+            - USER_ADD
+      tags:
+        - "Post"
+      operationId: createUnpublishedPost
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostPost'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/PostGetFull'
+  /v1/commentstatistic/{commentId}/{vote}:
+    put:
+      summary: Gives vote for comment could be positive or negative
+      security:
+        - BearerAuth:
+            - USER_EDIT
+      tags:
+        - "CommentStatistic"
+      operationId: vote
+      parameters:
+        - name: commentId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+            description: Vote
+        - name: vote
+          in: path
+          required: true
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/CommentStatisticGet'
+  /v1/post/{postId}/comment:
+    post:
+      summary: Creates new comment for given post
+      security:
+        - BearerAuth:
+            - USER_ADD
+      tags:
+        - "Comment"
+      operationId: reply
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+            description: Post id
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentPost'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/CommentGet'
+  /v1/tag/{tag}:
+    post:
+      summary: Creates new tag
+      security:
+        - BearerAuth:
+            - MODERATOR_ADD
+      tags:
+        - "Tag"
+      operationId: addTag
+      parameters:
+        - name: tag
+          in: path
+          required: true
+          schema:
+            type: string
+            example: Cat
+            description: Tag
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/TagGet'
+  /v1/profilepicture:
+    post:
+      summary: Creates new profile picture
+      security:
+        - BearerAuth:
+            - MODERATOR_ADD
+      tags:
+        - "ProfilePhoto"
+      operationId: addProfilePicture
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              required:
+                - file
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: File of post object
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ProfilePictureGet'
+  /v1/tag/all:
+    post:
+      summary: Returns paginated list of tags
+      tags:
+        - "Tag"
+      operationId: getAllTags
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TagRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/TagPageGet'
+  /v1/post/all:
+    post:
+      summary: Returns paginated list of posts
+      tags:
+        - "Post"
+      operationId: getAllPosts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/PostPageGet'
+  /v1/account/refresh:
+    post:
+      summary: Checks refresh token and returns new access token
+      tags:
+        - "Account"
+      operationId: refreshJWT
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthenticationRefreshRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/AuthenticationResponse'
+  /v1/account/all:
+    post:
+      summary: Returns paginated list of accounts
+      tags:
+        - "Account"
+      operationId: getAllAccounts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/AccountPageGet'
+  /v1/account/register:
+    post:
+      summary: Creates new account
+      tags:
+        - "Account"
+      operationId: createAccount
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountPost'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/AccountGetFull'
+  /v1/accountrole/all:
+    get:
+      summary: Returns all account roles
+      security:
+        - BearerAuth:
+            - ADMIN_READ
+      tags:
+        - "AccountRole"
+      operationId: getRoles
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AccountRoleGet'
+    post:
+      summary: Creates new account role
+      security:
+        - BearerAuth:
+            - ADMIN_ADD
+      tags:
+        - "AccountRole"
+      operationId: postRole
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountRolePost'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/AccountRoleGet'
+  /v1/account:
+    get:
+      summary: Returns self account data
+      tags:
+        - "Account"
+      operationId: getSelf
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/AccountGetFull'
+    delete:
+      summary: Deletes account
+      security:
+        - BearerAuth:
+            - USER_DELETE
+      tags:
+        - "Account"
+      operationId: deleteAccountSelf
+      responses:
+        '200':
+          description: OK
+  /v1/tag/{id}:
+    get:
+      summary: Returns tag by given id
+      tags:
+        - "Tag"
+      operationId: getTag
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/TagGet'
+    delete:
+      summary: Deletes tag by given id
+      security:
+        - BearerAuth:
+            - MODERATOR_DELETE
+      tags:
+        - "Tag"
+      operationId: deleteTag
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            description: Tag id
+            example: 1
+      responses:
+        '200':
+          description: OK
+  /v1/profilepicture/all:
+    get:
+      summary: Returns profile photos
+      tags:
+        - "ProfilePhoto"
+      operationId: getAllProfilePictures
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProfilePictureGet'
+  /v1/post/{id}/poststatistic/:
+    get:
+      summary: Returns post statistics
+      tags:
+        - "PostStatistic"
+      operationId: getPostStatistic
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            description: Post id
+            example: 1
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/PostStatisticGet'
+  /v1/comment/{id}/commentstatistic:
+    get:
+      summary: Returns comment statistics
+      tags:
+        - "CommentStatistic"
+      operationId: getCommentStatistic
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            description: Comment id
+            example: 1
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/CommentStatisticGet'
+  /v1/account/{id}:
+    get:
+      summary: Returns account by given id
+      tags:
+        - "Account"
+      operationId: getAccount
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            description: Account id
+            example: 1
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/AccountGetFull'
+    delete:
+      summary: Deletes account by given id
+      security:
+        - BearerAuth:
+            - ADMIN_DELETE
+      tags:
+        - "Account"
+      operationId: deleteAccount
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            description: Account id
+            example: 1
+      responses:
+        '200':
+          description: OK
+  /v1/accountpermission/all:
+    get:
+      summary: Returns accountpermissions
+      security:
+        - BearerAuth:
+            - ADMIN_READ
+      tags:
+        - "AccountPermission"
+      operationId: getPermissions
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AccountPermissionGet'
+  /v1/accountpermission/{id}:
+    get:
+      summary: Returns accountpermission by given id
+      security:
+        - BearerAuth:
+            - ADMIN_READ
+      tags:
+        - "AccountPermission"
+      operationId: getPermission
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            description: Accountpermission id
+            example: 1
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/AccountPermissionGet'
+  /v1/account/{id}/role:
+    get:
+      summary: Returns accountrole by given account id
+      security:
+        - BearerAuth:
+            - ADMIN_READ
+      tags:
+        - "Account"
+      operationId: getAccountRole
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            description: Account id
+            example: 1
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/AccountRoleGet'
+  /v1/comment/{id}:
+    delete:
+      summary: Deletes comment by given id
+      security:
+        - BearerAuth:
+            - MODERATOR_DELETE
+            - USER_DELETE
+      tags:
+        - "Comment"
+      operationId: deleteComment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+components:
+  schemas:
+    AccountGetFull:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Id of Account
+          example: 2
+        name:
+          type: string
+          description: Name of account
+          example: BigBen
+        email:
+          type: string
+          format: email
+          description: Email of account
+          example: BigBen@gmail.com
+        creationDate:
+          type: string
+          format: date
+          description: CreationDate of account
+          example: 01.01.2000
+        profilePhotoId:
+          type: integer
+          format: int64
+          description: Id of profile photo
+          example: 1
+        role:
+          $ref: '#/components/schemas/AccountRoleGet'
+        enabled:
+          type: boolean
+          description: Determines if account is enabled
+          example: true
+        banned:
+          type: boolean
+          description: Determines if account is banned
+          example: true
+    AccountGetShort:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Id of Account
+          example: 2
+        name:
+          type: string
+          description: Name of account
+          example: BigBen
+        creationDate:
+          type: string
+          format: date
+          description: CreationDate of account
+          example: 01.01.2000
+        profilePhotoId:
+          type: integer
+          format: int64
+          description: Id of profile photo
+          example: 1
+    AccountPermissionGet:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Id of permission
+          example: 1
+        permission:
+          type: string
+          description: Name of permission
+          example: USER_READ
+    CommentGet:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Id of comment
+          example: 1
+        account:
+          $ref: '#/components/schemas/AccountGetShort'
+        replyToId:
+          type: integer
+          format: int64
+          description: Id of comment this comment is reply to
+          example: 2
+        comment:
+          type: string
+          description: Comment value
+          example: Ha ha funny
+        commentStatistics:
+          $ref: '#/components/schemas/CommentStatisticGet'
+    CommentStatisticGet:
+      type: object
+      properties:
+        commentId:
+          type: integer
+          format: int64
+          description: Id of comment
+          example: 2
+        upVoteCount:
+          type: integer
+          format: int64
+          description: Ammount of positive votes this comment have
+          example: 2
+        downVoteCount:
+          type: integer
+          format: int64
+          description: Ammount of negative votes this comment have
+          example: 2
+    PostGetFull:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Id of post
+          example: 1
+        title:
+          type: string
+          description: Title of post
+          example: Ha ha funny
+        creationDate:
+          type: string
+          format: date
+          description: Creation date of post
+          example: 01.01.2000
+        visible:
+          type: boolean
+          description: Determines if post is publicly visible
+          example: true
+        filesId:
+          type: array
+          description: Array of post object ids
+          items:
+            type: integer
+            format: int64
+            description: Post object id
+            example: 1
+        tags:
+          type: array
+          description: Array of tags
+          items:
+            $ref: '#/components/schemas/TagGet'
+        comments:
+          type: array
+          description: Array of comments
+          items:
+            $ref: '#/components/schemas/CommentGet'
+        account:
+          $ref: '#/components/schemas/AccountGetFull'
+        postStatistics:
+          $ref: '#/components/schemas/PostStatisticGet'
+    PostStatisticGet:
+      type: object
+      properties:
+        postId:
+          type: integer
+          format: int64
+          description: Post statistic id
+          example: 1
+        seenCount:
+          type: integer
+          format: int64
+          description: Ammount of times this post was seen by unique user
+          example: 1
+        upVoteCount:
+          type: integer
+          format: int64
+          description: Ammount of positive votes this post have
+          example: 2
+        downVoteCount:
+          type: integer
+          format: int64
+          description: Ammount of negative votes this post have
+          example: 2
+        favoriteCount:
+          type: integer
+          format: int64
+          description: Ammount of favorites this post have
+          example: 2
+    TagGet:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Id of tag
+          example: 1
+        tag:
+          type: string
+          description: Value of tag
+          example: Cat
+    PostPut:
+      type: object
+      required:
+        - title
+        - tags
+        - visible
+        - order
+      properties:
+        title:
+          type: string
+          description: Title of post
+          example: Ha ha funny
+        tags:
+          type: array
+          description: List of tag ids
+          items:
+            type: integer
+            format: int64
+            example: 1
+            description: Id of tag
+        visible:
+          type: boolean
+          example: true
+          description: Determines if post is visible in public
+        order:
+          type: object
+          description: Map of PostObject Ids and weights determining ordering of post objects returned
+          additionalProperties:
+            type: integer
+            format: int64
+            description: Weight of PostObject, lower values are more important
+    AccountPutPasswordUser:
+      type: object
+      required:
+        - newPassword
+        - oldPassword
+      properties:
+        newPassword:
+          type: string
+          description: New password of user
+          example: SomePassword
+        oldPassword:
+          type: string
+          description: Old password of user
+          example: SomePassword
+    AccountPutPasswordAdmin:
+      type: object
+      required:
+        - newPassword
+      properties:
+        newPassword:
+          type: string
+          description: New password of user
+          example: SomePassword
+    ProfilePictureGet:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Id of profile picture
+          example: 1
+        content:
+          type: string
+          format: byte
+          description: Base64 string
+        mimeType:
+          type: string
+          description: Mime type of profile picture
+          example: image/jpeg
+    AccountRolePut:
+      type: object
+      required:
+        - permissions
+        - role
+      properties:
+        permissions:
+          type: array
+          description: Array of permission ids
+          items:
+            type: integer
+            format: int64
+            description: Permission id
+            example: 1
+        role:
+          type: string
+          description: Role name
+          example: USER
+    AccountRoleGet:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Account role id
+          example: 1
+        role:
+          type: string
+          description: Role name
+          example: USER
+        permissions:
+          type: array
+          description: Array of permissions
+          items:
+            $ref: '#/components/schemas/AccountPermissionGet'
+    PostPost:
+      type: object
+      required:
+        - title
+        - visible
+      properties:
+        title:
+          type: string
+          description: Title of post
+          example: Ha ha funny
+        tags:
+          type: array
+          description: Array of tags id
+          items:
+            type: integer
+            format: int64
+            description: Tag id
+            example: 1
+        visible:
+          type: boolean
+          description: Determines if post is visible publicly
+          example: true
+    CommentPost:
+      type: object
+      required:
+        - comment
+      properties:
+        comment:
+          type: string
+          description: Comment value
+          example: Ha ha funny
+        commentId:
+          type: integer
+          format: int64
+          example: 1
+          description: Comment id to reply to
+    TagFilter:
+      type: object
+      properties:
+        tag:
+          type: string
+          description: Tag to search for
+          example: Cat
+          nullable: true
+    TagPagingAndSortingRequest:
+      type: object
+      required:
+        - page
+        - size
+      properties:
+        page:
+          type: integer
+          format: int32
+          description: Page to display
+          example: 1
+        size:
+          type: integer
+          format: int32
+          description: Size of page to display
+          example: 1
+        sortBy:
+          type: string
+          description: Sort by field
+          example: id
+        sortDirection:
+          type: string
+          description: Sort direction
+          example: asc
+    TagRequest:
+      type: object
+      properties:
+        pagingAndSorting:
+          $ref: '#/components/schemas/TagPagingAndSortingRequest'
+        filters:
+          $ref: '#/components/schemas/TagFilter'
+    TagPageGet:
+      type: object
+      properties:
+        tags:
+          type: array
+          description: Array containing tags
+          items:
+            $ref: '#/components/schemas/TagGet'
+        totalNumberOfPages:
+          type: integer
+          format: int32
+          description: Total number of pages with current filter applied
+          example: 1
+        totalNumberOfElements:
+          type: integer
+          format: int64
+          description: Total number of elements that can be queried
+          example: 1
+        filters:
+          $ref: '#/components/schemas/TagFilter'
+    DateRange:
+      type: object
+      nullable: true
+      required:
+        - min
+        - max
+      properties:
+        min:
+          type: string
+          format: date
+          description: Minimal date to consider
+          example: 01.01.2000
+        max:
+          type: string
+          format: date
+          description: Maximal date to consider
+          example: 01.01.2000
+    LongRange:
+      nullable: true
+      type: object
+      required:
+        - min
+        - max
+      properties:
+        min:
+          type: integer
+          format: int64
+          description: Minimal value to consider
+          example: 1
+        max:
+          type: integer
+          format: int64
+          description: Maximal value to consider
+          example: 5
+    PostFilter:
+      type: object
+      properties:
+        creationDate:
+          $ref: '#/components/schemas/DateRange'
+        comments:
+          $ref: '#/components/schemas/LongRange'
+        upVotes:
+          $ref: '#/components/schemas/LongRange'
+        downVotes:
+          $ref: '#/components/schemas/LongRange'
+        favorites:
+          $ref: '#/components/schemas/LongRange'
+        tags:
+          type: array
+          nullable: true
+          description: Array of tag ids to filter by
+          items:
+            type: integer
+            format: int64
+            description: Tag id
+            example: 1
+        title:
+          type: string
+          nullable: true
+          description: Title of post to filter by
+          example: Ha ha
+    PostPagingAndSortingRequest:
+      type: object
+      required:
+        - page
+        - size
+      properties:
+        page:
+          type: integer
+          format: int32
+          description: Page to display
+          example: 1
+        size:
+          type: integer
+          format: int32
+          description: Size of page to display
+          example: 1
+        sortBy:
+          type: string
+          description: Sort by field
+          example: id
+        sortDirection:
+          type: string
+          description: Sort direction
+          example: asc
+    PostRequest:
+      type: object
+      properties:
+        pagingAndSorting:
+          $ref: '#/components/schemas/PostPagingAndSortingRequest'
+        filters:
+          $ref: '#/components/schemas/PostFilter'
+    PostGetShort:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Id of post
+          example: 1
+        title:
+          type: string
+          description: Title of post
+          example: Ha ha funny
+        firstFileId:
+          type: integer
+          format: int64
+          description: First post object id
+          example: 1
+        account:
+          $ref: '#/components/schemas/AccountGetFull'
+        postStatistics:
+          $ref: '#/components/schemas/PostStatisticGet'
+    PostPageGet:
+      type: object
+      properties:
+        posts:
+          type: array
+          description: Array of posts
+          items:
+            $ref: '#/components/schemas/PostGetShort'
+        totalNumberOfPages:
+          type: integer
+          format: int32
+          description: Total number of pages with current filter applied
+          example: 1
+        totalNumberOfElements:
+          type: integer
+          format: int64
+          description: Total number of elements that can be queried
+          example: 1
+        filters:
+          $ref: '#/components/schemas/PostFilter'
+    AuthenticationRefreshRequest:
+      type: object
+      required:
+        - refreshToken
+      properties:
+        refreshToken:
+          type: string
+          description: Refresh token
+          example: kjdhaslkfjahdslfkjash
+    AuthenticationResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          description: Access token
+          example: kjdhaslkfjahdslfkjash
+        refreshToken:
+          type: string
+          description: Refresh token
+          example: kjdhaslkfjahdslfkjash
+    AccountFilter:
+      type: object
+      properties:
+        creationDate:
+          $ref: '#/components/schemas/DateRange'
+        comments:
+          $ref: '#/components/schemas/LongRange'
+        posts:
+          $ref: '#/components/schemas/LongRange'
+        upVotes:
+          $ref: '#/components/schemas/LongRange'
+        downVotes:
+          $ref: '#/components/schemas/LongRange'
+        accountName:
+          type: string
+          description: Account name to filter by
+          example: BigBen
+          nullable: true
+        enabled:
+          type: boolean
+          description: Show enabled accounts
+          example: true
+          nullable: true
+        banned:
+          type: boolean
+          description: Show banned accounts
+          example: true
+          nullable: true
+    AccountPagingAndSortingRequest:
+      type: object
+      required:
+        - page
+        - size
+      properties:
+        page:
+          type: integer
+          format: int32
+          description: Page to display
+          example: 1
+        size:
+          type: integer
+          format: int32
+          description: Size of page to display
+          example: 1
+        sortBy:
+          type: string
+          description: Sort by field
+          example: id
+        sortDirection:
+          type: string
+          description: Sort direction
+          example: asc
+    AccountRequest:
+      type: object
+      properties:
+        pagingAndSorting:
+          $ref: '#/components/schemas/AccountPagingAndSortingRequest'
+        filters:
+          $ref: '#/components/schemas/AccountFilter'
+    AccountPageGet:
+      type: object
+      properties:
+        accounts:
+          type: array
+          description: Array of accounts
+          items:
+            $ref: '#/components/schemas/AccountGetFull'
+        totalNumberOfPages:
+          type: integer
+          format: int32
+          description: Total number of pages with current filter applied
+          example: 1
+        totalNumberOfElements:
+          type: integer
+          format: int64
+          description: Total number of elements that can be queried
+          example: 1
+        filters:
+          $ref: '#/components/schemas/AccountFilter'
+    AccountPost:
+      type: object
+      required:
+        - name
+        - email
+        - password
+        - profilePictureId
+      properties:
+        name:
+          type: string
+          description: Account name
+          example: BigBen
+        email:
+          type: string
+          format: email
+          description: Account email
+          example: BigBen@gmail.com
+        password:
+          type: string
+          format: password
+          description: Account password
+          example: fkladjdh
+        profilePictureId:
+          type: integer
+          format: int64
+          description: Profile picture id
+          example: 1
+    AccountRolePost:
+      type: object
+      required:
+        - permissions
+        - role
+      properties:
+        permissions:
+          type: array
+          description: Array of permission ids
+          items:
+            type: integer
+            format: int64
+        role:
+          type: string
+          description: Account role
+          example: User
+    PostObjectFullGet:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+          description: Id of post object
+        postId:
+          type: integer
+          format: int64
+          example: 1
+          description: Id of post
+        fileName:
+          type: string
+          example: meme1
+          description: Name of the file
+        content:
+          type: string
+          format: byte
+          description: Base64 string
+        mimeType:
+          type: string
+          example: image/png
+          description: Mime type of file
+        description:
+          type: string
+          example: Some file description
+          description: Description of file

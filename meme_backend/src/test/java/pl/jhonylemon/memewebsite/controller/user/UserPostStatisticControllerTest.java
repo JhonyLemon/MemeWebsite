@@ -19,7 +19,7 @@ import pl.jhonylemon.memewebsite.entity.Account;
 import pl.jhonylemon.memewebsite.repository.AccountPermissionRepository;
 import pl.jhonylemon.memewebsite.repository.AccountRepository;
 import pl.jhonylemon.memewebsite.repository.AccountRoleRepository;
-import pl.jhonylemon.memewebsite.repository.ProfilePictureRepository;
+import pl.jhonylemon.memewebsite.repository.ProfilePhotoRepository;
 
 import java.time.LocalDate;
 
@@ -39,7 +39,7 @@ class UserPostStatisticControllerTest {
     @Autowired
     AccountRepository accountRepository;
     @Autowired
-    ProfilePictureRepository profilePictureRepository;
+    ProfilePhotoRepository profilePhotoRepository;
     @Autowired
     AccountPermissionRepository accountPermissionRepository;
     @Autowired
@@ -63,7 +63,7 @@ class UserPostStatisticControllerTest {
     @Test
     void setVoteStatisticTest_Success() throws Exception {
         Account account = Account.builder()
-                .profilePicture(profilePictureRepository.findByDefaultProfileTrue().orElse(null))
+                .profilePicture(profilePhotoRepository.findByDefaultProfileTrue().orElse(null))
                 .password("123456789")
                 .name("Gacek")
                 .email("Gacek@gmail.com")
@@ -94,42 +94,9 @@ class UserPostStatisticControllerTest {
             password = "123456789"
     )
     @Test
-    void setSeenStatisticTest_Success() throws Exception {
-        Account account = Account.builder()
-                .profilePicture(profilePictureRepository.findByDefaultProfileTrue().orElse(null))
-                .password("123456789")
-                .name("Gacek")
-                .email("Gacek@gmail.com")
-                .enabled(true)
-                .banned(false)
-                .accountRole(accountRoleRepository.findByDefaultRoleTrue().orElse(null))
-                .creationDate(LocalDate.now())
-                .build();
-
-        accountRepository.save(account);
-
-        mockMvc.perform(MockMvcRequestBuilders
-                        .post(ApiPaths.User.USER_PATH + ApiPaths.PostStatistic.POST_STATISTIC_PATH +
-                                ApiPaths.PostStatistic.POST_STATISTIC_SET_SEEN,account.getId(),1L)
-                        .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andExpect(status().isOk());
-    }
-
-    @WithMockUser(
-            authorities = {
-                    "USER_ADD",
-                    "USER_READ",
-                    "USER_EDIT",
-                    "USER_DELETE"
-            },
-            username = "Gacek@gmail.com",
-            password = "123456789"
-    )
-    @Test
     void setFavoriteStatisticTest_Success() throws Exception {
         Account account = Account.builder()
-                .profilePicture(profilePictureRepository.findByDefaultProfileTrue().orElse(null))
+                .profilePicture(profilePhotoRepository.findByDefaultProfileTrue().orElse(null))
                 .password("123456789")
                 .name("Gacek")
                 .email("Gacek@gmail.com")

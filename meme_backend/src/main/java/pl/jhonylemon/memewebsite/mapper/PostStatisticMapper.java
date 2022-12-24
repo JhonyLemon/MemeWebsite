@@ -6,6 +6,7 @@ import org.mapstruct.ReportingPolicy;
 import pl.jhonylemon.memewebsite.dto.poststatistic.PostStatisticGetDto;
 import pl.jhonylemon.memewebsite.entity.Post;
 import pl.jhonylemon.memewebsite.entity.PostStatistic;
+import pl.jhonylemon.memewebsite.model.PostStatisticGetModelApi;
 
 import java.util.List;
 import java.util.Objects;
@@ -61,5 +62,7 @@ public interface PostStatisticMapper {
         );
         return postStatisticGetDto;
     }
+
+    PostStatisticGetModelApi postStatisticsGetDtoToModelApi(PostStatisticGetDto postStatisticGetDto);
 
 }

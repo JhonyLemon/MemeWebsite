@@ -15,6 +15,9 @@ import pl.jhonylemon.memewebsite.exception.BusinessException;
 import static pl.jhonylemon.memewebsite.service.account.util.AccountSpecification.*;
 
 public class AccountUtil {
+
+    private AccountUtil(){}
+
     public static PageRequest createPageRequest(AccountPagingAndSortingRequestDto requestDto) {
         return PageRequest.of(requestDto.getPage(), requestDto.getSize(),
                 getSorter(requestDto));
@@ -37,6 +40,12 @@ public class AccountUtil {
         return accountFilterDto != null ?
                 hasCreationDate(accountFilterDto.getCreationDate())
                         .and(hasNumberOfPosts(accountFilterDto.getPosts()))
+                        .and(hasNumberOfComments(accountFilterDto.getComments()))
+                        .and(hasNumberOfUpVotes(accountFilterDto.getUpVotes()))
+                        .and(hasNumberOfDownVotes(accountFilterDto.getDownVotes()))
+                        .and(hasAccountName(accountFilterDto.getAccountName()))
+                        .and(hasAccountEnabled(accountFilterDto.getEnabled()))
+                        .and(hasAccountBanned(accountFilterDto.getBanned()))
                 : Specification.where(null);
     }
 

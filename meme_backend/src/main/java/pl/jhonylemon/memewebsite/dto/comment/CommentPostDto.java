@@ -8,6 +8,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class CommentPostDto {
-    private Long accountId;
+    private Long commentId;
     private String comment;
 }

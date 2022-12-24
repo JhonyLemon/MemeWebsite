@@ -16,12 +16,11 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import pl.jhonylemon.memewebsite.controller.routes.ApiPaths;
 import pl.jhonylemon.memewebsite.dto.account.AccountPutPasswordDto;
-import pl.jhonylemon.memewebsite.dto.accountpermission.AccountPermissionPutDto;
 import pl.jhonylemon.memewebsite.entity.Account;
 import pl.jhonylemon.memewebsite.repository.AccountPermissionRepository;
 import pl.jhonylemon.memewebsite.repository.AccountRepository;
 import pl.jhonylemon.memewebsite.repository.AccountRoleRepository;
-import pl.jhonylemon.memewebsite.repository.ProfilePictureRepository;
+import pl.jhonylemon.memewebsite.repository.ProfilePhotoRepository;
 
 import java.time.LocalDate;
 
@@ -40,7 +39,7 @@ class AdminAccountControllerTest {
     @Autowired
     public AccountRepository accountRepository;
     @Autowired
-    public ProfilePictureRepository profilePictureRepository;
+    public ProfilePhotoRepository profilePhotoRepository;
 
     @Autowired
     public AccountPermissionRepository accountPermissionRepository;
@@ -65,7 +64,7 @@ class AdminAccountControllerTest {
     void updateAccountPasswordTest_Success() throws Exception {
 
         Account account = Account.builder()
-                .profilePicture(profilePictureRepository.findByDefaultProfileTrue().orElse(null))
+                .profilePicture(profilePhotoRepository.findByDefaultProfileTrue().orElse(null))
                 .password("123456789")
                 .name("Gacek")
                 .email("Gacek@gmail.com")
@@ -102,7 +101,7 @@ class AdminAccountControllerTest {
     )
     void deleteAccountTest_Success() throws Exception {
         Account account = Account.builder()
-                .profilePicture(profilePictureRepository.findByDefaultProfileTrue().orElse(null))
+                .profilePicture(profilePhotoRepository.findByDefaultProfileTrue().orElse(null))
                 .password("123456789")
                 .name("Gacek")
                 .email("Gacek@gmail.com")
@@ -115,7 +114,7 @@ class AdminAccountControllerTest {
         accountRepository.save(account);
 
         Account account1 = Account.builder()
-                .profilePicture(profilePictureRepository.findByDefaultProfileTrue().orElse(null))
+                .profilePicture(profilePhotoRepository.findByDefaultProfileTrue().orElse(null))
                 .password("1234567890")
                 .name("Gacek")
                 .email("Gacek1@gmail.com")
@@ -148,7 +147,7 @@ class AdminAccountControllerTest {
     )
     void getAccountTest_Success() throws Exception {
         Account account = Account.builder()
-                .profilePicture(profilePictureRepository.findByDefaultProfileTrue().orElse(null))
+                .profilePicture(profilePhotoRepository.findByDefaultProfileTrue().orElse(null))
                 .password("123456789")
                 .name("Gacek")
                 .email("Gacek@gmail.com")
@@ -181,7 +180,7 @@ class AdminAccountControllerTest {
     )
     void getAccountPermissionTest_Success() throws Exception {
         Account account = Account.builder()
-                .profilePicture(profilePictureRepository.findByDefaultProfileTrue().orElse(null))
+                .profilePicture(profilePhotoRepository.findByDefaultProfileTrue().orElse(null))
                 .password("123456789")
                 .name("Gacek")
                 .email("Gacek@gmail.com")
@@ -214,7 +213,7 @@ class AdminAccountControllerTest {
     )
     void changeAccountRoleTest_Success() throws Exception {
         Account account = Account.builder()
-                .profilePicture(profilePictureRepository.findByDefaultProfileTrue().orElse(null))
+                .profilePicture(profilePhotoRepository.findByDefaultProfileTrue().orElse(null))
                 .password("123456789")
                 .name("Gacek")
                 .email("Gacek@gmail.com")
