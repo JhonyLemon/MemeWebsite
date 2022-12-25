@@ -34,7 +34,7 @@ public class PostUtil {
                 Sort.by(sortBy.getFieldName()).descending();
     }
 
-    public static Specification<Post> getSpecification(PostFilterDto postFilterDto) {
+    public static Specification<Post> getSpecification(PostFilterDto postFilterDto,Long accountId) {
         return postFilterDto != null ?
                 isPublic()
                         .and(hasTitleLike(postFilterDto.getTitle()))
@@ -46,6 +46,7 @@ public class PostUtil {
                         .and(hasTags(postFilterDto.getTags()))
                         .and(isPublished())
                         .and(isPublic())
+                        .and(isYourFavorited(postFilterDto.getShowYourFavorite(),accountId))
                 : isPublic();
     }
 

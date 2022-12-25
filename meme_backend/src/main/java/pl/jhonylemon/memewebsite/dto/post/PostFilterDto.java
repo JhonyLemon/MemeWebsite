@@ -19,4 +19,5 @@ public class PostFilterDto {
     private LongRangeDto favorites;
     private List<Long> tags;
     private String title;
+    private Boolean showYourFavorite;
 }

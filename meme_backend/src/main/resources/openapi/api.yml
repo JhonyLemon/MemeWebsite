@@ -1778,6 +1778,11 @@ components:
           nullable: true
           description: Title of post to filter by
           example: Ha ha
+        showYourFavorite:
+          type: boolean
+          description: Show your favorite posts
+          example: true
+          nullable: true
     PostPagingAndSortingRequest:
       type: object
       required:

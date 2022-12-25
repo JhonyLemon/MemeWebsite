@@ -126,6 +126,21 @@ public class PostSpecification {
         };
     }
 
+    public static Specification<Post> isYourFavorited(Boolean showFavorited,Long accountId) {
+        return (root, query, criteriaBuilder) -> {
+            if (accountId != null && showFavorited !=null) {
+                Join j = root.join("postStatistics");
+                query.where(
+                        criteriaBuilder.equal(j.get("favorite"),showFavorited),
+                        criteriaBuilder.equal(j.join("account").get("id"),accountId)
+                );
+                return query.getRestriction();
+            } else {
+                return criteriaBuilder.conjunction();
+            }
+        };
+    }
+
     private static String getStringInLikeOperationFormat(String string) {
         return "%" + string.toLowerCase() + "%";
     }

@@ -119,8 +119,10 @@ public class PostService {
     public PostPageGetDto getAllPostsWithoutContent(PostRequestDto postToPostRequestDto) {
         validateRequest(postToPostRequestDto);
 
+        Account account = userDetailsService.currentUser();
+
         Page<Post> posts = postRepository
-                .findAll(PostUtil.getSpecification(postToPostRequestDto.getFilters()),
+                .findAll(PostUtil.getSpecification(postToPostRequestDto.getFilters(),account==null ? null : account.getId()),
                         PostUtil.createPageRequest(postToPostRequestDto.getPagingAndSorting()));
 
         List<PostGetShortDto> accountGetFullDtos = new ArrayList<>();
@@ -363,8 +365,10 @@ public class PostService {
     public pl.jhonylemon.memewebsite.dto.post.v2.PostPageGetDto getAllPostsWithContent(PostRequestDto postToPostRequestDto) {
         validateRequest(postToPostRequestDto);
 
+        Account account = userDetailsService.currentUser();
+
         Page<Post> posts = postRepository
-                .findAll(PostUtil.getSpecification(postToPostRequestDto.getFilters()),
+                .findAll(PostUtil.getSpecification(postToPostRequestDto.getFilters(), account==null ? null : account.getId()),
                         PostUtil.createPageRequest(postToPostRequestDto.getPagingAndSorting()));
 
         List<pl.jhonylemon.memewebsite.dto.post.v2.PostGetShortDto> accountGetFullDtos = new ArrayList<>();
