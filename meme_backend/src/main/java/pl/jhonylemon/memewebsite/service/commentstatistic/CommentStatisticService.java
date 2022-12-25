@@ -6,6 +6,7 @@ import pl.jhonylemon.memewebsite.dto.commentstatistic.CommentStatisticGetDto;
 import pl.jhonylemon.memewebsite.entity.Account;
 import pl.jhonylemon.memewebsite.entity.Comment;
 import pl.jhonylemon.memewebsite.entity.CommentStatistic;
+import pl.jhonylemon.memewebsite.exception.authentication.NotEnoughPermissionsException;
 import pl.jhonylemon.memewebsite.exception.comment.CommentInvalidParamException;
 import pl.jhonylemon.memewebsite.exception.comment.CommentNotFoundException;
 import pl.jhonylemon.memewebsite.exception.poststatistic.PostStatisticInvalidParamException;
@@ -43,6 +44,10 @@ public class CommentStatisticService {
         }
 
         Account account = userDetailsService.currentUser();
+
+        if(account==null){
+            throw new NotEnoughPermissionsException();
+        }
 
         Optional<CommentStatistic> postStatistic = commentStatisticRepository.findByComment_IdAndAccount_Id(commentId,account.getId());
 

@@ -1,4 +1,4 @@
-package pl.jhonylemon.memewebsite.controller.admin;
+package pl.jhonylemon.memewebsite.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
@@ -15,9 +15,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import pl.jhonylemon.memewebsite.controller.routes.ApiPaths;
-import pl.jhonylemon.memewebsite.repository.AccountPermissionRepository;
-import pl.jhonylemon.memewebsite.repository.AccountRepository;
-import pl.jhonylemon.memewebsite.repository.ProfilePhotoRepository;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -26,17 +23,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
 @Transactional
-class AdminAccountPermissionControllerTest {
+class AccountPermissionControllerTest{
+
 
     @Autowired
     MockMvc mockMvc;
-
-    @Autowired
-    public AccountRepository accountRepository;
-    @Autowired
-    public ProfilePhotoRepository profilePhotoRepository;
-    @Autowired
-    public AccountPermissionRepository accountPermissionRepository;
 
     ObjectMapper objectMapper;
 
@@ -50,12 +41,25 @@ class AdminAccountPermissionControllerTest {
             "ADMIN_ADD",
             "ADMIN_READ",
             "ADMIN_EDIT",
-            "ADMIN_DELETE"
-    })
+            "ADMIN_DELETE",
+            "MODERATOR_ADD",
+            "MODERATOR_READ",
+            "MODERATOR_EDIT",
+            "MODERATOR_DELETE",
+            "USER_ADD",
+            "USER_READ",
+            "USER_EDIT",
+            "USER_DELETE"
+    },
+            username = "Gacek@gmail.com",
+            password = "123456789"
+    )
     void getPermissionTest_Success() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
-                        .get( ApiPaths.AccountPermission.ACCOUNT_PERMISSION_PATH +
-                                ApiPaths.AccountPermission.ACCOUNT_PERMISSION_GET, 1L)
+                        .get(
+                                ApiPaths.Version.v1 + ApiPaths.AccountPermission.ACCOUNT_PERMISSION_PATH + ApiPaths.AccountPermission.ACCOUNT_PERMISSION_ID,
+                                1L
+                        )
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk());
@@ -66,15 +70,26 @@ class AdminAccountPermissionControllerTest {
             "ADMIN_ADD",
             "ADMIN_READ",
             "ADMIN_EDIT",
-            "ADMIN_DELETE"
-    })
+            "ADMIN_DELETE",
+            "MODERATOR_ADD",
+            "MODERATOR_READ",
+            "MODERATOR_EDIT",
+            "MODERATOR_DELETE",
+            "USER_ADD",
+            "USER_READ",
+            "USER_EDIT",
+            "USER_DELETE"
+    },
+            username = "Gacek@gmail.com",
+            password = "123456789"
+    )
     void getPermissionsTest_Success() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
-                        .get(ApiPaths.AccountPermission.ACCOUNT_PERMISSION_PATH +
-                                ApiPaths.AccountPermission.ACCOUNT_PERMISSION_GET_ALL_PAGINATED)
+                        .get(
+                                ApiPaths.Version.v1 + ApiPaths.AccountPermission.ACCOUNT_PERMISSION_PATH + ApiPaths.AccountPermission.ACCOUNT_PERMISSION_GET_ALL_PAGINATED
+                        )
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk());
     }
-
 }

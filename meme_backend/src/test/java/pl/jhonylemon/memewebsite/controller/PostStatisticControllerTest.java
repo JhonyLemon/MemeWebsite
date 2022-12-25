@@ -1,6 +1,7 @@
-package pl.jhonylemon.memewebsite.controller.user;
+package pl.jhonylemon.memewebsite.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -10,90 +11,97 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RestController;
+import pl.jhonylemon.memewebsite.api.PostStatisticApi;
 import pl.jhonylemon.memewebsite.controller.routes.ApiPaths;
 import pl.jhonylemon.memewebsite.entity.Account;
-import pl.jhonylemon.memewebsite.repository.AccountPermissionRepository;
+import pl.jhonylemon.memewebsite.mapper.PostStatisticMapper;
+import pl.jhonylemon.memewebsite.model.PostStatisticGetModelApi;
 import pl.jhonylemon.memewebsite.repository.AccountRepository;
 import pl.jhonylemon.memewebsite.repository.AccountRoleRepository;
 import pl.jhonylemon.memewebsite.repository.ProfilePhotoRepository;
+import pl.jhonylemon.memewebsite.service.poststatistic.PostStatisticService;
 
 import java.time.LocalDate;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@AutoConfigureMockMvc
 @SpringBootTest
+@AutoConfigureMockMvc
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
 @Transactional
-class UserPostStatisticControllerTest {
+class PostStatisticControllerTest {
 
     @Autowired
     MockMvc mockMvc;
-    ObjectMapper objectMapper;
 
     @Autowired
-    AccountRepository accountRepository;
+    public AccountRepository accountRepository;
     @Autowired
-    ProfilePhotoRepository profilePhotoRepository;
-    @Autowired
-    AccountPermissionRepository accountPermissionRepository;
+    public ProfilePhotoRepository profilePhotoRepository;
+
     @Autowired
     public AccountRoleRepository accountRoleRepository;
+
+    ObjectMapper objectMapper;
 
     @BeforeAll
     void beforeAll() {
         objectMapper = new ObjectMapper();
     }
 
-    @WithMockUser(
-            authorities = {
-                    "USER_ADD",
-                    "USER_READ",
-                    "USER_EDIT",
-                    "USER_DELETE"
-            },
+    @Test
+    @WithMockUser(authorities = {
+            "ADMIN_ADD",
+            "ADMIN_READ",
+            "ADMIN_EDIT",
+            "ADMIN_DELETE",
+            "MODERATOR_ADD",
+            "MODERATOR_READ",
+            "MODERATOR_EDIT",
+            "MODERATOR_DELETE",
+            "USER_ADD",
+            "USER_READ",
+            "USER_EDIT",
+            "USER_DELETE"
+    },
             username = "Gacek@gmail.com",
             password = "123456789"
     )
-    @Test
-    void setVoteStatisticTest_Success() throws Exception {
-        Account account = Account.builder()
-                .profilePicture(profilePhotoRepository.findByDefaultProfileTrue().orElse(null))
-                .password("123456789")
-                .name("Gacek")
-                .email("Gacek@gmail.com")
-                .enabled(true)
-                .banned(false)
-                .accountRole(accountRoleRepository.findByDefaultRoleTrue().orElse(null))
-                .creationDate(LocalDate.now())
-                .build();
-
-        accountRepository.save(account);
-
+    void getPostStatisticTest_Success() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
-                        .post( ApiPaths.PostStatistic.POST_STATISTIC_PATH +
-                                ApiPaths.PostStatistic.POST_STATISTIC_SET_VOTE,account.getId(),1L,true)
+                        .get(ApiPaths.Version.v1 + ApiPaths.Post.POST_PATH + ApiPaths.Post.POST_ID + ApiPaths.PostStatistic.POST_STATISTIC_PATH , 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk());
     }
 
-    @WithMockUser(
-            authorities = {
-                    "USER_ADD",
-                    "USER_READ",
-                    "USER_EDIT",
-                    "USER_DELETE"
-            },
+    @Test
+    @WithMockUser(authorities = {
+            "ADMIN_ADD",
+            "ADMIN_READ",
+            "ADMIN_EDIT",
+            "ADMIN_DELETE",
+            "MODERATOR_ADD",
+            "MODERATOR_READ",
+            "MODERATOR_EDIT",
+            "MODERATOR_DELETE",
+            "USER_ADD",
+            "USER_READ",
+            "USER_EDIT",
+            "USER_DELETE"
+    },
             username = "Gacek@gmail.com",
             password = "123456789"
     )
-    @Test
     void setFavoriteStatisticTest_Success() throws Exception {
         Account account = Account.builder()
                 .profilePicture(profilePhotoRepository.findByDefaultProfileTrue().orElse(null))
@@ -109,11 +117,48 @@ class UserPostStatisticControllerTest {
         accountRepository.save(account);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .post( ApiPaths.PostStatistic.POST_STATISTIC_PATH +
-                                ApiPaths.PostStatistic.POST_STATISTIC_SET_FAVORITE,account.getId(),1L,true)
+                        .put( ApiPaths.Version.v1 + ApiPaths.Post.POST_PATH + ApiPaths.Post.POST_ID + ApiPaths.PostStatistic.POST_STATISTIC_PATH + ApiPaths.PostStatistic.POST_STATISTIC_SET_FAVORITE,1L,true)
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk());
     }
 
+    @Test
+    @WithMockUser(authorities = {
+            "ADMIN_ADD",
+            "ADMIN_READ",
+            "ADMIN_EDIT",
+            "ADMIN_DELETE",
+            "MODERATOR_ADD",
+            "MODERATOR_READ",
+            "MODERATOR_EDIT",
+            "MODERATOR_DELETE",
+            "USER_ADD",
+            "USER_READ",
+            "USER_EDIT",
+            "USER_DELETE"
+    },
+            username = "Gacek@gmail.com",
+            password = "123456789"
+    )
+    void setVoteStatisticTest_Success() throws Exception {
+        Account account = Account.builder()
+                .profilePicture(profilePhotoRepository.findByDefaultProfileTrue().orElse(null))
+                .password("123456789")
+                .name("Gacek")
+                .email("Gacek@gmail.com")
+                .enabled(true)
+                .banned(false)
+                .accountRole(accountRoleRepository.findByDefaultRoleTrue().orElse(null))
+                .creationDate(LocalDate.now())
+                .build();
+
+        accountRepository.save(account);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .put( ApiPaths.Version.v1 + ApiPaths.Post.POST_PATH + ApiPaths.Post.POST_ID + ApiPaths.PostStatistic.POST_STATISTIC_PATH + ApiPaths.PostStatistic.POST_STATISTIC_SET_VOTE,1L,true)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk());
+    }
 }

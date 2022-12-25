@@ -163,7 +163,7 @@ public class AccountService {
     @Transactional
     public void deleteAccountSelf() {
         Account account = userDetailsService.currentUser();
-        if(accountRepository.isAccountAdmin(account.getId())) {
+        if(account == null || accountRepository.isAccountAdmin(account.getId())) {
             throw new AuthorizationFailedException();
         }
         accountRepository.delete(account);

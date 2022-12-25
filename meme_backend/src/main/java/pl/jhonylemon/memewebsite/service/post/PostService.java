@@ -243,7 +243,7 @@ public class PostService {
             throw new PostNotFoundException();
         });
 
-        if (!post.getFiles().isEmpty()) {
+        if (post.getFiles().isEmpty()) {
             throw new PostInvalidParamException("Post must contain at least one photo");
         }
 

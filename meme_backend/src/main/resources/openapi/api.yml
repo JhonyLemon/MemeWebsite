@@ -1027,6 +1027,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/AccountRoleGet'
+  /v1/accountrole:
     post:
       summary: Creates new account role
       description: Requires ADMIN_ADD permission
