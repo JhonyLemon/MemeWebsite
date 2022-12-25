@@ -69,7 +69,7 @@ class ModeratorAccountControllerTest {
         accountRepository.save(account);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .put(ApiPaths.Moderator.MODERATOR_PATH + ApiPaths.Account.ACCOUNT_PATH +
+                        .put(ApiPaths.Account.ACCOUNT_PATH +
                                 ApiPaths.Account.ACCOUNT_UPDATE_PROFILE_PHOTO, account.getId(),1L)
                         .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -97,7 +97,7 @@ class ModeratorAccountControllerTest {
         accountRepository.save(account);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .put(ApiPaths.Moderator.MODERATOR_PATH + ApiPaths.Account.ACCOUNT_PATH +
+                        .put( ApiPaths.Account.ACCOUNT_PATH +
                                 ApiPaths.Account.ACCOUNT_UPDATE_NAME, account.getId(),"Gacek1")
                         .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -126,7 +126,7 @@ class ModeratorAccountControllerTest {
         accountRepository.save(account);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .put(ApiPaths.Moderator.MODERATOR_PATH + ApiPaths.Account.ACCOUNT_PATH +
+                        .put(ApiPaths.Account.ACCOUNT_PATH +
                                 ApiPaths.Account.ACCOUNT_BAN, account.getId(),true)
                         .contentType(MediaType.APPLICATION_JSON)
                 )

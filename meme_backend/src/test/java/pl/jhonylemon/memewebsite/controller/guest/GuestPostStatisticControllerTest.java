@@ -36,7 +36,7 @@ class GuestPostStatisticControllerTest {
     @Test
     void getStatisticTest_Success() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
-                        .get(ApiPaths.Guest.GUEST_PATH + ApiPaths.PostStatistic.POST_STATISTIC_PATH +
+                        .get(ApiPaths.PostStatistic.POST_STATISTIC_PATH +
                                 ApiPaths.PostStatistic.POST_STATISTIC_GET, 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                 )

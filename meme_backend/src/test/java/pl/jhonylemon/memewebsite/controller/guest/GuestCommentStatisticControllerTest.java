@@ -41,7 +41,7 @@ class GuestCommentStatisticControllerTest {
     @Test
     void getStatisticTest_Success() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
-                        .get(ApiPaths.Guest.GUEST_PATH + ApiPaths.CommentStatistic.COMMENT_STATISTIC_PATH +
+                        .get(ApiPaths.CommentStatistic.COMMENT_STATISTIC_PATH +
                                 ApiPaths.CommentStatistic.POST_STATISTIC_GET, 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                 )

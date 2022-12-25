@@ -69,8 +69,7 @@ class ModeratorCommentControllerTest {
         commentRepository.save(comment);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .delete(ApiPaths.Moderator.MODERATOR_PATH + ApiPaths.Comment.COMMENT_PATH +
-                                ApiPaths.Comment.COMMENT_REMOVE, comment.getId())
+                        .delete( ApiPaths.Comment.COMMENT_PATH , comment.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk());

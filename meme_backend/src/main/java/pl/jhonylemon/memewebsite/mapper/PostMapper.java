@@ -26,15 +26,20 @@ import pl.jhonylemon.memewebsite.model.*;
 )
 public interface PostMapper {
 
-    PostGetShortDto postToGetShortDto(Post post);
+    pl.jhonylemon.memewebsite.dto.post.v1.PostGetShortDto postToV1GetShortDto(Post post);
+    pl.jhonylemon.memewebsite.dto.post.v2.PostGetShortDto postToV2GetShortDto(Post post);
 
-    PostGetFullDto postToGetFullDto(Post post);
+    pl.jhonylemon.memewebsite.dto.post.v1.PostGetFullDto postToV1GetFullDto(Post post);
+    pl.jhonylemon.memewebsite.dto.post.v2.PostGetFullDto postToV2GetFullDto(Post post);
 
     PostPostDto postModelApiTo(PostPostModelApi postPostModelApi);
-    PostGetFullModelApi postToGetFullModelApi(PostGetFullDto postGetFullDto);
+    PostGetFullV1ModelApi postToV1GetFullModelApi(pl.jhonylemon.memewebsite.dto.post.v1.PostGetFullDto postGetFullDto);
+    PostGetFullV2ModelApi postToV2GetFullModelApi(pl.jhonylemon.memewebsite.dto.post.v2.PostGetFullDto postGetFullDto);
+
     PostPutDto postModelApiTo(PostPutModelApi postPutModelApi);
 
-    PostPageGetModelApi postToPostPageGetModelApi(PostPageGetDto postPageGetDto);
+    PostPageGetV1ModelApi postToV1PostPageGetModelApi(pl.jhonylemon.memewebsite.dto.post.v1.PostPageGetDto postPageGetDto);
+    PostPageGetV2ModelApi postToV2PostPageGetModelApi(pl.jhonylemon.memewebsite.dto.post.v2.PostPageGetDto postPageGetDto);
 
     PostRequestDto postToPostRequestDto(PostRequestModelApi postRequestModelApi);
 

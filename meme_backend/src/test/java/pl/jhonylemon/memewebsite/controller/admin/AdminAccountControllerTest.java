@@ -80,7 +80,7 @@ class AdminAccountControllerTest {
         accountPutPasswordDto.setNewPassword("987654321");
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .put(ApiPaths.Admin.ADMIN_PATH + ApiPaths.Account.ACCOUNT_PATH +
+                        .put(ApiPaths.Account.ACCOUNT_PATH +
                                 ApiPaths.Account.ACCOUNT_UPDATE_PASSWORD, account.getId())
                         .content(objectMapper.writeValueAsString(accountPutPasswordDto))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -127,7 +127,7 @@ class AdminAccountControllerTest {
         accountRepository.save(account1);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .delete(ApiPaths.Admin.ADMIN_PATH + ApiPaths.Account.ACCOUNT_PATH +
+                        .delete(ApiPaths.Account.ACCOUNT_PATH +
                                 ApiPaths.Account.ACCOUNT_DELETE, account1.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -160,7 +160,7 @@ class AdminAccountControllerTest {
         accountRepository.save(account);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .get(ApiPaths.Admin.ADMIN_PATH + ApiPaths.Account.ACCOUNT_PATH +
+                        .get( ApiPaths.Account.ACCOUNT_PATH +
                                 ApiPaths.Account.ACCOUNT_GET, account.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -193,7 +193,7 @@ class AdminAccountControllerTest {
         accountRepository.save(account);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .get(ApiPaths.Admin.ADMIN_PATH + ApiPaths.Account.ACCOUNT_PATH +
+                        .get( ApiPaths.Account.ACCOUNT_PATH +
                                 ApiPaths.Account.ACCOUNT_GET_ROLE, account.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -226,7 +226,7 @@ class AdminAccountControllerTest {
         accountRepository.save(account);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .put(ApiPaths.Admin.ADMIN_PATH + ApiPaths.Account.ACCOUNT_PATH +
+                        .put(ApiPaths.Account.ACCOUNT_PATH +
                                 ApiPaths.Account.ACCOUNT_UPDATE_ROLE, account.getId(),1L)
                         .contentType(MediaType.APPLICATION_JSON)
                 )

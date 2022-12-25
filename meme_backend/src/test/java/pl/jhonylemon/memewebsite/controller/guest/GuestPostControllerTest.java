@@ -41,8 +41,7 @@ class GuestPostControllerTest {
         postRequestDto.setDefaultPagingAndSorting();
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .post(ApiPaths.Guest.GUEST_PATH + ApiPaths.Post.POST_PATH +
-                                ApiPaths.Post.POST_GET_ALL_PAGINATED, 1L)
+                        .post( ApiPaths.Post.POST_PATH , 1L)
                         .content(objectMapper.writeValueAsString(postRequestDto))
                         .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -52,8 +51,7 @@ class GuestPostControllerTest {
     @Test
     void getPostTest_Success() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
-                        .get(ApiPaths.Guest.GUEST_PATH + ApiPaths.Post.POST_PATH +
-                                ApiPaths.Post.POST_GET, 1L)
+                        .get(ApiPaths.Post.POST_PATH , 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk());

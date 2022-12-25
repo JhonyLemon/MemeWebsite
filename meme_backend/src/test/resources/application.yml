@@ -1,8 +1,11 @@
 spring:
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DATABASE:memewebsite}
-    username: ${DB_USER:meem}
-    password: ${DB_PASSWORD:meem}
+    url: 'jdbc:h2:mem:db;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH'
+    username: sa
+    password: sa
+    driverClassName: org.h2.Driver
+  flyway:
+    locations: 'classpath:/db/testmigration'
 jwt:
   secretKeyAccessToken: someWeakSecretPassword1234
   secretKeyRefreshToken: someWeakSecretPassword1234

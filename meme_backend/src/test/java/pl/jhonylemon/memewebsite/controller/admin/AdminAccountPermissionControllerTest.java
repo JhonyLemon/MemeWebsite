@@ -54,7 +54,7 @@ class AdminAccountPermissionControllerTest {
     })
     void getPermissionTest_Success() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
-                        .get(ApiPaths.Admin.ADMIN_PATH + ApiPaths.AccountPermission.ACCOUNT_PERMISSION_PATH +
+                        .get( ApiPaths.AccountPermission.ACCOUNT_PERMISSION_PATH +
                                 ApiPaths.AccountPermission.ACCOUNT_PERMISSION_GET, 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -70,7 +70,7 @@ class AdminAccountPermissionControllerTest {
     })
     void getPermissionsTest_Success() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
-                        .get(ApiPaths.Admin.ADMIN_PATH + ApiPaths.AccountPermission.ACCOUNT_PERMISSION_PATH +
+                        .get(ApiPaths.AccountPermission.ACCOUNT_PERMISSION_PATH +
                                 ApiPaths.AccountPermission.ACCOUNT_PERMISSION_GET_ALL_PAGINATED)
                         .contentType(MediaType.APPLICATION_JSON)
                 )

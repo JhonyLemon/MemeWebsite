@@ -62,7 +62,7 @@ class ModeratorProfilePhotoControllerTest {
                 ).readAllBytes()
                 );
 
-        mockMvc.perform(MockMvcRequestBuilders.multipart(ApiPaths.Moderator.MODERATOR_PATH + ApiPaths.ProfilePicture.PROFILE_PICTURE_PATH +
+        mockMvc.perform(MockMvcRequestBuilders.multipart( ApiPaths.ProfilePicture.PROFILE_PICTURE_PATH +
                                 ApiPaths.ProfilePicture.PROFILE_PICTURE_ADD)
                         .file(photo))
                 .andExpect(status().isOk());
@@ -77,7 +77,7 @@ class ModeratorProfilePhotoControllerTest {
     @Test
     void changeDefaultProfilePictureTest_Success() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
-                        .put(ApiPaths.Moderator.MODERATOR_PATH + ApiPaths.ProfilePicture.PROFILE_PICTURE_PATH +
+                        .put( ApiPaths.ProfilePicture.PROFILE_PICTURE_PATH +
                                 ApiPaths.ProfilePicture.PROFILE_PICTURE_CHANGE, 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -108,7 +108,7 @@ class ModeratorProfilePhotoControllerTest {
         profilePhotoRepository.save(profilePicture);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .delete(ApiPaths.Moderator.MODERATOR_PATH + ApiPaths.ProfilePicture.PROFILE_PICTURE_PATH +
+                        .delete(ApiPaths.ProfilePicture.PROFILE_PICTURE_PATH +
                                 ApiPaths.ProfilePicture.PROFILE_PICTURE_DELETE, profilePicture.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                 )

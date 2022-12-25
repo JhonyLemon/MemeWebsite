@@ -76,7 +76,7 @@ class UserPostStatisticControllerTest {
         accountRepository.save(account);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .post(ApiPaths.User.USER_PATH + ApiPaths.PostStatistic.POST_STATISTIC_PATH +
+                        .post( ApiPaths.PostStatistic.POST_STATISTIC_PATH +
                                 ApiPaths.PostStatistic.POST_STATISTIC_SET_VOTE,account.getId(),1L,true)
                         .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -109,7 +109,7 @@ class UserPostStatisticControllerTest {
         accountRepository.save(account);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .post(ApiPaths.User.USER_PATH + ApiPaths.PostStatistic.POST_STATISTIC_PATH +
+                        .post( ApiPaths.PostStatistic.POST_STATISTIC_PATH +
                                 ApiPaths.PostStatistic.POST_STATISTIC_SET_FAVORITE,account.getId(),1L,true)
                         .contentType(MediaType.APPLICATION_JSON)
                 )

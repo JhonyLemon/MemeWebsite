@@ -29,10 +29,10 @@ public class CommentStatisticController implements CommentStatisticApi {
 
     @Override
     @PreAuthorize("hasAuthority('USER_EDIT')")
-    public ResponseEntity<CommentStatisticGetModelApi> vote(Long commentId, Boolean vote) {
+    public ResponseEntity<CommentStatisticGetModelApi> vote(Long id, Boolean vote) {
         return ResponseEntity.ok().body(
                 commentStatisticMapper.commentStatisticGetDtoToModelApi(
-                        commentStatisticService.vote(commentId,vote)
+                        commentStatisticService.vote(id,vote)
                 )
         );
     }

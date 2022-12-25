@@ -10,9 +10,9 @@ import java.util.List;
 
 @Repository
 public interface PostObjectRepository extends JpaRepository<PostObject,Long> {
-    @Query("select p.id from PostObject p where p.post.id = ?1 order by p.order")
-    List<Long> findFirstByPostId(Long id, Pageable pageable);
+    @Query("select p from PostObject p where p.post.id = ?1 order by p.order")
+    List<PostObject> findFirstByPostId(Long id, Pageable pageable);
 
-    @Query("select p.id from PostObject p where p.post.id = ?1 order by p.order")
-    List<Long> findPostObjectsByPostId(Long id);
+    @Query("select p from PostObject p where p.post.id = ?1 order by p.order")
+    List<PostObject> findPostObjectsByPostId(Long id);
 }

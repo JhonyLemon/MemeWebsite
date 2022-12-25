@@ -22,9 +22,9 @@ public class PostController implements PostApi {
     private final PostMapper postMapper;
 
     @Override
-    public ResponseEntity<PostGetFullModelApi> createPublishedPost(String title, List<MultipartFile> files, Boolean visible, List<String> description,List<Long> tags) {
+    public ResponseEntity<PostGetFullV2ModelApi> createPublishedPost(String title, List<MultipartFile> files, Boolean visible, List<String> description,List<Long> tags) {
         return ResponseEntity.ok().body(
-                postMapper.postToGetFullModelApi(
+                postMapper.postToV2GetFullModelApi(
                         postService.createPublishedPost(
                                 title,
                                 files,
@@ -37,9 +37,9 @@ public class PostController implements PostApi {
 
     @Override
     @PreAuthorize("hasAuthority('USER_ADD')")
-    public ResponseEntity<PostGetFullModelApi> createUnpublishedPost(PostPostModelApi postPostModelApi) {
+    public ResponseEntity<PostGetFullV1ModelApi> createUnpublishedPost(PostPostModelApi postPostModelApi) {
         return ResponseEntity.ok().body(
-                postMapper.postToGetFullModelApi(
+                postMapper.postToV1GetFullModelApi(
                         postService.createUnpublishedPost(
                                 postMapper.postModelApiTo(postPostModelApi)
                         )
@@ -54,28 +54,10 @@ public class PostController implements PostApi {
     }
 
     @Override
-    public ResponseEntity<PostPageGetModelApi> getAllPosts(PostRequestModelApi postRequestModelApi) {
-        return ResponseEntity.ok().body(
-                postMapper.postToPostPageGetModelApi(
-                        postService.getAllPosts(
-                                postMapper.postToPostRequestDto(postRequestModelApi)
-                        )
-                ));
-    }
-
-    @Override
-    public ResponseEntity<PostGetFullModelApi> getPost(Long id) {
-        return ResponseEntity.ok().body(
-                postMapper.postToGetFullModelApi(
-                        postService.getPost(id)
-                ));
-    }
-
-    @Override
     @PreAuthorize("hasAuthority('USER_EDIT') or hasAuthority('MODERATOR_EDIT')")
-    public ResponseEntity<PostGetFullModelApi> updatePost(Long id, PostPutModelApi postPutModelApi) {
+    public ResponseEntity<PostGetFullV1ModelApi> updatePost(Long id, PostPutModelApi postPutModelApi) {
         return ResponseEntity.ok().body(
-                postMapper.postToGetFullModelApi(
+                postMapper.postToV1GetFullModelApi(
                         postService.updatePost(
                                 id,
                                 postMapper.postModelApiTo(postPutModelApi)
@@ -85,9 +67,9 @@ public class PostController implements PostApi {
 
     @Override
     @PreAuthorize("hasAuthority('USER_ADD')")
-    public ResponseEntity<PostGetFullModelApi> updatePostPublish(Long id) {
+    public ResponseEntity<PostGetFullV1ModelApi> updatePostPublish(Long id) {
         return ResponseEntity.ok().body(
-                postMapper.postToGetFullModelApi(
+                postMapper.postToV1GetFullModelApi(
                         postService.updatePostPublish(
                                 id
                         )
@@ -96,10 +78,46 @@ public class PostController implements PostApi {
 
     @Override
     @PreAuthorize("hasAuthority('USER_ADD')")
-    public ResponseEntity<PostGetFullModelApi> getUnpublishedPost() {
+    public ResponseEntity<PostGetFullV1ModelApi> getUnpublishedPost() {
         return ResponseEntity.ok().body(
-                postMapper.postToGetFullModelApi(
+                postMapper.postToV1GetFullModelApi(
                         postService.getUnpublishedPost()
+                ));
+    }
+
+    @Override
+    public ResponseEntity<PostPageGetV2ModelApi> getAllPostsWithContent(PostRequestModelApi postRequestModelApi) {
+        return ResponseEntity.ok().body(
+                postMapper.postToV2PostPageGetModelApi(
+                        postService.getAllPostsWithContent(
+                                postMapper.postToPostRequestDto(postRequestModelApi)
+                        )
+                ));
+    }
+
+    @Override
+    public ResponseEntity<PostPageGetV1ModelApi> getAllPostsWithoutContent(PostRequestModelApi postRequestModelApi) {
+        return ResponseEntity.ok().body(
+                postMapper.postToV1PostPageGetModelApi(
+                        postService.getAllPostsWithoutContent(
+                                postMapper.postToPostRequestDto(postRequestModelApi)
+                        )
+                ));
+    }
+
+    @Override
+    public ResponseEntity<PostGetFullV2ModelApi> getPostWithContent(Long id) {
+        return ResponseEntity.ok().body(
+                postMapper.postToV2GetFullModelApi(
+                        postService.getPostWithContent(id)
+                ));
+    }
+
+    @Override
+    public ResponseEntity<PostGetFullV1ModelApi> getPostWithoutContent(Long id) {
+        return ResponseEntity.ok().body(
+                postMapper.postToV1GetFullModelApi(
+                        postService.getPostWithoutContent(id)
                 ));
     }
 }

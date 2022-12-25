@@ -49,8 +49,7 @@ class ModeratorPostControllerTest {
     @Test
     void deletePostTest_Success() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
-                        .delete(ApiPaths.Moderator.MODERATOR_PATH + ApiPaths.Post.POST_PATH +
-                                ApiPaths.Post.POST_DELETE, 1L)
+                        .delete( ApiPaths.Post.POST_PATH , 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk());
@@ -74,8 +73,7 @@ class ModeratorPostControllerTest {
         postPutDto.setTags(new ArrayList<>());
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .put(ApiPaths.Moderator.MODERATOR_PATH + ApiPaths.Post.POST_PATH +
-                                ApiPaths.Post.POST_UPDATE, 3L)
+                        .put(ApiPaths.Post.POST_PATH , 3L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(postPutDto))
                 )

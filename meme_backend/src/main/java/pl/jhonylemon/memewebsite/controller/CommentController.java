@@ -28,11 +28,11 @@ public class CommentController implements CommentApi {
 
     @Override
     @PreAuthorize("hasAuthority('USER_ADD')")
-    public ResponseEntity<CommentGetModelApi> reply(Long postId, CommentPostModelApi commentPostModelApi) {
+    public ResponseEntity<CommentGetModelApi> reply(Long id, CommentPostModelApi commentPostModelApi) {
         return ResponseEntity.ok().body(
                 commentMapper.commentGetDtoToModelApi(
                         commentService.reply(
-                                postId,
+                                id,
                                 commentMapper.commentPostModelApiToDto(commentPostModelApi)
                         )
                 )

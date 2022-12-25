@@ -69,7 +69,7 @@ class GuestAccountControllerTest {
         accountPostDto.setProfilePictureId(1L);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .post(ApiPaths.Guest.GUEST_PATH + ApiPaths.Account.ACCOUNT_PATH +
+                        .post(ApiPaths.Account.ACCOUNT_PATH +
                                 ApiPaths.Account.ACCOUNT_CREATE)
                         .content(objectMapper.writeValueAsString(accountPostDto))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -91,7 +91,7 @@ class GuestAccountControllerTest {
         accountRequestDto.getFilters().setEnabled(true);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .post(ApiPaths.Guest.GUEST_PATH + ApiPaths.Account.ACCOUNT_PATH +
+                        .post(ApiPaths.Account.ACCOUNT_PATH +
                                 ApiPaths.Account.ACCOUNT_GET_ALL_PAGINATED)
                         .content(objectMapper.writeValueAsString(accountRequestDto))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -121,7 +121,7 @@ class GuestAccountControllerTest {
         accountRepository.save(account);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .get(ApiPaths.Guest.GUEST_PATH + ApiPaths.Account.ACCOUNT_PATH +
+                        .get( ApiPaths.Account.ACCOUNT_PATH +
                                 ApiPaths.Account.ACCOUNT_GET,1L)
                         .contentType(MediaType.APPLICATION_JSON)
                 )

@@ -7,6 +7,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import pl.jhonylemon.memewebsite.component.PostProperties;
 import pl.jhonylemon.memewebsite.dto.post.*;
+import pl.jhonylemon.memewebsite.dto.post.v1.PostGetShortDto;
+import pl.jhonylemon.memewebsite.dto.post.v1.PostPageGetDto;
+import pl.jhonylemon.memewebsite.dto.post.v2.PostGetFullDto;
 import pl.jhonylemon.memewebsite.entity.Account;
 import pl.jhonylemon.memewebsite.entity.Post;
 import pl.jhonylemon.memewebsite.entity.PostObject;
@@ -18,6 +21,7 @@ import pl.jhonylemon.memewebsite.exception.post.PostInvalidParamException;
 import pl.jhonylemon.memewebsite.exception.post.PostNotFoundException;
 import pl.jhonylemon.memewebsite.exception.postobject.PostObjectNotFoundException;
 import pl.jhonylemon.memewebsite.mapper.PostMapper;
+import pl.jhonylemon.memewebsite.mapper.PostObjectMapper;
 import pl.jhonylemon.memewebsite.repository.PostObjectRepository;
 import pl.jhonylemon.memewebsite.repository.PostRepository;
 import pl.jhonylemon.memewebsite.repository.TagRepository;
@@ -31,6 +35,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static pl.jhonylemon.memewebsite.service.post.util.PostUtil.validateRequest;
 
@@ -45,9 +50,10 @@ public class PostService {
     private final CustomUserDetailsService userDetailsService;
     private final PostStatisticService postStatisticService;
     private final PostProperties postProperties;
+    private final PostObjectMapper postObjectMapper;
 
     @Transactional
-    public PostGetFullDto createUnpublishedPost(PostPostDto postPostDto) {
+    public pl.jhonylemon.memewebsite.dto.post.v1.PostGetFullDto createUnpublishedPost(PostPostDto postPostDto) {
         if (!postPostDto.validateRequest()) {
             throw new PostInvalidParamException();
         }
@@ -74,9 +80,12 @@ public class PostService {
 
         postRepository.save(post);
 
-        PostGetFullDto postGetFullDto = postMapper.postToGetFullDto(post);
+        pl.jhonylemon.memewebsite.dto.post.v1.PostGetFullDto postGetFullDto = postMapper.postToV1GetFullDto(post);
 
-        postGetFullDto.setFilesId(postObjectRepository.findPostObjectsByPostId(post.getId()));
+        postGetFullDto.setPostObjects(
+                postObjectRepository.findPostObjectsByPostId(post.getId()).stream()
+                        .map(postObjectMapper::postObjectToShortGetDto)
+                .collect(Collectors.toList()));
 
         return postGetFullDto;
     }
@@ -107,7 +116,7 @@ public class PostService {
         postRepository.delete(post);
     }
 
-    public PostPageGetDto getAllPosts(PostRequestDto postToPostRequestDto) {
+    public PostPageGetDto getAllPostsWithoutContent(PostRequestDto postToPostRequestDto) {
         validateRequest(postToPostRequestDto);
 
         Page<Post> posts = postRepository
@@ -118,16 +127,14 @@ public class PostService {
 
 
         posts.forEach(p -> {
-            PostGetShortDto postGetShortDto = postMapper.postToGetShortDto(p);
-            postGetShortDto.setFirstFileContent(
-                    postObjectRepository.findById(postObjectRepository
+            PostGetShortDto postGetShortDto = postMapper.postToV1GetShortDto(p);
+            postGetShortDto.setFirstObjectId(
+                    postObjectRepository
                             .findFirstByPostId(postGetShortDto.getId(), PageRequest.of(0, 1))
                             .stream().findFirst()
                             .orElseThrow(() -> {
-                                throw new PostObjectNotFoundException();
-                            })).orElseThrow(() -> {
                         throw new PostObjectNotFoundException();
-                    }).getContent());
+                    }).getId());
             accountGetFullDtos.add(postGetShortDto);
         });
 
@@ -138,7 +145,7 @@ public class PostService {
                 postToPostRequestDto.getFilters());
     }
 
-    public PostGetFullDto getPost(Long id) {
+    public pl.jhonylemon.memewebsite.dto.post.v1.PostGetFullDto getPostWithoutContent(Long id) {
         if (!Validator.isIdValid(id)) {
             throw new PostInvalidParamException();
         }
@@ -157,9 +164,12 @@ public class PostService {
         } catch (Exception ignored) {
         }
 
-        PostGetFullDto postGetFullDto = postMapper.postToGetFullDto(post);
+        pl.jhonylemon.memewebsite.dto.post.v1.PostGetFullDto postGetFullDto = postMapper.postToV1GetFullDto(post);
 
-        postGetFullDto.setFilesId(postObjectRepository.findPostObjectsByPostId(post.getId()));
+        postGetFullDto.setPostObjects(
+                postObjectRepository.findPostObjectsByPostId(post.getId()).stream()
+                        .map(postObjectMapper::postObjectToShortGetDto)
+                        .collect(Collectors.toList()));
 
         postGetFullDto.getComments().removeIf(c -> c.getReplyToId() != null);
 
@@ -167,7 +177,7 @@ public class PostService {
     }
 
     @Transactional
-    public PostGetFullDto updatePost(Long id, PostPutDto postModelApiTo) {
+    public pl.jhonylemon.memewebsite.dto.post.v1.PostGetFullDto updatePost(Long id, PostPutDto postModelApiTo) {
         if (!Validator.isIdValid(id)) {
             throw new PostInvalidParamException();
         }
@@ -213,15 +223,18 @@ public class PostService {
             }
         });
 
-        PostGetFullDto postGetFullDto = postMapper.postToGetFullDto(post);
+        pl.jhonylemon.memewebsite.dto.post.v1.PostGetFullDto postGetFullDto = postMapper.postToV1GetFullDto(post);
 
-        postGetFullDto.setFilesId(postObjectRepository.findPostObjectsByPostId(post.getId()));
+        postGetFullDto.setPostObjects(
+                postObjectRepository.findPostObjectsByPostId(post.getId()).stream()
+                        .map(postObjectMapper::postObjectToShortGetDto)
+                        .collect(Collectors.toList()));
 
         return postGetFullDto;
     }
 
     @Transactional
-    public PostGetFullDto updatePostPublish(Long id) {
+    public pl.jhonylemon.memewebsite.dto.post.v1.PostGetFullDto updatePostPublish(Long id) {
         if (!Validator.isIdValid(id)) {
             throw new AccountInvalidParamException();
         }
@@ -236,22 +249,25 @@ public class PostService {
 
         post.isPublished(true);
 
-        PostGetFullDto postGetFullDto = postMapper.postToGetFullDto(post);
+        pl.jhonylemon.memewebsite.dto.post.v1.PostGetFullDto postGetFullDto = postMapper.postToV1GetFullDto(post);
 
-        postGetFullDto.setFilesId(postObjectRepository.findPostObjectsByPostId(post.getId()));
+        postGetFullDto.setPostObjects(
+                postObjectRepository.findPostObjectsByPostId(post.getId()).stream()
+                        .map(postObjectMapper::postObjectToShortGetDto)
+                        .collect(Collectors.toList()));
 
         return postGetFullDto;
     }
 
-    public PostGetFullDto getUnpublishedPost() {
-        return postMapper.postToGetFullDto(
+    public pl.jhonylemon.memewebsite.dto.post.v1.PostGetFullDto getUnpublishedPost() {
+        return postMapper.postToV1GetFullDto(
                 postRepository.findUnPublishedPost().orElseThrow(() -> {
                     throw new PostNotFoundException();
                 }));
     }
 
     @Transactional
-    public PostGetFullDto createPublishedPost(String title, List<MultipartFile> files, Boolean visible, List<String> descriptions,List<Long> tags) {
+    public pl.jhonylemon.memewebsite.dto.post.v2.PostGetFullDto createPublishedPost(String title, List<MultipartFile> files, Boolean visible, List<String> descriptions,List<Long> tags) {
         if(!Validator.isStringValid(title)){
            throw new PostInvalidParamException();
         }
@@ -302,11 +318,74 @@ public class PostService {
             throw new PostInvalidParamException();
         }
 
-        PostGetFullDto postGetFullDto = postMapper.postToGetFullDto(post);
+        pl.jhonylemon.memewebsite.dto.post.v2.PostGetFullDto postGetFullDto = postMapper.postToV2GetFullDto(post);
 
-        postGetFullDto.setFilesId(postObjectRepository.findPostObjectsByPostId(post.getId()));
+        postGetFullDto.setPostObjects(
+                postObjectRepository.findPostObjectsByPostId(post.getId()).stream()
+                        .map(postObjectMapper::postObjectToFullGetDto)
+                        .collect(Collectors.toList()));
 
         return postGetFullDto;
 
+    }
+
+    public PostGetFullDto getPostWithContent(Long id) {
+        if (!Validator.isIdValid(id)) {
+            throw new PostInvalidParamException();
+        }
+
+        Post post = postRepository.findById(id).orElseThrow(() -> {
+            throw new PostNotFoundException();
+        });
+
+        if (!post.isPublished()) {
+            throw new PostInvalidParamException();
+        }
+
+        try {
+            Account account = userDetailsService.currentUser();
+            postStatisticService.setSeenStatistic(account.getId(), id);
+        } catch (Exception ignored) {
+        }
+
+        pl.jhonylemon.memewebsite.dto.post.v2.PostGetFullDto postGetFullDto = postMapper.postToV2GetFullDto(post);
+
+        postGetFullDto.setPostObjects(
+                postObjectRepository.findPostObjectsByPostId(post.getId()).stream()
+                        .map(postObjectMapper::postObjectToFullGetDto)
+                        .collect(Collectors.toList()));
+
+        postGetFullDto.getComments().removeIf(c -> c.getReplyToId() != null);
+
+        return postGetFullDto;
+    }
+
+    public pl.jhonylemon.memewebsite.dto.post.v2.PostPageGetDto getAllPostsWithContent(PostRequestDto postToPostRequestDto) {
+        validateRequest(postToPostRequestDto);
+
+        Page<Post> posts = postRepository
+                .findAll(PostUtil.getSpecification(postToPostRequestDto.getFilters()),
+                        PostUtil.createPageRequest(postToPostRequestDto.getPagingAndSorting()));
+
+        List<pl.jhonylemon.memewebsite.dto.post.v2.PostGetShortDto> accountGetFullDtos = new ArrayList<>();
+
+
+        posts.forEach(p -> {
+            pl.jhonylemon.memewebsite.dto.post.v2.PostGetShortDto postGetShortDto = postMapper.postToV2GetShortDto(p);
+            postGetShortDto.setFirstObjectContent(
+                    postObjectRepository
+                            .findFirstByPostId(postGetShortDto.getId(), PageRequest.of(0, 1))
+                            .stream().findFirst()
+                            .orElseThrow(() -> {
+                                throw new PostObjectNotFoundException();
+                            }).getContent());
+            accountGetFullDtos.add(postGetShortDto);
+        });
+
+        return new pl.jhonylemon.memewebsite.dto.post.v2.PostPageGetDto(
+                accountGetFullDtos,
+                posts.getTotalPages(),
+                posts.getTotalElements(),
+                postToPostRequestDto.getFilters());
     }
 }

@@ -1,9 +1,10 @@
-package pl.jhonylemon.memewebsite.dto.post;
+package pl.jhonylemon.memewebsite.dto.post.v1;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import pl.jhonylemon.memewebsite.dto.post.PostFilterDto;
 
 import java.util.List;
 

@@ -84,7 +84,7 @@ class UserAccountControllerTest {
         accountRepository.save(account);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .delete(ApiPaths.User.USER_PATH + ApiPaths.Account.ACCOUNT_PATH +
+                        .delete(ApiPaths.Account.ACCOUNT_PATH +
                                 ApiPaths.Account.ACCOUNT_DELETE,account.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -116,7 +116,7 @@ class UserAccountControllerTest {
         accountRepository.save(account);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .put(ApiPaths.User.USER_PATH + ApiPaths.Account.ACCOUNT_PATH +
+                        .put(ApiPaths.Account.ACCOUNT_PATH +
                                 ApiPaths.Account.ACCOUNT_UPDATE_PROFILE_PHOTO,account.getId(),1L)
                         .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -152,7 +152,7 @@ class UserAccountControllerTest {
         accountPutPasswordDto.setOldPassword("123456789");
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .put(ApiPaths.User.USER_PATH + ApiPaths.Account.ACCOUNT_PATH +
+                        .put(ApiPaths.Account.ACCOUNT_PATH +
                                 ApiPaths.Account.ACCOUNT_UPDATE_PASSWORD,account.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(accountPutPasswordDto))
@@ -185,7 +185,7 @@ class UserAccountControllerTest {
         accountRepository.save(account);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .put(ApiPaths.User.USER_PATH + ApiPaths.Account.ACCOUNT_PATH +
+                        .put(ApiPaths.Account.ACCOUNT_PATH +
                                 ApiPaths.Account.ACCOUNT_UPDATE_NAME,account.getId(),"Gacek1")
                         .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -217,7 +217,7 @@ class UserAccountControllerTest {
         accountRepository.save(account);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .get(ApiPaths.User.USER_PATH + ApiPaths.Account.ACCOUNT_PATH)
+                        .get( ApiPaths.Account.ACCOUNT_PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk());

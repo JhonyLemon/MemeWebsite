@@ -37,7 +37,7 @@ class GuestTagControllerTest {
     @Test
     void getAllTagsTest_Success() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
-                        .get(ApiPaths.Guest.GUEST_PATH + ApiPaths.Tag.TAG_PATH +
+                        .get( ApiPaths.Tag.TAG_PATH +
                                 ApiPaths.Tag.TAG_GET,1L)
                         .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -49,7 +49,7 @@ class GuestTagControllerTest {
         tagRequestDto.setDefaultPagingAndSorting();
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .post(ApiPaths.Guest.GUEST_PATH + ApiPaths.Tag.TAG_PATH +
+                        .post(ApiPaths.Tag.TAG_PATH +
                                 ApiPaths.Tag.TAG_GET_ALL_PAGINATED)
                         .content(objectMapper.writeValueAsString(tagRequestDto))
                         .contentType(MediaType.APPLICATION_JSON)

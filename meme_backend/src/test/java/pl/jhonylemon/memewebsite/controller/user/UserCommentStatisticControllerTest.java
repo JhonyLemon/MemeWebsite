@@ -43,7 +43,7 @@ class UserCommentStatisticControllerTest {
     @Test
     void voteTest_Success() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
-                        .post(ApiPaths.User.USER_PATH + ApiPaths.CommentStatistic.COMMENT_STATISTIC_PATH +
+                        .post(ApiPaths.CommentStatistic.COMMENT_STATISTIC_PATH +
                                 ApiPaths.CommentStatistic.POST_STATISTIC_SET_VOTE,1L,1L,true)
                         .contentType(MediaType.APPLICATION_JSON)
                 )

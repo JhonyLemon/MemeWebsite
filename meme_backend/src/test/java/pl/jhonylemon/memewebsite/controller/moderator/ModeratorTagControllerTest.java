@@ -43,7 +43,7 @@ class ModeratorTagControllerTest {
     @Test
     void deleteTagTest_Success() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
-                        .delete(ApiPaths.Moderator.MODERATOR_PATH + ApiPaths.Tag.TAG_PATH +
+                        .delete( ApiPaths.Tag.TAG_PATH +
                                 ApiPaths.Tag.TAG_REMOVE, 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -58,7 +58,7 @@ class ModeratorTagControllerTest {
     @Test
     void changeTagTest_Success() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
-                        .put(ApiPaths.Moderator.MODERATOR_PATH + ApiPaths.Tag.TAG_PATH +
+                        .put(ApiPaths.Tag.TAG_PATH +
                                 ApiPaths.Tag.TAG_UPDATE, 2L,"test")
                         .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -73,7 +73,7 @@ class ModeratorTagControllerTest {
     @Test
     void addTagTest_Success() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
-                        .post(ApiPaths.Moderator.MODERATOR_PATH + ApiPaths.Tag.TAG_PATH +
+                        .post( ApiPaths.Tag.TAG_PATH +
                                 ApiPaths.Tag.TAG_POST, "Catto")
                         .contentType(MediaType.APPLICATION_JSON)
                 )

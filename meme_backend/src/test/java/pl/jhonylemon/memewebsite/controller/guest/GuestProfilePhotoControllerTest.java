@@ -36,7 +36,7 @@ class GuestProfilePhotoControllerTest {
     @Test
     void getProfilePictureTest_Success() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
-                        .get(ApiPaths.Guest.GUEST_PATH + ApiPaths.ProfilePicture.PROFILE_PICTURE_PATH +
+                        .get(ApiPaths.ProfilePicture.PROFILE_PICTURE_PATH +
                                 ApiPaths.ProfilePicture.PROFILE_PICTURE_GET, 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -45,7 +45,7 @@ class GuestProfilePhotoControllerTest {
     @Test
     void getAllProfilePicturesTest_Success() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
-                        .get(ApiPaths.Guest.GUEST_PATH + ApiPaths.ProfilePicture.PROFILE_PICTURE_PATH +
+                        .get( ApiPaths.ProfilePicture.PROFILE_PICTURE_PATH +
                                 ApiPaths.ProfilePicture.PROFILE_PICTURE_GET_ALL)
                         .contentType(MediaType.APPLICATION_JSON)
                 )

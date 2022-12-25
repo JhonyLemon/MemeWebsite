@@ -1,4 +1,4 @@
-package pl.jhonylemon.memewebsite.dto.post;
+package pl.jhonylemon.memewebsite.dto.post.v2;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +12,7 @@ import pl.jhonylemon.memewebsite.dto.poststatistic.PostStatisticGetDto;
 public class PostGetShortDto {
     private Long id;
     private String title;
-    private byte[] firstFileContent;
+    private byte[] firstObjectContent;
     private AccountGetFullDto account;
     private PostStatisticGetDto postStatistics;
 }

@@ -3,19 +3,31 @@ info:
   title: Meme backend
   version: 0.0.1
 tags:
-  - name: "PostObject"
-  - name: "Post"
-  - name: "Account"
-  - name: "Tag"
-  - name: "ProfilePhoto"
-  - name: "AccountRole"
-  - name: "AccountPermission"
-  - name: "PostStatistic"
-  - name: "CommentStatistic"
-  - name: "Comment"
+  - name: Post
+    description: the Post API
+  - name: Comment
+    description: the Comment API
+  - name: Tag
+    description: the Tag API
+  - name: PostStatistic
+    description: the PostStatistic API
+  - name: AccountRole
+    description: the AccountRole API
+  - name: CommentStatistic
+    description: the CommentStatistic API
+  - name: ProfilePhoto
+    description: the ProfilePhoto API
+  - name: AccountPermission
+    description: the AccountPermission API
+  - name: Account
+    description: the Account API
+  - name: PostObject
+    description: the PostObject API
 servers:
   - url: http://localhost:8080/api
     description: Generated server url
+security:
+  - bearerAuth: []
 paths:
   /v1/postobject/{id}:
     get:
@@ -41,10 +53,7 @@ paths:
                 $ref: '#/components/schemas/PostObjectFullGet'
     put:
       summary: Updates one of the files/description in post
-      security:
-        - BearerAuth:
-            - USER_EDIT
-            - MODERATOR_EDIT
+      description: Requires USER_EDIT or MODERATOR_EDIT permission
       tags:
         - "PostObject"
       operationId: updatePostObject
@@ -82,10 +91,7 @@ paths:
                 $ref: '#/components/schemas/PostObjectFullGet'
     delete:
       summary: Deletes post object by id
-      security:
-        - BearerAuth:
-            - USER_DELETE
-            - MODERATOR_DELETE
+      description: Requires USER_DELETE or MODERATOR_DELETE permission
       tags:
         - "PostObject"
       operationId: deletePostObject
@@ -101,12 +107,12 @@ paths:
       responses:
         '200':
           description: OK
-  /v1/post/{id}:
+  /v2/post/{id}:
     get:
       summary: Returns post
       tags:
         - "Post"
-      operationId: getPost
+      operationId: getPostWithContent
       parameters:
         - name: id
           in: path
@@ -122,13 +128,32 @@ paths:
           content:
             'application/json':
               schema:
-                $ref: '#/components/schemas/PostGetFull'
+                $ref: '#/components/schemas/PostGetFullV2'
+  /v1/post/{id}:
+    get:
+      summary: Returns post
+      tags:
+        - "Post"
+      operationId: getPostWithoutContent
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            description: Post id
+            example: 1
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/PostGetFullV1'
     put:
       summary: Updates post selected by id
-      security:
-        - BearerAuth:
-            - USER_EDIT
-            - MODERATOR_EDIT
+      description: Requires USER_EDIT or MODERATOR_EDIT permission
       tags:
         - "Post"
       operationId: updatePost
@@ -153,12 +178,10 @@ paths:
           content:
             'application/json':
               schema:
-                $ref: '#/components/schemas/PostGetFull'
+                $ref: '#/components/schemas/PostGetFullV1'
     post:
       summary: Publishes post
-      security:
-        - BearerAuth:
-            - USER_ADD
+      description: Requires USER_ADD permission
       tags:
         - "Post"
       operationId: updatePostPublish
@@ -177,13 +200,10 @@ paths:
           content:
             'application/json':
               schema:
-                $ref: '#/components/schemas/PostGetFull'
+                $ref: '#/components/schemas/PostGetFullV1'
     delete:
       summary: Deletes post by given id
-      security:
-        - BearerAuth:
-            - MODERATOR_DELETE
-            - USER_DELETE
+      description: Requires USER_DELETE or MODERATOR_DELETE permission
       tags:
         - "Post"
       operationId: deletePost
@@ -202,9 +222,7 @@ paths:
   /v1/account/photo/{photoId}:
     put:
       summary: Updates account photo
-      security:
-        - BearerAuth:
-            - USER_EDIT
+      description: Requires USER_EDIT permission
       tags:
         - "Account"
       operationId: updateAccountProfilePictureSelf
@@ -227,9 +245,7 @@ paths:
   /v1/account/{id}/photo/{photoId}:
     put:
       summary: Updates account photo
-      security:
-        - BearerAuth:
-            - MODERATOR_EDIT
+      description: Requires MODERATOR_EDIT permission
       tags:
         - "Account"
       operationId: updateAccountProfilePicture
@@ -258,9 +274,7 @@ paths:
   /v1/account/password:
     put:
       summary: Updates account password
-      security:
-        - BearerAuth:
-            - USER_EDIT
+      description: Requires USER_EDIT permission
       tags:
         - "Account"
       operationId: updateAccountPasswordSelf
@@ -276,9 +290,7 @@ paths:
   /v1/account/{id}/password:
     put:
       summary: Updates account password
-      security:
-        - BearerAuth:
-            - ADMIN_EDIT
+      description: Requires ADMIN_EDIT permission
       tags:
         - "Account"
       operationId: updateAccountPassword
@@ -303,9 +315,7 @@ paths:
   /v1/account/name/{name}:
     put:
       summary: Updates account password
-      security:
-        - BearerAuth:
-            - USER_EDIT
+      description: Requires USER_EDIT permission
       tags:
         - "Account"
       operationId: updateAccountNameSelf
@@ -327,9 +337,7 @@ paths:
   /v1/account/{id}/name/{name}:
     put:
       summary: Updates account password
-      security:
-        - BearerAuth:
-            - MODERATOR_EDIT
+      description: Requires MODERATOR_EDIT permission
       tags:
         - "Account"
       operationId: updateAccountName
@@ -359,9 +367,7 @@ paths:
   /v1/tag/{id}/{tag}:
     put:
       summary: Updates tag
-      security:
-        - BearerAuth:
-            - MODERATOR_EDIT
+      description: Requires MODERATOR_EDIT permission
       tags:
         - "Tag"
       operationId: changeTag
@@ -410,9 +416,7 @@ paths:
                 $ref: '#/components/schemas/ProfilePictureGet'
     put:
       summary: Updates profile picture
-      security:
-        - BearerAuth:
-            - MODERATOR_EDIT
+      description: Requires MODERATOR_EDIT permission
       tags:
         - "ProfilePhoto"
       operationId: changeDefaultProfilePicture
@@ -434,9 +438,7 @@ paths:
                 $ref: '#/components/schemas/ProfilePictureGet'
     delete:
       summary: Removes profile picture
-      security:
-        - BearerAuth:
-            - MODERATOR_EDIT
+      description: Requires MODERATOR_EDIT permission
       tags:
         - "ProfilePhoto"
       operationId: removeProfilePicture
@@ -455,9 +457,7 @@ paths:
   /v1/account/{id}/ban/{ban}:
     put:
       summary: Updates account banned flag
-      security:
-        - BearerAuth:
-            - MODERATOR_EDIT
+      description: Requires MODERATOR_EDIT permission
       tags:
         - "Account"
       operationId: banAccount
@@ -487,9 +487,7 @@ paths:
   /v1/accountrole/{id}:
     get:
       summary: Get role for given id
-      security:
-        - BearerAuth:
-            - ADMIN_READ
+      description: Requires ADMIN_READ permission
       tags:
         - "AccountRole"
       operationId: getRole
@@ -511,9 +509,7 @@ paths:
                 $ref: '#/components/schemas/AccountRoleGet'
     put:
       summary: Get role for given id
-      security:
-        - BearerAuth:
-            - ADMIN_EDIT
+      description: Requires ADMIN_EDIT permission
       tags:
         - "AccountRole"
       operationId: putRole
@@ -541,9 +537,7 @@ paths:
                 $ref: '#/components/schemas/AccountRoleGet'
     delete:
       summary: Remove role for given id
-      security:
-        - BearerAuth:
-            - ADMIN_DELETE
+      description: Requires ADMIN_DELETE permission
       tags:
         - "AccountRole"
       operationId: deleteRole
@@ -562,9 +556,7 @@ paths:
   /v1/accountrole/{id}/default:
     put:
       summary: Sets new default role
-      security:
-        - BearerAuth:
-            - ADMIN_EDIT
+      description: Requires ADMIN_EDIT permission
       tags:
         - "AccountRole"
       operationId: putDefaultRole
@@ -587,9 +579,7 @@ paths:
   /v1/account/{id}/role/{newRoleId}:
     put:
       summary: Sets new role for given account
-      security:
-        - BearerAuth:
-            - ADMIN_EDIT
+      description: Requires ADMIN_EDIT permission
       tags:
         - "Account"
       operationId: changeAccountRole
@@ -617,17 +607,15 @@ paths:
             'application/json':
               schema:
                 $ref: '#/components/schemas/AccountRoleGet'
-  /v1/poststatistic/{postId}/vote/{vote}:
+  /v1/post/{id}/poststatistic/vote/{vote}:
     put:
       summary: Gives vote for post could be positive or negative
-      security:
-        - BearerAuth:
-            - USER_EDIT
+      description: Requires USER_EDIT permission
       tags:
         - "PostStatistic"
       operationId: setVoteStatistic
       parameters:
-        - name: postId
+        - name: id
           in: path
           required: true
           schema:
@@ -649,17 +637,15 @@ paths:
             'application/json':
               schema:
                 $ref: '#/components/schemas/PostStatisticGet'
-  /v1/poststatistic/{postId}/favorite/{favorite}:
+  /v1/post/{id}/poststatistic/favorite/{favorite}:
     put:
       summary: Gives favorite for post
-      security:
-        - BearerAuth:
-            - USER_EDIT
+      description: Requires USER_EDIT permission
       tags:
         - "PostStatistic"
       operationId: setFavoriteStatistic
       parameters:
-        - name: postId
+        - name: id
           in: path
           required: true
           schema:
@@ -684,9 +670,7 @@ paths:
   /v1/post/{id}/postobject/{order}:
     post:
       summary: Creates new postobject for unpublished post
-      security:
-        - BearerAuth:
-            - USER_ADD
+      description: Requires USER_ADD permission
       tags:
         - "PostObject"
       operationId: createPostObject
@@ -732,9 +716,7 @@ paths:
   /v2/post:
     post:
       summary: Creates new post
-      security:
-        - BearerAuth:
-            - USER_ADD
+      description: Requires USER_ADD permission
       tags:
         - "Post"
       operationId: createPublishedPost
@@ -776,13 +758,11 @@ paths:
           content:
             'application/json':
               schema:
-                $ref: '#/components/schemas/PostGetFull'
+                $ref: '#/components/schemas/PostGetFullV2'
   /v1/post:
     get:
       summary: Returns unpublished if any exists post
-      security:
-        - BearerAuth:
-            - USER_READ
+      description: Requires USER_READ permission
       tags:
         - "Post"
       operationId: getUnpublishedPost
@@ -792,12 +772,10 @@ paths:
           content:
             'application/json':
               schema:
-                $ref: '#/components/schemas/PostGetFull'
+                $ref: '#/components/schemas/PostGetFullV1'
     post:
       summary: Creates new unpublished post
-      security:
-        - BearerAuth:
-            - USER_ADD
+      description: Requires USER_ADD permission
       tags:
         - "Post"
       operationId: createUnpublishedPost
@@ -813,18 +791,16 @@ paths:
           content:
             'application/json':
               schema:
-                $ref: '#/components/schemas/PostGetFull'
-  /v1/commentstatistic/{commentId}/{vote}:
+                $ref: '#/components/schemas/PostGetFullV1'
+  /v1/comment/{id}/commentstatistic/{vote}:
     put:
       summary: Gives vote for comment could be positive or negative
-      security:
-        - BearerAuth:
-            - USER_EDIT
+      description: Requires USER_EDIT permission
       tags:
         - "CommentStatistic"
       operationId: vote
       parameters:
-        - name: commentId
+        - name: id
           in: path
           required: true
           schema:
@@ -844,17 +820,15 @@ paths:
             'application/json':
               schema:
                 $ref: '#/components/schemas/CommentStatisticGet'
-  /v1/post/{postId}/comment:
+  /v1/post/{id}/comment:
     post:
       summary: Creates new comment for given post
-      security:
-        - BearerAuth:
-            - USER_ADD
+      description: Requires USER_ADD permission
       tags:
         - "Comment"
       operationId: reply
       parameters:
-        - name: postId
+        - name: id
           in: path
           required: true
           schema:
@@ -878,9 +852,7 @@ paths:
   /v1/tag/{tag}:
     post:
       summary: Creates new tag
-      security:
-        - BearerAuth:
-            - MODERATOR_ADD
+      description: Requires MODERATOR_ADD permission
       tags:
         - "Tag"
       operationId: addTag
@@ -902,9 +874,7 @@ paths:
   /v1/profilepicture:
     post:
       summary: Creates new profile picture
-      security:
-        - BearerAuth:
-            - MODERATOR_ADD
+      description: Requires MODERATOR_ADD permission
       tags:
         - "ProfilePhoto"
       operationId: addProfilePicture
@@ -951,7 +921,7 @@ paths:
       summary: Returns paginated list of posts
       tags:
         - "Post"
-      operationId: getAllPosts
+      operationId: getAllPostsWithoutContent
       requestBody:
         content:
           application/json:
@@ -964,7 +934,26 @@ paths:
           content:
             'application/json':
               schema:
-                $ref: '#/components/schemas/PostPageGet'
+                $ref: '#/components/schemas/PostPageGetV1'
+  /v2/post/all:
+    post:
+      summary: Returns paginated list of posts
+      tags:
+        - "Post"
+      operationId: getAllPostsWithContent
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/PostPageGetV2'
   /v1/account/refresh:
     post:
       summary: Checks refresh token and returns new access token
@@ -1025,9 +1014,7 @@ paths:
   /v1/accountrole/all:
     get:
       summary: Returns all account roles
-      security:
-        - BearerAuth:
-            - ADMIN_READ
+      description: Requires ADMIN_READ permission
       tags:
         - "AccountRole"
       operationId: getRoles
@@ -1042,9 +1029,7 @@ paths:
                   $ref: '#/components/schemas/AccountRoleGet'
     post:
       summary: Creates new account role
-      security:
-        - BearerAuth:
-            - ADMIN_ADD
+      description: Requires ADMIN_ADD permission
       tags:
         - "AccountRole"
       operationId: postRole
@@ -1076,9 +1061,7 @@ paths:
                 $ref: '#/components/schemas/AccountGetFull'
     delete:
       summary: Deletes account
-      security:
-        - BearerAuth:
-            - USER_DELETE
+      description: Requires USER_DELETE permission
       tags:
         - "Account"
       operationId: deleteAccountSelf
@@ -1107,9 +1090,7 @@ paths:
                 $ref: '#/components/schemas/TagGet'
     delete:
       summary: Deletes tag by given id
-      security:
-        - BearerAuth:
-            - MODERATOR_DELETE
+      description: Requires MODERATOR_DELETE permission
       tags:
         - "Tag"
       operationId: deleteTag
@@ -1140,7 +1121,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/ProfilePictureGet'
-  /v1/post/{id}/poststatistic/:
+  /v1/post/{id}/poststatistic:
     get:
       summary: Returns post statistics
       tags:
@@ -1208,9 +1189,7 @@ paths:
                 $ref: '#/components/schemas/AccountGetFull'
     delete:
       summary: Deletes account by given id
-      security:
-        - BearerAuth:
-            - ADMIN_DELETE
+      description: Requires ADMIN_DELETE permission
       tags:
         - "Account"
       operationId: deleteAccount
@@ -1229,9 +1208,7 @@ paths:
   /v1/accountpermission/all:
     get:
       summary: Returns accountpermissions
-      security:
-        - BearerAuth:
-            - ADMIN_READ
+      description: Requires ADMIN_READ permission
       tags:
         - "AccountPermission"
       operationId: getPermissions
@@ -1247,9 +1224,7 @@ paths:
   /v1/accountpermission/{id}:
     get:
       summary: Returns accountpermission by given id
-      security:
-        - BearerAuth:
-            - ADMIN_READ
+      description: Requires ADMIN_READ permission
       tags:
         - "AccountPermission"
       operationId: getPermission
@@ -1272,9 +1247,7 @@ paths:
   /v1/account/{id}/role:
     get:
       summary: Returns accountrole by given account id
-      security:
-        - BearerAuth:
-            - ADMIN_READ
+      description: Requires ADMIN_READ permission
       tags:
         - "Account"
       operationId: getAccountRole
@@ -1297,10 +1270,7 @@ paths:
   /v1/comment/{id}:
     delete:
       summary: Deletes comment by given id
-      security:
-        - BearerAuth:
-            - MODERATOR_DELETE
-            - USER_DELETE
+      description: Requires USER_DELETE or MODERATOR_DELETE permission
       tags:
         - "Comment"
       operationId: deleteComment
@@ -1426,7 +1396,7 @@ components:
           format: int64
           description: Ammount of negative votes this comment have
           example: 2
-    PostGetFull:
+    PostGetFullV1:
       type: object
       properties:
         id:
@@ -1447,14 +1417,51 @@ components:
           type: boolean
           description: Determines if post is publicly visible
           example: true
-        filesId:
+        postObjects:
           type: array
-          description: Array of post object ids
+          description: Array of short post object
           items:
-            type: integer
-            format: int64
-            description: Post object id
-            example: 1
+            $ref: '#/components/schemas/PostObjectShortGet'
+        tags:
+          type: array
+          description: Array of tags
+          items:
+            $ref: '#/components/schemas/TagGet'
+        comments:
+          type: array
+          description: Array of comments
+          items:
+            $ref: '#/components/schemas/CommentGet'
+        account:
+          $ref: '#/components/schemas/AccountGetFull'
+        postStatistics:
+          $ref: '#/components/schemas/PostStatisticGet'
+    PostGetFullV2:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Id of post
+          example: 1
+        title:
+          type: string
+          description: Title of post
+          example: Ha ha funny
+        creationDate:
+          type: string
+          format: date
+          description: Creation date of post
+          example: 01.01.2000
+        visible:
+          type: boolean
+          description: Determines if post is publicly visible
+          example: true
+        postObjects:
+          type: array
+          description: Array of full post object
+          items:
+            $ref: '#/components/schemas/PostObjectFullGet'
         tags:
           type: array
           description: Array of tags
@@ -1720,12 +1727,12 @@ components:
           type: string
           format: date
           description: Minimal date to consider
-          example: 01.01.2000
+          example: 2000-01-01
         max:
           type: string
           format: date
           description: Maximal date to consider
-          example: 01.01.2000
+          example: 2000-01-01
     LongRange:
       nullable: true
       type: object
@@ -1801,7 +1808,7 @@ components:
           $ref: '#/components/schemas/PostPagingAndSortingRequest'
         filters:
           $ref: '#/components/schemas/PostFilter'
-    PostGetShort:
+    PostGetShortV1:
       type: object
       properties:
         id:
@@ -1813,23 +1820,64 @@ components:
           type: string
           description: Title of post
           example: Ha ha funny
-        firstFileId:
+        firstObjectId:
           type: integer
           format: int64
           description: First post object id
           example: 1
         account:
-          $ref: '#/components/schemas/AccountGetFull'
+          $ref: '#/components/schemas/AccountGetShort'
         postStatistics:
           $ref: '#/components/schemas/PostStatisticGet'
-    PostPageGet:
+    PostGetShortV2:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Id of post
+          example: 1
+        title:
+          type: string
+          description: Title of post
+          example: Ha ha funny
+        firstObjectContent:
+          type: string
+          format: byte
+          description: First post object content
+          example: 1
+        account:
+          $ref: '#/components/schemas/AccountGetShort'
+        postStatistics:
+          $ref: '#/components/schemas/PostStatisticGet'
+    PostPageGetV1:
       type: object
       properties:
         posts:
           type: array
           description: Array of posts
           items:
-            $ref: '#/components/schemas/PostGetShort'
+            $ref: '#/components/schemas/PostGetShortV1'
+        totalNumberOfPages:
+          type: integer
+          format: int32
+          description: Total number of pages with current filter applied
+          example: 1
+        totalNumberOfElements:
+          type: integer
+          format: int64
+          description: Total number of elements that can be queried
+          example: 1
+        filters:
+          $ref: '#/components/schemas/PostFilter'
+    PostPageGetV2:
+      type: object
+      properties:
+        posts:
+          type: array
+          description: Array of posts
+          items:
+            $ref: '#/components/schemas/PostGetShortV2'
         totalNumberOfPages:
           type: integer
           format: int32
@@ -2013,3 +2061,33 @@ components:
           type: string
           example: Some file description
           description: Description of file
+    PostObjectShortGet:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+          description: Id of post object
+        postId:
+          type: integer
+          format: int64
+          example: 1
+          description: Id of post
+        fileName:
+          type: string
+          example: meme1
+          description: Name of the file
+        mimeType:
+          type: string
+          example: image/png
+          description: Mime type of file
+        description:
+          type: string
+          example: Some file description
+          description: Description of file
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

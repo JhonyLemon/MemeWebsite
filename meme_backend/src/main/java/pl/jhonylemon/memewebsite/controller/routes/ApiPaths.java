@@ -2,21 +2,9 @@ package pl.jhonylemon.memewebsite.controller.routes;
 
 public class ApiPaths {
 
-
-    public static class Admin {
-        public static final String ADMIN_PATH = "/admin";
-    }
-
-    public static class Moderator {
-        public static final String MODERATOR_PATH = "/moderator";
-    }
-
-    public static class User {
-        public static final String USER_PATH = "/user";
-    }
-
-    public static class Guest {
-        public static final String GUEST_PATH = "/guest";
+    public static class Version {
+        public static final String v1 = "/v1";
+        public static final String v2 = "/v2";
     }
 
     public static class Account {
@@ -35,12 +23,8 @@ public class ApiPaths {
 
     public static class Post {
         public static final String POST_PATH = "/post";
-        public static final String POST_GET = "/{id}";
-        public static final String POST_GET_ALL_PAGINATED = "";
-        public static final String POST_CREATE = "";
-        public static final String POST_PUBLISH = "/{id}";
-        public static final String POST_UPDATE = "/{id}";
-        public static final String POST_DELETE = "/{id}/delete";
+        public static final String POST_ID = "/{id}";
+        public static final String POST_ALL = "/all";
     }
 
     public static class PostObject {
@@ -98,8 +82,7 @@ public class ApiPaths {
 
     public static class Comment {
         public static final String COMMENT_PATH = "/comment";
-        public static final String COMMENT_REPLY = "/{postId}/reply/{commentId}";
-        public static final String COMMENT_REMOVE = "/{id}";
+        public static final String COMMENT_ID = "/{id}";
     }
 
     public static class CommentStatistic {

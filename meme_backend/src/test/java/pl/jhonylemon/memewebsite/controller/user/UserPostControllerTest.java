@@ -91,8 +91,7 @@ class UserPostControllerTest {
         postPostDto.setVisible(true);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .post(ApiPaths.User.USER_PATH + ApiPaths.Post.POST_PATH +
-                                ApiPaths.Post.POST_CREATE)
+                        .post(ApiPaths.Post.POST_PATH )
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(postPostDto))
                 )
@@ -138,8 +137,7 @@ class UserPostControllerTest {
         postRepository.save(post);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .delete(ApiPaths.User.USER_PATH + ApiPaths.Post.POST_PATH +
-                                ApiPaths.Post.POST_DELETE,post.getId())
+                        .delete(ApiPaths.Post.POST_PATH ,post.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk());
@@ -194,8 +192,7 @@ class UserPostControllerTest {
         postPutDto.setTags(new ArrayList<>());
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .put(ApiPaths.User.USER_PATH + ApiPaths.Post.POST_PATH +
-                                ApiPaths.Post.POST_UPDATE, post.getId())
+                        .put( ApiPaths.Post.POST_PATH , post.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(postPutDto))
                 )

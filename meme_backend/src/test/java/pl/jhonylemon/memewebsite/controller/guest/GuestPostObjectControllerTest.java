@@ -38,7 +38,7 @@ class GuestPostObjectControllerTest {
     @Test
     void getPostFileFileTest_Success() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
-                        .get(ApiPaths.Guest.GUEST_PATH + ApiPaths.PostObject.POST_OBJECT_PATH +
+                        .get(ApiPaths.PostObject.POST_OBJECT_PATH +
                                 ApiPaths.PostObject.POST_OBJECT_GET_FILE, 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                 )

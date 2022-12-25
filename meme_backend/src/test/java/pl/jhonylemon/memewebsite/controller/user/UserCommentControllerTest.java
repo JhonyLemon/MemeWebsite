@@ -82,8 +82,7 @@ class UserCommentControllerTest {
         commentPostDto.setCommentId(1L);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .post(ApiPaths.User.USER_PATH + ApiPaths.Comment.COMMENT_PATH +
-                                ApiPaths.Comment.COMMENT_REPLY,1L,1L)
+                        .post( ApiPaths.Comment.COMMENT_PATH ,1L,1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(commentPostDto))
                 )
