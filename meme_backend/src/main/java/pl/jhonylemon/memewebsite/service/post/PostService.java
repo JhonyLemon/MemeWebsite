@@ -277,10 +277,10 @@ public class PostService {
             throw new PostInvalidParamException();
         }
         if(descriptions==null){
-            throw new PostInvalidParamException();
+            descriptions = new ArrayList<>();
         }
         if(visible==null){
-            throw new PostInvalidParamException();
+            visible = true;
         }
 
         Account account = userDetailsService.currentUser();
