@@ -33,8 +33,20 @@ public class CommentStatisticService {
         if(id==null || id<1){
             throw new CommentInvalidParamException();
         }
+
+        Account account = userDetailsService.currentUser();
+
         List<CommentStatistic> statisticList = commentStatisticRepository.findByComment_Id(id);
-        return commentStatisticMapper.commentStatisticGetDto(statisticList);
+        CommentStatisticGetDto commentStatisticGetDto = commentStatisticMapper.commentStatisticGetDto(statisticList);
+        if(account!=null){
+            commentStatisticGetDto.expandData(
+                    commentStatisticRepository.findByComment_IdAndAccount_Id(
+                            id,
+                            account.getId()
+                    )
+            );
+        }
+        return commentStatisticGetDto;
     }
 
     @Transactional
@@ -67,6 +79,15 @@ public class CommentStatisticService {
             commentStatisticRepository.save(postStat);
         }
         List<CommentStatistic> statisticList = commentStatisticRepository.findByComment_Id(commentId);
-        return commentStatisticMapper.commentStatisticGetDto(statisticList);
+        CommentStatisticGetDto commentStatisticGetDto = commentStatisticMapper.commentStatisticGetDto(statisticList);
+        if(account!=null){
+            commentStatisticGetDto.expandData(
+                    commentStatisticRepository.findByComment_IdAndAccount_Id(
+                            commentId,
+                            account.getId()
+                    )
+            );
+        }
+        return commentStatisticGetDto;
     }
 }

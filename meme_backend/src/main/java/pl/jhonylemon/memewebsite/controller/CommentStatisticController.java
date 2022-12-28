@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pl.jhonylemon.memewebsite.api.CommentStatisticApi;
 import pl.jhonylemon.memewebsite.mapper.CommentStatisticMapper;
 import pl.jhonylemon.memewebsite.model.CommentStatisticGetModelApi;
+import pl.jhonylemon.memewebsite.model.StatisticPutModelApi;
 import pl.jhonylemon.memewebsite.service.commentstatistic.CommentStatisticService;
 
 @RestController
@@ -29,10 +30,10 @@ public class CommentStatisticController implements CommentStatisticApi {
 
     @Override
     @PreAuthorize("hasAuthority('USER_EDIT')")
-    public ResponseEntity<CommentStatisticGetModelApi> vote(Long id, Boolean vote) {
+    public ResponseEntity<CommentStatisticGetModelApi> vote(Long id, StatisticPutModelApi vote) {
         return ResponseEntity.ok().body(
                 commentStatisticMapper.commentStatisticGetDtoToModelApi(
-                        commentStatisticService.vote(id,vote)
+                        commentStatisticService.vote(id,vote.getVote())
                 )
         );
     }

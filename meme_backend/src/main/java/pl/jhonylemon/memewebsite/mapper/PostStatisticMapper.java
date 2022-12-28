@@ -60,6 +60,7 @@ public interface PostStatisticMapper {
                         .filter(s->s)
                         .count()
         );
+
         return postStatisticGetDto;
     }
 

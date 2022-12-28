@@ -4,6 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
 import pl.jhonylemon.memewebsite.dto.commentstatistic.CommentStatisticGetDto;
+import pl.jhonylemon.memewebsite.entity.Account;
 import pl.jhonylemon.memewebsite.entity.Comment;
 import pl.jhonylemon.memewebsite.entity.CommentStatistic;
 import pl.jhonylemon.memewebsite.model.CommentStatisticGetModelApi;

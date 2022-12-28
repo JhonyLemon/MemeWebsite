@@ -15,6 +15,7 @@ import pl.jhonylemon.memewebsite.model.*;
                 PostObjectMapper.class,
                 PostStatisticMapper.class,
                 TagMapper.class,
+                AccountMapper.class,
                 CommentMapper.class,
                 MiscMapper.class,
                 NullableMapper.class

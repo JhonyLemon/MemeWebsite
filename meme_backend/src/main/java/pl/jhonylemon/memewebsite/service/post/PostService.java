@@ -6,14 +6,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import pl.jhonylemon.memewebsite.component.PostProperties;
+import pl.jhonylemon.memewebsite.dto.comment.CommentGetDto;
 import pl.jhonylemon.memewebsite.dto.post.*;
 import pl.jhonylemon.memewebsite.dto.post.v1.PostGetShortDto;
 import pl.jhonylemon.memewebsite.dto.post.v1.PostPageGetDto;
 import pl.jhonylemon.memewebsite.dto.post.v2.PostGetFullDto;
-import pl.jhonylemon.memewebsite.entity.Account;
-import pl.jhonylemon.memewebsite.entity.Post;
-import pl.jhonylemon.memewebsite.entity.PostObject;
-import pl.jhonylemon.memewebsite.entity.Tag;
+import pl.jhonylemon.memewebsite.dto.poststatistic.PostStatisticGetDto;
+import pl.jhonylemon.memewebsite.entity.*;
 import pl.jhonylemon.memewebsite.enums.Permissions;
 import pl.jhonylemon.memewebsite.exception.account.AccountInvalidParamException;
 import pl.jhonylemon.memewebsite.exception.authentication.NotEnoughPermissionsException;
@@ -22,9 +21,7 @@ import pl.jhonylemon.memewebsite.exception.post.PostNotFoundException;
 import pl.jhonylemon.memewebsite.exception.postobject.PostObjectNotFoundException;
 import pl.jhonylemon.memewebsite.mapper.PostMapper;
 import pl.jhonylemon.memewebsite.mapper.PostObjectMapper;
-import pl.jhonylemon.memewebsite.repository.PostObjectRepository;
-import pl.jhonylemon.memewebsite.repository.PostRepository;
-import pl.jhonylemon.memewebsite.repository.TagRepository;
+import pl.jhonylemon.memewebsite.repository.*;
 import pl.jhonylemon.memewebsite.security.service.CustomUserDetailsService;
 import pl.jhonylemon.memewebsite.service.post.util.PostUtil;
 import pl.jhonylemon.memewebsite.service.poststatistic.PostStatisticService;
@@ -51,6 +48,8 @@ public class PostService {
     private final PostStatisticService postStatisticService;
     private final PostProperties postProperties;
     private final PostObjectMapper postObjectMapper;
+    private final CommentStatisticRepository commentStatisticRepository;
+    private final PostStatisticRepository postStatisticRepository;
 
     @Transactional
     public pl.jhonylemon.memewebsite.dto.post.v1.PostGetFullDto createUnpublishedPost(PostPostDto postPostDto) {
@@ -81,6 +80,8 @@ public class PostService {
         postRepository.save(post);
 
         pl.jhonylemon.memewebsite.dto.post.v1.PostGetFullDto postGetFullDto = postMapper.postToV1GetFullDto(post);
+
+        postGetFullDto.setPostStatistics(setPostStatistics(account,postGetFullDto.getPostStatistics()));
 
         postGetFullDto.setPostObjects(
                 postObjectRepository.findPostObjectsByPostId(post.getId()).stream()
@@ -127,7 +128,6 @@ public class PostService {
 
         List<PostGetShortDto> accountGetFullDtos = new ArrayList<>();
 
-
         posts.forEach(p -> {
             PostGetShortDto postGetShortDto = postMapper.postToV1GetShortDto(p);
             postGetShortDto.setFirstObjectId(
@@ -137,6 +137,7 @@ public class PostService {
                             .orElseThrow(() -> {
                         throw new PostObjectNotFoundException();
                     }).getId());
+            postGetShortDto.setPostStatistics(setPostStatistics(account,postGetShortDto.getPostStatistics()));
             accountGetFullDtos.add(postGetShortDto);
         });
 
@@ -160,8 +161,10 @@ public class PostService {
             throw new PostInvalidParamException();
         }
 
+        Account account = userDetailsService.currentUser();
+
         try {
-            Account account = userDetailsService.currentUser();
+
             postStatisticService.setSeenStatistic(account.getId(), id);
         } catch (Exception ignored) {
         }
@@ -174,6 +177,9 @@ public class PostService {
                         .collect(Collectors.toList()));
 
         postGetFullDto.getComments().removeIf(c -> c.getReplyToId() != null);
+
+        postGetFullDto.setComments(setCommentStatistics(account,postGetFullDto.getComments()));
+        postGetFullDto.setPostStatistics(setPostStatistics(account,postGetFullDto.getPostStatistics()));
 
         return postGetFullDto;
     }
@@ -227,6 +233,10 @@ public class PostService {
 
         pl.jhonylemon.memewebsite.dto.post.v1.PostGetFullDto postGetFullDto = postMapper.postToV1GetFullDto(post);
 
+        postGetFullDto.getComments().removeIf(c -> c.getReplyToId() != null);
+        postGetFullDto.setComments(setCommentStatistics(account,postGetFullDto.getComments()));
+        postGetFullDto.setPostStatistics(setPostStatistics(account,postGetFullDto.getPostStatistics()));
+
         postGetFullDto.setPostObjects(
                 postObjectRepository.findPostObjectsByPostId(post.getId()).stream()
                         .map(postObjectMapper::postObjectToShortGetDto)
@@ -253,6 +263,11 @@ public class PostService {
 
         pl.jhonylemon.memewebsite.dto.post.v1.PostGetFullDto postGetFullDto = postMapper.postToV1GetFullDto(post);
 
+        Account account = userDetailsService.currentUser();
+
+        postGetFullDto.getComments().removeIf(c -> c.getReplyToId() != null);
+        postGetFullDto.setComments(setCommentStatistics(account,postGetFullDto.getComments()));
+        postGetFullDto.setPostStatistics(setPostStatistics(account,postGetFullDto.getPostStatistics()));
         postGetFullDto.setPostObjects(
                 postObjectRepository.findPostObjectsByPostId(post.getId()).stream()
                         .map(postObjectMapper::postObjectToShortGetDto)
@@ -262,10 +277,16 @@ public class PostService {
     }
 
     public pl.jhonylemon.memewebsite.dto.post.v1.PostGetFullDto getUnpublishedPost() {
-        return postMapper.postToV1GetFullDto(
-                postRepository.findUnPublishedPost().orElseThrow(() -> {
-                    throw new PostNotFoundException();
-                }));
+        Post post = postRepository.findUnPublishedPost().orElseThrow(() -> {
+            throw new PostNotFoundException();
+        });
+        Account account = userDetailsService.currentUser();
+        pl.jhonylemon.memewebsite.dto.post.v1.PostGetFullDto postGetFullDto = postMapper.postToV1GetFullDto(
+                post
+        );
+
+        postGetFullDto.setPostStatistics(setPostStatistics(account,postGetFullDto.getPostStatistics()));
+        return postGetFullDto;
     }
 
     @Transactional
@@ -322,6 +343,8 @@ public class PostService {
 
         pl.jhonylemon.memewebsite.dto.post.v2.PostGetFullDto postGetFullDto = postMapper.postToV2GetFullDto(post);
 
+        postGetFullDto.setPostStatistics(setPostStatistics(account,postGetFullDto.getPostStatistics()));
+
         postGetFullDto.setPostObjects(
                 postObjectRepository.findPostObjectsByPostId(post.getId()).stream()
                         .map(postObjectMapper::postObjectToFullGetDto)
@@ -350,14 +373,19 @@ public class PostService {
         } catch (Exception ignored) {
         }
 
+        Account account = userDetailsService.currentUser();
+
         pl.jhonylemon.memewebsite.dto.post.v2.PostGetFullDto postGetFullDto = postMapper.postToV2GetFullDto(post);
+
+
+        postGetFullDto.getComments().removeIf(c -> c.getReplyToId() != null);
+        postGetFullDto.setComments(setCommentStatistics(account,postGetFullDto.getComments()));
+        postGetFullDto.setPostStatistics(setPostStatistics(account,postGetFullDto.getPostStatistics()));
 
         postGetFullDto.setPostObjects(
                 postObjectRepository.findPostObjectsByPostId(post.getId()).stream()
                         .map(postObjectMapper::postObjectToFullGetDto)
                         .collect(Collectors.toList()));
-
-        postGetFullDto.getComments().removeIf(c -> c.getReplyToId() != null);
 
         return postGetFullDto;
     }
@@ -383,6 +411,8 @@ public class PostService {
                             .orElseThrow(() -> {
                                 throw new PostObjectNotFoundException();
                             }).getContent());
+
+            postGetShortDto.setPostStatistics(setPostStatistics(account,postGetShortDto.getPostStatistics()));
             accountGetFullDtos.add(postGetShortDto);
         });
 
@@ -392,4 +422,30 @@ public class PostService {
                 posts.getTotalElements(),
                 postToPostRequestDto.getFilters());
     }
+
+    private List<CommentGetDto> setCommentStatistics(Account account, List<CommentGetDto> commentGetDto){
+        if(account!=null){
+            for(var comment : commentGetDto){
+                if(comment.getChildComments()!=null && !comment.getChildComments().isEmpty()) {
+                    comment.setChildComments(setCommentStatistics(account, comment.getChildComments()));
+                }
+                comment.getCommentStatistics().expandData(commentStatisticRepository.findByComment_IdAndAccount_Id(
+                        comment.getId(),
+                        account.getId()
+                ));
+            }
+        }
+        return commentGetDto;
+    }
+
+    private PostStatisticGetDto setPostStatistics(Account account, PostStatisticGetDto post){
+        if(account!=null){
+            post.expandData(postStatisticRepository.findByPost_IdAndAccount_Id(
+                    post.getPostId(),
+                    account.getId()
+            ));
+        }
+        return post;
+    }
+
 }

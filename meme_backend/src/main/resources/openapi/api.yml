@@ -607,7 +607,7 @@ paths:
             'application/json':
               schema:
                 $ref: '#/components/schemas/AccountRoleGet'
-  /v1/post/{id}/poststatistic/vote/{vote}:
+  /v1/post/{id}/poststatistic/vote:
     put:
       summary: Gives vote for post could be positive or negative
       description: Requires USER_EDIT permission
@@ -623,13 +623,11 @@ paths:
             format: int64
             example: 1
             description: Post id
-        - name: vote
-          in: path
-          required: true
-          schema:
-            type: boolean
-            example: true
-            description: Vote
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StatisticPut'
       responses:
         '200':
           description: OK
@@ -637,7 +635,7 @@ paths:
             'application/json':
               schema:
                 $ref: '#/components/schemas/PostStatisticGet'
-  /v1/post/{id}/poststatistic/favorite/{favorite}:
+  /v1/post/{id}/poststatistic/favorite:
     put:
       summary: Gives favorite for post
       description: Requires USER_EDIT permission
@@ -653,13 +651,11 @@ paths:
             format: int64
             example: 1
             description: Post id
-        - name: favorite
-          in: path
-          required: true
-          schema:
-            type: boolean
-            example: true
-            description: Favorite
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StatisticPut'
       responses:
         '200':
           description: OK
@@ -792,34 +788,6 @@ paths:
             'application/json':
               schema:
                 $ref: '#/components/schemas/PostGetFullV1'
-  /v1/comment/{id}/commentstatistic/{vote}:
-    put:
-      summary: Gives vote for comment could be positive or negative
-      description: Requires USER_EDIT permission
-      tags:
-        - "CommentStatistic"
-      operationId: vote
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int64
-            example: 1
-            description: Vote
-        - name: vote
-          in: path
-          required: true
-          schema:
-            type: boolean
-      responses:
-        '200':
-          description: OK
-          content:
-            'application/json':
-              schema:
-                $ref: '#/components/schemas/CommentStatisticGet'
   /v1/post/{id}/comment:
     post:
       summary: Creates new comment for given post
@@ -1166,6 +1134,33 @@ paths:
             'application/json':
               schema:
                 $ref: '#/components/schemas/CommentStatisticGet'
+    put:
+      summary: Gives vote for comment could be positive or negative
+      description: Requires USER_EDIT permission
+      tags:
+        - "CommentStatistic"
+      operationId: vote
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+            description: Vote
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StatisticPut'
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/CommentStatisticGet'
   /v1/account/{id}:
     get:
       summary: Returns account by given id
@@ -1368,6 +1363,11 @@ components:
           example: 1
         account:
           $ref: '#/components/schemas/AccountGetShort'
+        childComments:
+          type: array
+          description: Array of child comments
+          items:
+            $ref: '#/components/schemas/CommentGet'
         replyToId:
           type: integer
           format: int64
@@ -1397,6 +1397,10 @@ components:
           format: int64
           description: Ammount of negative votes this comment have
           example: 2
+        yourVote:
+          type: boolean
+          description: Your vote for comment
+          example: true
     PostGetFullV1:
       type: object
       properties:
@@ -1505,6 +1509,18 @@ components:
           format: int64
           description: Ammount of favorites this post have
           example: 2
+        yourVote:
+          type: boolean
+          description: Your vote for post
+          example: true
+        yourFavorite:
+          type: boolean
+          description: Your favorite for post
+          example: true
+        yourSeen:
+          type: boolean
+          description: Determines if you already seen this post
+          example: true
     TagGet:
       type: object
       properties:
@@ -2092,6 +2108,13 @@ components:
           type: string
           example: Some file description
           description: Description of file
+    StatisticPut:
+      type: object
+      properties:
+        vote:
+          type: boolean
+          example: true
+          description: Vote
   securitySchemes:
     bearerAuth:
       type: http

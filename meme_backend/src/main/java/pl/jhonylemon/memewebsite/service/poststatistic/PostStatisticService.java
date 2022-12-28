@@ -58,7 +58,16 @@ public class PostStatisticService {
             postStatisticRepository.save(postStat);
         }
         List<PostStatistic> statisticList = postStatisticRepository.findByPost_Id(postId);
-        return postStatisticMapper.postStatisticToGetDto(statisticList);
+        PostStatisticGetDto postStatisticGetDto = postStatisticMapper.postStatisticToGetDto(statisticList);
+        if(account!=null){
+            postStatisticGetDto.expandData(
+                    postStatisticRepository.findByPost_IdAndAccount_Id(
+                            postId,
+                            account.getId()
+                    )
+            );
+        }
+        return postStatisticGetDto;
     }
 
     @Transactional
@@ -71,13 +80,13 @@ public class PostStatisticService {
         }
         Optional<PostStatistic> postStatistic = postStatisticRepository.findByPost_IdAndAccount_Id(postId,userId);
 
+        Account account = accountRepository.findById(userId).orElseThrow(()->{
+            throw new AccountNotFoundException();
+        });
+
         if(postStatistic.isPresent()) {
             postStatistic.get().setSeen(true);
         }else {
-            Account account = accountRepository.findById(userId).orElseThrow(()->{
-                throw new AccountNotFoundException();
-            });
-
             Post post = postRepository.findById(postId).orElseThrow(()->{
                 throw new PostNotFoundException();
             });
@@ -92,7 +101,16 @@ public class PostStatisticService {
             postStatisticRepository.save(postStat);
         }
         List<PostStatistic> statisticList = postStatisticRepository.findByPost_Id(postId);
-        return postStatisticMapper.postStatisticToGetDto(statisticList);
+        PostStatisticGetDto postStatisticGetDto = postStatisticMapper.postStatisticToGetDto(statisticList);
+        if(account!=null){
+            postStatisticGetDto.expandData(
+                    postStatisticRepository.findByPost_IdAndAccount_Id(
+                            postId,
+                            account.getId()
+                    )
+            );
+        }
+        return postStatisticGetDto;
     }
 
     @Transactional
@@ -101,7 +119,7 @@ public class PostStatisticService {
             throw new PostStatisticInvalidParamException();
         }
         if(favorite==null){
-            throw new PostStatisticInvalidParamException();
+            favorite = false;
         }
 
         Account account = userDetailsService.currentUser();
@@ -125,15 +143,35 @@ public class PostStatisticService {
             postStatisticRepository.save(postStat);
         }
         List<PostStatistic> statisticList = postStatisticRepository.findByPost_Id(postId);
-        return postStatisticMapper.postStatisticToGetDto(statisticList);
+        PostStatisticGetDto postStatisticGetDto = postStatisticMapper.postStatisticToGetDto(statisticList);
+        if(account!=null){
+            postStatisticGetDto.expandData(
+                    postStatisticRepository.findByPost_IdAndAccount_Id(
+                            postId,
+                            account.getId()
+                    )
+            );
+        }
+        return postStatisticGetDto;
     }
 
     public PostStatisticGetDto getPostStatistic(Long id) {
         if(id==null || id<1){
             throw new PostStatisticInvalidParamException();
         }
+        Account account = userDetailsService.currentUser();
+
         List<PostStatistic> statisticList = postStatisticRepository.findByPost_Id(id);
-        return postStatisticMapper.postStatisticToGetDto(statisticList);
+        PostStatisticGetDto postStatisticGetDto = postStatisticMapper.postStatisticToGetDto(statisticList);
+        if(account!=null){
+            postStatisticGetDto.expandData(
+                    postStatisticRepository.findByPost_IdAndAccount_Id(
+                            id,
+                            account.getId()
+                    )
+            );
+        }
+        return postStatisticGetDto;
     }
 
 
