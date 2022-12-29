@@ -1,0 +1,106 @@
+@use './common.scss' as *;
+
+.post-details {
+    max-width: 900px;
+    padding: 100px 0;
+    margin: 0 auto;
+
+    &__container {
+        background-color: #36393f;
+    }
+
+    &__info {
+        display: flex;
+        padding-bottom: 20px;
+    }
+
+    &__p {
+        font-size: 22px;
+        color: white;
+        padding-bottom: 5px;
+    }
+
+    &__tags {
+        display: flex;
+        gap: 10px;
+    }
+
+    &__p,
+    &__tags,
+    &__comments,
+    &__add-comment {
+        padding-left: 20px;
+    }
+
+    &__creator {
+        display: flex;
+        align-items: center;
+        margin-left: auto;
+        padding-right: 10px;
+
+        &--photo {
+            max-width: 70px;
+        }
+
+        &--name {
+            padding-left: 10px;
+            color: white;
+        }
+
+        &--date {
+            font-size: 14px;
+            color: grey;
+        }
+    }
+
+    &__comments {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+        border-bottom: 2px solid grey;
+
+        p {
+            color: white;
+            font-size: 25px;
+        }
+    }
+
+    &__add-comment {
+        display: inline-flex;
+        flex-direction: column;
+
+        &__container {
+            display: flex;
+            padding-bottom: 5px;
+        }
+
+        &__photo {
+            max-width: 50px;
+            max-height: 50px;
+        }
+
+        &__textarea {
+            @extend %custom-input--textarea;
+            margin-left: 10px;
+            border-radius: 10px;
+        }
+    }
+}
+
+.add-comment {
+    height: 40px;
+    width: 150px;
+    margin: 0 0 30px auto;
+    border-radius: 20px;
+    cursor: pointer;
+    background-color: #e2dfd2;
+    color: #1c1c1c;
+    font-size: 14px;
+    transition: background-color 0.2s ease-in;
+
+    &:hover {
+        background-color: #f4d345;
+    }
+}

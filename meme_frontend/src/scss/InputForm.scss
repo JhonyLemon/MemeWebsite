@@ -1,0 +1,38 @@
+.form {
+    position: relative;
+    display: inline-block;
+
+    &__input {
+        background-color: #1c1c1c;
+        border: solid 2px grey;
+        outline: none;
+        border-radius: 8px;
+        font-size: 16px;
+        padding: 10px;
+        color: white;
+
+        &:focus {
+            border-color: #e2dfd2;
+        }
+    }
+
+    &__label {
+        position: absolute;
+        left: 15px;
+        top: 12px;
+        font-size: 16px;
+        color: white;
+        transition: top 0.2s ease-in, left 0.2s ease-in,
+            border-color 0.2s ease-in, font-size 0.2s ease-in;
+        cursor: text;
+    }
+}
+
+.form__input:focus ~ .form__label,
+.form__input:not(:placeholder-shown) ~ .form__label {
+    font-size: 12px;
+    top: -6px;
+    left: 7px;
+    background-color: #1c1c1c;
+    padding: 0 5px;
+}

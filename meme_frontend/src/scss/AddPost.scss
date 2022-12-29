@@ -1,0 +1,29 @@
+@use './common.scss' as *;
+
+.add-post {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding: 30px 0;
+    gap: 30px;
+    max-width: 500px;
+    @extend %container;
+
+    p {
+        color: white;
+        font-size: 40px;
+    }
+
+    &__file {
+        color: white;
+        cursor: pointer;
+    }
+
+    &__input {
+        @extend %custom-input;
+
+        &--textarea {
+            @extend %custom-input--textarea;
+        }
+    }
+}

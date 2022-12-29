@@ -1,0 +1,42 @@
+.navbar-container {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background-color: #121212;
+}
+
+.navbar {
+    display: flex;
+    justify-content: center;
+    gap: 70px;
+    padding: 20px 0;
+
+    &__item {
+        color: white;
+        font-size: 22px;
+        text-decoration: none;
+        transition: transform 0.2s ease-in-out;
+
+        &:hover {
+            &:hover {
+                transform: scale(1.2);
+            }
+        }
+
+        &--logout,
+        &--add-post {
+            @extend .navbar__item;
+        }
+
+        &--logout {
+            cursor: pointer;
+            background: none;
+            outline: none;
+            border: none;
+        }
+
+        &--add-post {
+            color: #f4d345;
+        }
+    }
+}

@@ -1,0 +1,34 @@
+@forward './Navbar.scss';
+@forward './Post.scss';
+@forward './Login.scss';
+@forward './InputForm.scss';
+@forward './LoginButton.scss';
+@forward './AddPost.scss';
+@forward './AccountSettings.scss';
+@forward './PostDetails.scss';
+@forward './Tag.scss';
+@forward './Comments.scss';
+
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Lato';
+}
+
+.App {
+    width: 100vw;
+    height: 100vh;
+}
+
+.layout {
+    background-color: #36393f;
+    height: 100vh;
+    z-index: -9999;
+    padding-top: 77px;
+}
