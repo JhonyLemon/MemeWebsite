@@ -38,6 +38,13 @@ const Login = () => {
                             res.data.email,
                             res.data.profilePhotoId,
                         );
+                        localStorage.setItem('userId', res.data.id);
+                        localStorage.setItem('userName', res.data.name);
+                        localStorage.setItem('userEmail', res.data.email);
+                        localStorage.setItem(
+                            'userProfilePhotoId',
+                            res.data.profilePhotoId,
+                        );
                     });
                 navigate('/');
             });

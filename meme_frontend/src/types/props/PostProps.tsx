@@ -13,6 +13,7 @@ export default interface PostProps {
     userVote: boolean | undefined | null;
     userFavorite: boolean | undefined | null;
     details?: boolean;
+    description?: string;
     creationDate?: string;
     tags?: [ITag];
     account?: IAccountDetails;

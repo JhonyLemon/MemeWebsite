@@ -23,7 +23,7 @@ const Home = () => {
         data: {
             pagingAndSorting: {
                 page: 0,
-                size: 5,
+                size: 10,
             },
         },
         ...(isLogged && {

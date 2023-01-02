@@ -10,6 +10,6 @@ export default interface IComments {
         commentId: number;
         upVoteCount: number;
         downVoteCount: number;
-        yourVote: boolean;
+        yourVote: boolean | undefined | null;
     };
 }

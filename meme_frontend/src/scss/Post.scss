@@ -50,6 +50,13 @@
         width: 100%;
     }
 
+    &__description {
+        padding: 15px 0 10px 20px;
+        font-size: 30px;
+        color: white;
+        border-bottom: 2px solid grey;
+    }
+
     &__statistics {
         display: flex;
         padding: 10px 0px 15px 20px;

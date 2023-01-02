@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAxios } from '../customHooks/useAxios';
-import { AxiosRequestConfig } from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import useAuthStore from '../stores/authStore';
 import IPostDetails from '../types/IPostDetails';
 import Post from '../components/Post';
@@ -40,6 +40,7 @@ const PostDetails = () => {
                     userVote={response.postStatistics.yourVote}
                     userFavorite={response.postStatistics.yourFavorite}
                     details={true}
+                    description={response.postObjects[0].description}
                     creationDate={response.creationDate}
                     tags={response.tags}
                     account={response.account}

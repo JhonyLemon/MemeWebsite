@@ -37,6 +37,7 @@ const Post = ({
     userVote,
     userFavorite,
     details,
+    description,
     tags,
     account,
     creationDate,
@@ -120,7 +121,7 @@ const Post = ({
 
     //Function used change color and number of votes
     const changeVoteNumbers = (userVote: boolean | null | undefined) => {
-        if (!isLogged || yourVote == userVote) {
+        if (!isLogged) {
             return;
         }
 
@@ -231,7 +232,10 @@ const Post = ({
                 </div>
             </div>
             {details ? (
-                <img className="post__img" src={img} alt="post" />
+                <>
+                    <img className="post__img" src={img} alt="post" />
+                    <p className='post__description'>{description}</p>
+                </>
             ) : (
                 <Link to={`post/${id}`}>
                     <img className="post__img" src={img} alt="post" />
@@ -249,7 +253,7 @@ const Post = ({
                             src={ArrowUp}
                             onClick={() => {
                                 let tempYourVote: boolean | null = true;
-                                if (yourVote) {
+                                if (yourVote === true) {
                                     tempYourVote = null;
                                 }
                                 vote(tempYourVote);
@@ -270,7 +274,7 @@ const Post = ({
                             src={ArrowDown}
                             onClick={() => {
                                 let tempYourVote: boolean | null = false;
-                                if (yourVote == false) {
+                                if (yourVote === false) {
                                     tempYourVote = null;
                                 }
                                 vote(tempYourVote);

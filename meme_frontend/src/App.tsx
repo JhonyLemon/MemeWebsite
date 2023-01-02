@@ -28,22 +28,26 @@ function App() {
 
     useEffect(() => {
         const token = localStorage.getItem('accessToken');
+        const userId = localStorage.getItem('userId');
+        const userName = localStorage.getItem('userName');
+        const userEmail = localStorage.getItem('userEmail');
+        const userProfilePhotoId = localStorage.getItem('userProfilePhotoId');
         if (token !== null) {
             setLoggedTrue(token);
-            axios
-                .get('http://localhost:8080/api/v1/account', {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                })
-                .then((res) => {
-                    setUser(
-                        res.data.id,
-                        res.data.name,
-                        res.data.email,
-                        res.data.profilePhotoId,
-                    );
-                });
+        }
+
+        if (
+            userId !== null &&
+            userName !== null &&
+            userEmail !== null &&
+            userProfilePhotoId !== null
+        ) {
+            setUser(
+                parseInt(userId),
+                userName,
+                userEmail,
+                parseInt(userProfilePhotoId),
+            );
         }
 
         photos.length === 0 &&
