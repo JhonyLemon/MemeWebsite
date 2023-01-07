@@ -314,7 +314,7 @@ public class PostService {
                 .title(title)
                 .creationDate(LocalDate.now())
                 .files(new ArrayList<>())
-                .isPublished(false)
+                .isPublished(true)
                 .comments(new ArrayList<>())
                 .postStatistics(new ArrayList<>())
                 .isVisible(visible)
