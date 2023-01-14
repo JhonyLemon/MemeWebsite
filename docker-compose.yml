@@ -18,5 +18,9 @@ services:
       DB_PORT: 5432
       DBUSER: "meem"
       DBPASSWORD: "meem"
+  meme-frontend:
+    image: adamn2000/meme_website_frontend:latest
+    ports:
+      - "80:80"
 volumes:
   memewebsite:
