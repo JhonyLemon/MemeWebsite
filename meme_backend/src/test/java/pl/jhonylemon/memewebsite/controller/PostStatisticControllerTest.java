@@ -24,6 +24,7 @@ import pl.jhonylemon.memewebsite.controller.routes.ApiPaths;
 import pl.jhonylemon.memewebsite.entity.Account;
 import pl.jhonylemon.memewebsite.mapper.PostStatisticMapper;
 import pl.jhonylemon.memewebsite.model.PostStatisticGetModelApi;
+import pl.jhonylemon.memewebsite.model.StatisticPutModelApi;
 import pl.jhonylemon.memewebsite.repository.AccountRepository;
 import pl.jhonylemon.memewebsite.repository.AccountRoleRepository;
 import pl.jhonylemon.memewebsite.repository.ProfilePhotoRepository;
@@ -117,8 +118,9 @@ class PostStatisticControllerTest {
         accountRepository.save(account);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .put( ApiPaths.Version.v1 + ApiPaths.Post.POST_PATH + ApiPaths.Post.POST_ID + ApiPaths.PostStatistic.POST_STATISTIC_PATH + ApiPaths.PostStatistic.POST_STATISTIC_SET_FAVORITE,1L,true)
+                        .put( ApiPaths.Version.v1 + ApiPaths.Post.POST_PATH + ApiPaths.Post.POST_ID + ApiPaths.PostStatistic.POST_STATISTIC_PATH + ApiPaths.PostStatistic.POST_STATISTIC_SET_FAVORITE,1L)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new StatisticPutModelApi()))
                 )
                 .andExpect(status().isOk());
     }
@@ -156,8 +158,9 @@ class PostStatisticControllerTest {
         accountRepository.save(account);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .put( ApiPaths.Version.v1 + ApiPaths.Post.POST_PATH + ApiPaths.Post.POST_ID + ApiPaths.PostStatistic.POST_STATISTIC_PATH + ApiPaths.PostStatistic.POST_STATISTIC_SET_VOTE,1L,true)
+                        .put( ApiPaths.Version.v1 + ApiPaths.Post.POST_PATH + ApiPaths.Post.POST_ID + ApiPaths.PostStatistic.POST_STATISTIC_PATH + ApiPaths.PostStatistic.POST_STATISTIC_SET_VOTE,1L)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new StatisticPutModelApi()))
                 )
                 .andExpect(status().isOk());
     }

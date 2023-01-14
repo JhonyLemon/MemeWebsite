@@ -41,8 +41,8 @@ public class ApiPaths {
 
     public static class PostStatistic {
         public static final String POST_STATISTIC_PATH = "/poststatistic";
-        public static final String POST_STATISTIC_SET_VOTE = "/vote/{vote}";
-        public static final String POST_STATISTIC_SET_FAVORITE = "/favorite/{favorite}";
+        public static final String POST_STATISTIC_SET_VOTE = "/vote";
+        public static final String POST_STATISTIC_SET_FAVORITE = "/favorite";
     }
 
     public static class Tag {
@@ -72,6 +72,6 @@ public class ApiPaths {
 
     public static class CommentStatistic {
         public static final String COMMENT_STATISTIC_PATH = "/commentstatistic";
-        public static final String POST_STATISTIC_SET_VOTE = "/{vote}";
+        public static final String POST_STATISTIC_SET_VOTE = "";
     }
 }
