@@ -32,11 +32,13 @@ const Login = () => {
                         },
                     })
                     .then((res) => {
+                        console.log(res);
                         setUser(
                             res.data.id,
                             res.data.name,
                             res.data.email,
                             res.data.profilePhotoId,
+                            res.data.role.role,
                         );
                         localStorage.setItem('userId', res.data.id);
                         localStorage.setItem('userName', res.data.name);
@@ -45,6 +47,7 @@ const Login = () => {
                             'userProfilePhotoId',
                             res.data.profilePhotoId,
                         );
+                        localStorage.setItem('userRole', res.data.role.role);
                     });
                 navigate('/');
             });
@@ -70,7 +73,7 @@ const Login = () => {
                 }
             />
             <CustomButton
-                styles={'login-button'}
+                styles="login-button"
                 onClick={() => {}}
                 text="Zaloguj się"
             />

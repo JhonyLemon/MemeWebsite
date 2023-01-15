@@ -5,7 +5,7 @@ import useUserStore from '../stores/userStore';
 
 const Navbar = () => {
     const { isLogged, logoutUser } = useAuthStore();
-    const { resetUser } = useUserStore();
+    const { resetUser, role } = useUserStore();
     const navigate = useNavigate();
 
     return (
@@ -25,6 +25,14 @@ const Navbar = () => {
                         <Link to="twojekonto" className="navbar__item">
                             Twoje konto
                         </Link>
+                        {role === 'ADMIN' && (
+                            <Link
+                                className="navbar__item--add-post"
+                                to="paneladmina"
+                            >
+                                Panel admina
+                            </Link>
+                        )}
                         <button
                             className="navbar__item--logout"
                             onClick={() => {

@@ -106,17 +106,24 @@ const Post = ({
             return;
         }
 
-        axios.put(
-            `http://localhost:8080/api/v1/post/${postId}/poststatistic/vote`,
-            {
-                vote: userVote,
-            },
-            {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
+        axios
+            .put(
+                `http://localhost:8080/api/v1/post/${postId}/poststatistic/vote`,
+                {
+                    vote: userVote,
                 },
-            },
-        );
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                },
+            )
+            .then((res) => {
+                changeVoteNumbers(userVote);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
     };
 
     //Function used change color and number of votes
@@ -159,17 +166,24 @@ const Post = ({
             return;
         }
 
-        axios.put(
-            `http://localhost:8080/api/v1/post/${postId}/poststatistic/favorite`,
-            {
-                vote: userVote,
-            },
-            {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
+        axios
+            .put(
+                `http://localhost:8080/api/v1/post/${postId}/poststatistic/favorite`,
+                {
+                    vote: userVote,
                 },
-            },
-        );
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                },
+            )
+            .then((res) => {
+                changeHeartColor(userVote);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
     };
 
     //Function used to change color of heart
@@ -234,10 +248,10 @@ const Post = ({
             {details ? (
                 <>
                     <img className="post__img" src={img} alt="post" />
-                    <p className='post__description'>{description}</p>
+                    <p className="post__description">{description}</p>
                 </>
             ) : (
-                <Link to={`post/${id}`}>
+                <Link to={`/post/${id}`}>
                     <img className="post__img" src={img} alt="post" />
                 </Link>
             )}
@@ -257,7 +271,6 @@ const Post = ({
                                     tempYourVote = null;
                                 }
                                 vote(tempYourVote);
-                                changeVoteNumbers(tempYourVote);
                             }}
                         />
                     </div>
@@ -278,7 +291,6 @@ const Post = ({
                                     tempYourVote = null;
                                 }
                                 vote(tempYourVote);
-                                changeVoteNumbers(tempYourVote);
                             }}
                         />
                     </div>
@@ -298,7 +310,6 @@ const Post = ({
                             let tempUserFavourite = true;
                             if (isFavourite) tempUserFavourite = false;
                             favourite(tempUserFavourite);
-                            changeHeartColor(tempUserFavourite);
                         }}
                     />
                     <p className="post__statistics__count">{favoriteCount}</p>

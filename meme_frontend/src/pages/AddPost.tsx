@@ -1,13 +1,15 @@
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import CustomButton from '../components/CustomButton';
 import useAuthStore from '../stores/authStore';
+import { useNavigate } from 'react-router-dom';
 
 const AddPost = () => {
     const [postImg, setPostImg] = useState<File>();
     const [postTitle, setPostTitle] = useState<string>('');
     const [postDescription, setPostDescription] = useState<string>('');
     const { accessToken } = useAuthStore();
+    const navigate = useNavigate();
 
     const config = {
         headers: {
@@ -26,6 +28,9 @@ const AddPost = () => {
         bodyFormData.append('visible', true);
         axios
             .post('http://localhost:8080/api/v2/post', bodyFormData, config)
+            .then((res) => {
+                navigate('/');
+            });
     };
 
     return (

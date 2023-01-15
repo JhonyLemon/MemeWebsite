@@ -6,14 +6,19 @@ interface UserStore {
     name: string;
     email: string;
     profilePhotoId: number;
+    role: string;
+
     setUser: (
         id: number,
         name: string,
         email: string,
         profilePhotoId: number,
+        role: string,
     ) => void;
 
     resetUser: () => void;
+
+    setName: (name: string) => void;
 }
 
 const useUserStore = create<UserStore>((set) => ({
@@ -21,12 +26,14 @@ const useUserStore = create<UserStore>((set) => ({
     name: '',
     email: '',
     profilePhotoId: 0,
+    role: '',
 
     setUser: (
         id: number,
         name: string,
         email: string,
         profilePhotoId: number,
+        role: string,
     ) => {
         set((state) => ({
             ...state,
@@ -34,6 +41,7 @@ const useUserStore = create<UserStore>((set) => ({
             name: name,
             email: email,
             profilePhotoId: profilePhotoId,
+            role: role,
         }));
     },
 
@@ -44,6 +52,14 @@ const useUserStore = create<UserStore>((set) => ({
             name: '',
             email: '',
             profilePhotoId: 0,
+            role: '',
+        }));
+    },
+
+    setName: (name: string) => {
+        set((state) => ({
+            ...state,
+            name: name,
         }));
     },
 }));

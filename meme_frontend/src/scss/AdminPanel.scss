@@ -1,0 +1,66 @@
+@use './common.scss' as *;
+
+.admin-panel {
+    @extend %container;
+    height: fit-content;
+    max-width: 750px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 50px;
+
+    &__user {
+        display: flex;
+        align-items: center;
+        gap: 50px;
+
+        &__img {
+            height: 60px;
+            width: 60px;
+        }
+
+        &__name {
+            width: 150px;
+            color: white;
+            font-size: 20px;
+        }
+
+        &__role {
+            color: #f4d345;
+            font-size: 20px;
+            width: 150px;
+        }
+
+        &--delete {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out, color 0.2s ease-in-out;
+
+            p,
+            svg {
+                color: white;
+            }
+
+            p {
+                font-size: 25px;
+            }
+
+            svg {
+                width: 40px;
+                height: 40px;
+            }
+
+            &:hover {
+                transform: scale(1.2);
+
+                p,
+                svg {
+                    color: #d70040;
+                }
+            }
+        }
+    }
+}

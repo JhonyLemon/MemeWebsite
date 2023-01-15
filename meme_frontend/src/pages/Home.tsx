@@ -12,7 +12,7 @@ export interface IJsonResponse {
     totalNumberOfElements: number;
 }
 
-const Home = () => {
+const Home = ({ waitingRoom }: { waitingRoom: boolean }) => {
     const { isLogged, accessToken } = useAuthStore();
     const { setPhotos } = usePhotosStore();
 
@@ -42,20 +42,41 @@ const Home = () => {
         <div style={{ backgroundColor: '#36393f' }}>
             <div className="posts-container">
                 {response?.posts.map((post: IPost) => {
-                    return (
-                        <Post
-                            key={post.id}
-                            id={post.id}
-                            title={post.title}
-                            img={`data:image/jpeg;base64,${post.firstObjectContent}`}
-                            upCount={post.postStatistics.upVoteCount}
-                            downCount={post.postStatistics.downVoteCount}
-                            seenCount={post.postStatistics.seenCount}
-                            favCount={post.postStatistics.favoriteCount}
-                            userVote={post.postStatistics.yourVote}
-                            userFavorite={post.postStatistics.yourFavorite}
-                        ></Post>
-                    );
+                    return waitingRoom
+                        ? post.postStatistics.downVoteCount >=
+                              post.postStatistics.upVoteCount && (
+                              <Post
+                                  key={post.id}
+                                  id={post.id}
+                                  title={post.title}
+                                  img={`data:image/jpeg;base64,${post.firstObjectContent}`}
+                                  upCount={post.postStatistics.upVoteCount}
+                                  downCount={post.postStatistics.downVoteCount}
+                                  seenCount={post.postStatistics.seenCount}
+                                  favCount={post.postStatistics.favoriteCount}
+                                  userVote={post.postStatistics.yourVote}
+                                  userFavorite={
+                                      post.postStatistics.yourFavorite
+                                  }
+                              ></Post>
+                          )
+                        : post.postStatistics.upVoteCount >
+                              post.postStatistics.downVoteCount && (
+                              <Post
+                                  key={post.id}
+                                  id={post.id}
+                                  title={post.title}
+                                  img={`data:image/jpeg;base64,${post.firstObjectContent}`}
+                                  upCount={post.postStatistics.upVoteCount}
+                                  downCount={post.postStatistics.downVoteCount}
+                                  seenCount={post.postStatistics.seenCount}
+                                  favCount={post.postStatistics.favoriteCount}
+                                  userVote={post.postStatistics.yourVote}
+                                  userFavorite={
+                                      post.postStatistics.yourFavorite
+                                  }
+                              ></Post>
+                          );
                 })}
             </div>
         </div>
