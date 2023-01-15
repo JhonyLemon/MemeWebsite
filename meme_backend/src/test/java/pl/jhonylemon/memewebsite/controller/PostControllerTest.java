@@ -268,6 +268,7 @@ class PostControllerTest {
                 .isVisible(true)
                 .isPublished(true)
                 .files(List.of(postObjectRepository.findById(1L).orElse(null)))
+                .comments(new ArrayList<>())
                 .build();
 
         postRepository.save(post);
@@ -329,6 +330,7 @@ class PostControllerTest {
                 .isVisible(true)
                 .isPublished(false)
                 .files(List.of(postObjectRepository.findById(1L).orElse(null)))
+                .comments(new ArrayList<>())
                 .build();
 
         postRepository.save(post);

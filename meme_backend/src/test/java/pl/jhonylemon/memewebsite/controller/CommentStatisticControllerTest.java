@@ -24,6 +24,7 @@ import pl.jhonylemon.memewebsite.controller.routes.ApiPaths;
 import pl.jhonylemon.memewebsite.entity.Account;
 import pl.jhonylemon.memewebsite.mapper.CommentStatisticMapper;
 import pl.jhonylemon.memewebsite.model.CommentStatisticGetModelApi;
+import pl.jhonylemon.memewebsite.model.StatisticPutModelApi;
 import pl.jhonylemon.memewebsite.repository.AccountRepository;
 import pl.jhonylemon.memewebsite.repository.AccountRoleRepository;
 import pl.jhonylemon.memewebsite.repository.ProfilePhotoRepository;
@@ -120,8 +121,9 @@ class CommentStatisticControllerTest {
         mockMvc.perform(MockMvcRequestBuilders
                         .put(ApiPaths.Version.v1 + ApiPaths.Comment.COMMENT_PATH +
                                 ApiPaths.Comment.COMMENT_ID + ApiPaths.CommentStatistic.COMMENT_STATISTIC_PATH +
-                                ApiPaths.CommentStatistic.POST_STATISTIC_SET_VOTE,1L,true)
+                                ApiPaths.CommentStatistic.POST_STATISTIC_SET_VOTE,1L)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new StatisticPutModelApi()))
                 )
                 .andExpect(status().isOk());
     }
