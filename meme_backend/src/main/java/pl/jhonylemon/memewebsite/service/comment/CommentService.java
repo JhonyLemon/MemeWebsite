@@ -17,9 +17,11 @@ import pl.jhonylemon.memewebsite.repository.AccountRepository;
 import pl.jhonylemon.memewebsite.repository.CommentRepository;
 import pl.jhonylemon.memewebsite.repository.PostRepository;
 import pl.jhonylemon.memewebsite.security.service.CustomUserDetailsService;
+import pl.jhonylemon.memewebsite.util.FunctionHolder;
 import pl.jhonylemon.memewebsite.util.Validator;
 
 import javax.transaction.Transactional;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -45,18 +47,23 @@ public class CommentService {
         Account account = userDetailsService.currentUser();
         List<String> permissions = userDetailsService.currentUserPermissions();
 
-        Validator.checkPermission(permissions, Map.of(
-                Permissions.MODERATOR_DELETE.getName(), () -> {},
-                Permissions.USER_DELETE.getName(), () -> {
-                    if(!comment.getAccount().getId().equals(account.getId())){
-                        throw new NotEnoughPermissionsException();
-                    }
-                }
-        ));
+        Map<String, FunctionHolder> map = new LinkedHashMap();
+        map.put(Permissions.MODERATOR_DELETE.getName(), () -> {});
+        map.put(Permissions.USER_DELETE.getName(), () -> {
+            if(!comment.getAccount().getId().equals(account.getId())){
+                throw new NotEnoughPermissionsException();
+            }
+        });
+        Validator.checkPermission(permissions, map);
+
+        comment.getChildComments().forEach(c->{
+            c.setReplyTo(null);
+        });
 
         if (comment.getChildComments() == null) {
             comment.setComment("");
             comment.setAccount(null);
+
         } else {
             commentRepository.delete(comment);
         }

@@ -20,11 +20,12 @@ public class Validator {
     }
 
     public static void checkPermission(List<String> currentPermissions, Map<String,FunctionHolder> permissionsToCheck){
-        for(String permission : currentPermissions){
-            FunctionHolder holder = permissionsToCheck.get(permission);
-            if(holder!=null){
-                holder.execute();
-                return;
+        for(var entry : permissionsToCheck.entrySet()){
+            for(String permission : currentPermissions){
+                if(entry.getValue().equals(permission)){
+                    permissionsToCheck.get(permission).execute();
+                    return;
+                }
             }
         }
     }

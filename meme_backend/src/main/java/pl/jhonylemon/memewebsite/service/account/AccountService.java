@@ -28,12 +28,11 @@ import pl.jhonylemon.memewebsite.exception.authorization.AuthorizationFailedExce
 import pl.jhonylemon.memewebsite.exception.profilepicture.ProfilePictureNotFoundException;
 import pl.jhonylemon.memewebsite.mapper.AccountMapper;
 import pl.jhonylemon.memewebsite.mapper.AccountRoleMapper;
-import pl.jhonylemon.memewebsite.repository.AccountRepository;
-import pl.jhonylemon.memewebsite.repository.AccountRoleRepository;
-import pl.jhonylemon.memewebsite.repository.ProfilePhotoRepository;
+import pl.jhonylemon.memewebsite.repository.*;
 import pl.jhonylemon.memewebsite.security.component.JwtProperties;
 import pl.jhonylemon.memewebsite.security.service.CustomUserDetailsService;
 import pl.jhonylemon.memewebsite.service.account.util.AccountUtil;
+import pl.jhonylemon.memewebsite.service.comment.CommentService;
 
 import javax.transaction.Transactional;
 import java.time.Instant;
@@ -55,6 +54,10 @@ public class AccountService {
     private final AccountRoleRepository accountRoleRepository;
     private final ProfilePhotoRepository profilePhotoRepository;
     private final AccountRoleMapper accountRoleMapper;
+    private final PostRepository postRepository;
+    private final PostStatisticRepository postStatisticRepository;
+    private final CommentService commentService;
+    private final CommentStatisticRepository commentStatisticRepository;
 
     private final CustomUserDetailsService userDetailsService;
     @Qualifier("secretKeyAccessToken")
@@ -153,10 +156,16 @@ public class AccountService {
         Account account = accountRepository.findById(id).orElseThrow(() -> {
             throw new AccountNotFoundException();
         });
-
         if (authAccount.getId().equals(account.getId())) {
             throw new AuthorizationFailedException();
         }
+
+        postStatisticRepository.deleteAll(account.getPostStatistics());
+        postRepository.deleteAll(account.getPosts());
+        commentStatisticRepository.deleteAll(account.getCommentStatistics());
+        account.getCommentStatistics().clear();
+        account.getComments().forEach(comment-> commentService.deleteComment(comment.getId()));
+        account.getComments().clear();
         accountRepository.delete(account);
     }
 
@@ -166,6 +175,13 @@ public class AccountService {
         if(account == null || accountRepository.isAccountAdmin(account.getId())) {
             throw new AuthorizationFailedException();
         }
+
+        postStatisticRepository.deleteAll(account.getPostStatistics());
+        postRepository.deleteAll(account.getPosts());
+        commentStatisticRepository.deleteAll(account.getCommentStatistics());
+        account.getCommentStatistics().clear();
+        account.getComments().forEach(comment-> commentService.deleteComment(comment.getId()));
+        account.getComments().clear();
         accountRepository.delete(account);
     }
 

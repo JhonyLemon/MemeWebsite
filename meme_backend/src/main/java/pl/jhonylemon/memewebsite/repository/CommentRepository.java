@@ -6,4 +6,7 @@ import pl.jhonylemon.memewebsite.entity.Comment;
 
 @Repository
 public interface CommentRepository extends JpaRepository<Comment,Long> {
+
+
+
 }
