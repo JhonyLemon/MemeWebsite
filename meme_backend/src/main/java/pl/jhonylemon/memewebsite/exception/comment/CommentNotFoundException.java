@@ -9,6 +9,6 @@ public class CommentNotFoundException extends BusinessException {
     }
 
     public CommentNotFoundException() {
-        super(HttpStatus.BAD_REQUEST, "Post not found");
+        super(HttpStatus.BAD_REQUEST, "Comment not found");
     }
 }

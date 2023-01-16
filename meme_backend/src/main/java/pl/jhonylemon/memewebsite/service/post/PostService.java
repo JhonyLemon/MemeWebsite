@@ -303,6 +303,16 @@ public class PostService {
         if(visible==null){
             visible = true;
         }
+        if (files.stream().map(MultipartFile::getSize).max(Long::compare).get() > postProperties.getMaxFileObject()) {
+            throw new PostInvalidParamException("File too large");
+        }
+        if (!files.stream().map(MultipartFile::getContentType)
+                .allMatch(contentType->postProperties.getAllowedTypes().contains(contentType))) {
+            throw new PostInvalidParamException("Unsupported media type");
+        }
+        if (files.size() >= postProperties.getMaxObjects()) {
+            throw new PostInvalidParamException("Max post size reached");
+        }
 
         Account account = userDetailsService.currentUser();
 
@@ -404,13 +414,14 @@ public class PostService {
 
         posts.forEach(p -> {
             pl.jhonylemon.memewebsite.dto.post.v2.PostGetShortDto postGetShortDto = postMapper.postToV2GetShortDto(p);
-            postGetShortDto.setFirstObjectContent(
-                    postObjectRepository
+            postGetShortDto.setFirstObject(
+                    postObjectMapper.postObjectToFullGetDto(postObjectRepository
                             .findFirstByPostId(postGetShortDto.getId(), PageRequest.of(0, 1))
                             .stream().findFirst()
                             .orElseThrow(() -> {
                                 throw new PostObjectNotFoundException();
-                            }).getContent());
+                            }))
+                    );
 
             postGetShortDto.setPostStatistics(setPostStatistics(account,postGetShortDto.getPostStatistics()));
             accountGetFullDtos.add(postGetShortDto);

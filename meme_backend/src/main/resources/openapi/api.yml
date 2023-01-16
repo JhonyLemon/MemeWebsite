@@ -755,6 +755,19 @@ paths:
             'application/json':
               schema:
                 $ref: '#/components/schemas/PostGetFullV2'
+  /v1/post/types:
+    get:
+      summary: Returns list of allowed file types
+      tags:
+        - "Post"
+      operationId: getAllowedMimeTypes
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/AllowedTypes'
   /v1/post:
     get:
       summary: Returns unpublished if any exists post
@@ -1863,11 +1876,8 @@ components:
           type: string
           description: Title of post
           example: Ha ha funny
-        firstObjectContent:
-          type: string
-          format: byte
-          description: First post object content
-          example: 1
+        firstObject:
+          $ref: '#/components/schemas/PostObjectFullGet'
         account:
           $ref: '#/components/schemas/AccountGetShort'
         postStatistics:
@@ -2115,6 +2125,14 @@ components:
           type: boolean
           example: true
           description: Vote
+    AllowedTypes:
+      type: object
+      properties:
+        type:
+          type: array
+          description: Array of allowed mime types
+          items:
+            type: string
   securitySchemes:
     bearerAuth:
       type: http

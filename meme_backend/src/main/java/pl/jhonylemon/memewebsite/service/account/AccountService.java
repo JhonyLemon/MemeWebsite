@@ -14,10 +14,7 @@ import pl.jhonylemon.memewebsite.dto.account.*;
 import pl.jhonylemon.memewebsite.dto.accountrole.AccountRoleGetDto;
 import pl.jhonylemon.memewebsite.dto.authentication.AuthenticationRefreshRequest;
 import pl.jhonylemon.memewebsite.dto.authentication.AuthenticationResponse;
-import pl.jhonylemon.memewebsite.entity.Account;
-import pl.jhonylemon.memewebsite.entity.AccountPermission;
-import pl.jhonylemon.memewebsite.entity.AccountRole;
-import pl.jhonylemon.memewebsite.entity.ProfilePicture;
+import pl.jhonylemon.memewebsite.entity.*;
 import pl.jhonylemon.memewebsite.exception.account.AccountEmailTakenException;
 import pl.jhonylemon.memewebsite.exception.account.AccountInvalidParamException;
 import pl.jhonylemon.memewebsite.exception.account.AccountInvalidPasswordException;
@@ -58,6 +55,8 @@ public class AccountService {
     private final PostStatisticRepository postStatisticRepository;
     private final CommentService commentService;
     private final CommentStatisticRepository commentStatisticRepository;
+    private final CommentRepository commentRepository;
+    private final PostObjectRepository postObjectRepository;
 
     private final CustomUserDetailsService userDetailsService;
     @Qualifier("secretKeyAccessToken")
@@ -161,11 +160,46 @@ public class AccountService {
         }
 
         postStatisticRepository.deleteAll(account.getPostStatistics());
-        postRepository.deleteAll(account.getPosts());
         commentStatisticRepository.deleteAll(account.getCommentStatistics());
         account.getCommentStatistics().clear();
-        account.getComments().forEach(comment-> commentService.deleteComment(comment.getId()));
+        account.getPostStatistics().clear();
+
+        postStatisticRepository.deleteAll(
+                account.getPosts().stream()
+                        .map(Post::getPostStatistics)
+                        .flatMap(List::stream)
+                        .collect(Collectors.toList())
+        );
+        commentStatisticRepository.deleteAll(
+                account.getPosts().stream()
+                        .map(Post::getComments)
+                        .flatMap(List::stream)
+                        .map(Comment::getCommentStatistics)
+                        .flatMap(List::stream)
+                        .collect(Collectors.toList())
+        );
+
+        commentRepository.deleteAll(account.getPosts().stream()
+                .map(Post::getComments)
+                .flatMap(List::stream)
+                .collect(Collectors.toList())
+        );
+        account.getComments().forEach(comment-> {
+            if(commentRepository.findById(comment.getId()).isPresent()){
+                commentService.deleteComment(comment.getId());
+            }
+        });
         account.getComments().clear();
+
+        postObjectRepository.deleteAll(
+                account.getPosts().stream()
+                        .map(Post::getFiles)
+                        .flatMap(List::stream)
+                        .collect(Collectors.toList())
+        );
+        postRepository.deleteAll(account.getPosts());
+        account.getPosts().clear();
+
         accountRepository.delete(account);
     }
 
@@ -177,11 +211,28 @@ public class AccountService {
         }
 
         postStatisticRepository.deleteAll(account.getPostStatistics());
-        postRepository.deleteAll(account.getPosts());
+        account.getComments().removeAll(account.getPosts().stream()
+                .map(Post::getComments)
+                .flatMap(List::stream)
+                .filter(c->c.getAccount().getId().equals(account.getId()))
+                .collect(Collectors.toList()));
+        commentRepository.deleteAll(account.getPosts().stream()
+                .map(Post::getComments)
+                .flatMap(List::stream)
+                .collect(Collectors.toList())
+        );
         commentStatisticRepository.deleteAll(account.getCommentStatistics());
         account.getCommentStatistics().clear();
+
         account.getComments().forEach(comment-> commentService.deleteComment(comment.getId()));
         account.getComments().clear();
+        postStatisticRepository.deleteAll(
+                account.getPosts().stream()
+                        .map(Post::getPostStatistics)
+                        .flatMap(List::stream)
+                        .collect(Collectors.toList())
+        );
+        postRepository.deleteAll(account.getPosts());
         accountRepository.delete(account);
     }
 

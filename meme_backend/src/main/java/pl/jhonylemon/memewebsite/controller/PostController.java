@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import pl.jhonylemon.memewebsite.api.PostApi;
+import pl.jhonylemon.memewebsite.component.PostProperties;
 import pl.jhonylemon.memewebsite.mapper.PostMapper;
 import pl.jhonylemon.memewebsite.model.*;
 import pl.jhonylemon.memewebsite.service.post.PostService;
@@ -20,6 +21,7 @@ public class PostController implements PostApi {
 
     private final PostService postService;
     private final PostMapper postMapper;
+    private final PostProperties postProperties;
 
     @Override
     public ResponseEntity<PostGetFullV2ModelApi> createPublishedPost(String title, List<MultipartFile> files, Boolean visible, List<String> description,List<Long> tags) {
@@ -119,5 +121,12 @@ public class PostController implements PostApi {
                 postMapper.postToV1GetFullModelApi(
                         postService.getPostWithoutContent(id)
                 ));
+    }
+
+    @Override
+    public ResponseEntity<AllowedTypesModelApi> getAllowedMimeTypes() {
+        AllowedTypesModelApi allowedTypesModelApi = new AllowedTypesModelApi();
+        allowedTypesModelApi.setType(postProperties.getAllowedTypes());
+        return ResponseEntity.ok().body(allowedTypesModelApi);
     }
 }
