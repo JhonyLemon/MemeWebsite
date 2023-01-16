@@ -3,8 +3,9 @@ import { useEffect } from 'react';
 import IPost from '../types/IPost';
 import useAuthStore from '../stores/authStore';
 import { useAxios } from '../customHooks/useAxios';
-import axios, { AxiosRequestConfig } from 'axios';
+import { AxiosRequestConfig } from 'axios';
 import usePhotosStore from '../stores/photosStore';
+import useRefreshStore from '../stores/refreshStore';
 
 export interface IJsonResponse {
     posts: IPost[];
@@ -15,6 +16,7 @@ export interface IJsonResponse {
 const Home = ({ waitingRoom }: { waitingRoom: boolean }) => {
     const { isLogged, accessToken } = useAuthStore();
     const { setPhotos } = usePhotosStore();
+    const { homeRefresh } = useRefreshStore();
 
     //Different config for axios request according to if user is logged in
     const config: AxiosRequestConfig = {
@@ -23,7 +25,7 @@ const Home = ({ waitingRoom }: { waitingRoom: boolean }) => {
         data: {
             pagingAndSorting: {
                 page: 0,
-                size: 10,
+                size: 50,
             },
         },
         ...(isLogged && {
@@ -36,7 +38,7 @@ const Home = ({ waitingRoom }: { waitingRoom: boolean }) => {
 
     useEffect(() => {
         request();
-    }, []);
+    }, [homeRefresh]);
 
     return (
         <div style={{ backgroundColor: '#36393f' }}>
@@ -49,7 +51,7 @@ const Home = ({ waitingRoom }: { waitingRoom: boolean }) => {
                                   key={post.id}
                                   id={post.id}
                                   title={post.title}
-                                  img={`data:image/jpeg;base64,${post.firstObjectContent}`}
+                                  firstObject={post.firstObject}
                                   upCount={post.postStatistics.upVoteCount}
                                   downCount={post.postStatistics.downVoteCount}
                                   seenCount={post.postStatistics.seenCount}
@@ -66,7 +68,7 @@ const Home = ({ waitingRoom }: { waitingRoom: boolean }) => {
                                   key={post.id}
                                   id={post.id}
                                   title={post.title}
-                                  img={`data:image/jpeg;base64,${post.firstObjectContent}`}
+                                  firstObject={post.firstObject}
                                   upCount={post.postStatistics.upVoteCount}
                                   downCount={post.postStatistics.downVoteCount}
                                   seenCount={post.postStatistics.seenCount}

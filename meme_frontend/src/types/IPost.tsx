@@ -3,7 +3,14 @@ import IPostStatistics from './IPostStatistics';
 export default interface IPost {
     id: number;
     title: string;
-    firstObjectContent: string;
+    firstObject: {
+        id: number;
+        postId: number;
+        content: string;
+        description: string;
+        fileName: string;
+        mimeType: string;
+    };
     account: {
         id: number;
         name: string;

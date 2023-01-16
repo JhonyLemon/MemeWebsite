@@ -5,7 +5,14 @@ import ITag from '../ITag';
 export default interface PostProps {
     id: number;
     title: string;
-    img: any;
+    firstObject: {
+        id: number;
+        postId: number;
+        content: string;
+        description: string;
+        fileName: string;
+        mimeType: string;
+    };
     upCount: number;
     downCount: number;
     seenCount: number;
@@ -13,7 +20,6 @@ export default interface PostProps {
     userVote: boolean | undefined | null;
     userFavorite: boolean | undefined | null;
     details?: boolean;
-    description?: string;
     creationDate?: string;
     tags?: [ITag];
     account?: IAccountDetails;

@@ -5,10 +5,12 @@ import axios, { AxiosRequestConfig } from 'axios';
 import useAuthStore from '../stores/authStore';
 import IPostDetails from '../types/IPostDetails';
 import Post from '../components/Post';
+import useRefreshStore from '../stores/refreshStore';
 
 const PostDetails = () => {
     const { id } = useParams();
     const { isLogged, accessToken } = useAuthStore();
+    const { commentsRefresh } = useRefreshStore();
 
     const config: AxiosRequestConfig = {
         method: 'get',
@@ -23,7 +25,7 @@ const PostDetails = () => {
 
     useEffect(() => {
         request();
-    }, []);
+    }, [commentsRefresh]);
 
     return response ? (
         <div className="post-details__container">
@@ -32,7 +34,7 @@ const PostDetails = () => {
                     key={response.id}
                     id={response.id}
                     title={response.title}
-                    img={`data:image/jpeg;base64,${response.postObjects[0].content}`}
+                    firstObject={response.postObjects[0]}
                     upCount={response.postStatistics.upVoteCount}
                     downCount={response.postStatistics.downVoteCount}
                     seenCount={response.postStatistics.seenCount}
@@ -40,7 +42,6 @@ const PostDetails = () => {
                     userVote={response.postStatistics.yourVote}
                     userFavorite={response.postStatistics.yourFavorite}
                     details={true}
-                    description={response.postObjects[0].description}
                     creationDate={response.creationDate}
                     tags={response.tags}
                     account={response.account}

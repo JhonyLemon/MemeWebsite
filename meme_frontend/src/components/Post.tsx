@@ -1,4 +1,4 @@
-import { useState, useEffect, ReactEventHandler } from 'react';
+import { useState, useEffect } from 'react';
 import PostProps from '../types/props/PostProps';
 import ArrowUp from '../images/up-arrow.png';
 import ArrowDown from '../images/down-arrow.png';
@@ -14,6 +14,7 @@ import Tag from '../components/Tag';
 import Comments from './Comments';
 import CustomButton from './CustomButton';
 import useUserStore from '../stores/userStore';
+import useRefreshStore from '../stores/refreshStore';
 
 export interface IJsonResponse {
     postId: number;
@@ -29,7 +30,7 @@ export interface IJsonResponse {
 const Post = ({
     id,
     title,
-    img,
+    firstObject,
     upCount,
     downCount,
     seenCount,
@@ -37,14 +38,17 @@ const Post = ({
     userVote,
     userFavorite,
     details,
-    description,
     tags,
     account,
     creationDate,
     comments,
 }: PostProps) => {
     const navigate = useNavigate();
+
     const { isLogged, accessToken } = useAuthStore();
+    const { homeRefresh, refreshHome, commentsRefresh, refreshComments } =
+        useRefreshStore();
+
     const [postId, setPostId] = useState<number>();
     const [yourVote, setYourVote] = useState(userVote);
     const [upVoteCount, setUpVoteCount] = useState(upCount);
@@ -119,6 +123,7 @@ const Post = ({
                 },
             )
             .then((res) => {
+                refreshHome(homeRefresh ? false : true);
                 changeVoteNumbers(userVote);
             })
             .catch((err) => {
@@ -179,6 +184,7 @@ const Post = ({
                 },
             )
             .then((res) => {
+                refreshHome(homeRefresh ? false : true);
                 changeHeartColor(userVote);
             })
             .catch((err) => {
@@ -223,7 +229,8 @@ const Post = ({
                 },
             )
             .then((res) => {
-                window.location.reload();
+                refreshComments(commentsRefresh ? false : true);
+                setUserComment('');
             });
     };
 
@@ -233,7 +240,7 @@ const Post = ({
                 {details ? (
                     <p className="post__header__title">{title}</p>
                 ) : (
-                    <Link to={`post/${id}`}>
+                    <Link to={`/post/${id}`}>
                         <p className="post__header__title">{title}</p>
                     </Link>
                 )}
@@ -247,13 +254,53 @@ const Post = ({
             </div>
             {details ? (
                 <>
-                    <img className="post__img" src={img} alt="post" />
-                    <p className="post__description">{description}</p>
+                    {firstObject.mimeType.substring(0, 5) === 'video' && (
+                        <>
+                            <video
+                                className="post__img"
+                                src={`data:${firstObject.mimeType};base64,${firstObject.content}`}
+                                controls={true}
+                            />
+                            <p className="post__description">
+                                {firstObject.description}
+                            </p>
+                        </>
+                    )}
+                    {firstObject.mimeType.substring(0, 5) === 'image' && (
+                        <>
+                            <Link to={`/post/${id}`}>
+                                <img
+                                    className="post__img"
+                                    src={`data:${firstObject.mimeType};base64,${firstObject.content}`}
+                                    alt="post"
+                                />
+                            </Link>
+
+                            <p className="post__description">
+                                {firstObject.description}
+                            </p>
+                        </>
+                    )}
                 </>
             ) : (
-                <Link to={`/post/${id}`}>
-                    <img className="post__img" src={img} alt="post" />
-                </Link>
+                <>
+                    {firstObject.mimeType.substring(0, 5) === 'video' && (
+                        <video
+                            className="post__img"
+                            src={`data:${firstObject.mimeType};base64,${firstObject.content}`}
+                            controls={true}
+                        />
+                    )}
+                    {firstObject.mimeType.substring(0, 5) === 'image' && (
+                        <Link to={`/post/${id}`}>
+                            <img
+                                className="post__img"
+                                src={`data:${firstObject.mimeType};base64,${firstObject.content}`}
+                                alt="post"
+                            />
+                        </Link>
+                    )}
+                </>
             )}
             <div className="post__statistics">
                 <div className="post__statistics__wrapper">
@@ -357,6 +404,7 @@ const Post = ({
                                         className="post-details__add-comment__textarea"
                                         placeholder="Napisz komentarz"
                                         rows={5}
+                                        value={userComment}
                                         onChange={(
                                             e: React.ChangeEvent<HTMLTextAreaElement>,
                                         ) => {

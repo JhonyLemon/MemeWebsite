@@ -1,15 +1,56 @@
 import axios from 'axios';
-import { useState } from 'react';
+import ITag from '../types/ITag';
+import { useEffect, useState } from 'react';
 import CustomButton from '../components/CustomButton';
 import useAuthStore from '../stores/authStore';
 import { useNavigate } from 'react-router-dom';
+import Select from 'react-dropdown-select';
 
 const AddPost = () => {
+    const { accessToken } = useAuthStore();
+    const navigate = useNavigate();
+
+    const [tagsList, setTagsList] = useState<ITag[]>([]);
     const [postImg, setPostImg] = useState<File>();
     const [postTitle, setPostTitle] = useState<string>('');
     const [postDescription, setPostDescription] = useState<string>('');
-    const { accessToken } = useAuthStore();
-    const navigate = useNavigate();
+    const [tags, setTags] = useState<ITag[]>([]);
+
+    const getTagsId = (tags: ITag[]) => {
+        let tagsArray: number[] = [];
+
+        tags.map((tag) => {
+            tagsArray.push(tag.id);
+        });
+
+        return tagsArray;
+    };
+
+    useEffect(() => {
+        axios
+            .post(
+                'http://localhost:8080/api/v1/tag/all',
+                {
+                    pagingAndSorting: {
+                        page: 0,
+                        size: 400,
+                        sortBy: 'id',
+                        sortDirection: 'asc',
+                    },
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                },
+            )
+            .then((res) => {
+                setTagsList(res.data.tags);
+            })
+            .catch((err) => console.log(err));
+
+        console.log(tags);
+    }, []);
 
     const config = {
         headers: {
@@ -26,6 +67,7 @@ const AddPost = () => {
         bodyFormData.append('title', postTitle);
         bodyFormData.append('description', postDescription);
         bodyFormData.append('visible', true);
+        bodyFormData.append('tags', getTagsId(tags));
         axios
             .post('http://localhost:8080/api/v2/post', bodyFormData, config)
             .then((res) => {
@@ -36,6 +78,15 @@ const AddPost = () => {
     return (
         <form className="add-post" onSubmit={submitHandler}>
             <p>Dodaj posta</p>
+            <Select
+                options={tagsList}
+                labelField="tag"
+                valueField="id"
+                onChange={(values) => setTags(values)}
+                values={[]}
+                multi={true}
+                placeholder="Dodaj tagi"
+            />
             <input
                 className="add-post__file"
                 type="file"
@@ -46,7 +97,7 @@ const AddPost = () => {
                         setPostImg(files[0]);
                     }
                 }}
-                accept="image/png, image/jpeg"
+                accept="image/png, image/jpeg, image/gif, video/mp4"
             />
             <input
                 className="add-post__input"
