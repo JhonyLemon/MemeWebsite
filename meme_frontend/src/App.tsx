@@ -15,6 +15,7 @@ import usePhotosStore from './stores/photosStore';
 import useUserStore from './stores/userStore';
 import ProtectedRouteProps from './types/props/ProtectedRouteProps';
 import AdminPanel from './pages/AdminPanel';
+import ModeratorPanel from './pages/ModeratorPanel';
 
 function App() {
     const { isLogged, setLoggedTrue } = useAuthStore();
@@ -96,6 +97,15 @@ function App() {
                             <ProtectedRoute
                                 {...defaultProtectedRouteProps}
                                 outlet={<AdminPanel />}
+                            />
+                        }
+                    />
+                    <Route
+                        path="panelmoderatora"
+                        element={
+                            <ProtectedRoute
+                                {...defaultProtectedRouteProps}
+                                outlet={<ModeratorPanel />}
                             />
                         }
                     />

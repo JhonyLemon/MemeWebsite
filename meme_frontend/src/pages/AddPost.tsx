@@ -48,8 +48,6 @@ const AddPost = () => {
                 setTagsList(res.data.tags);
             })
             .catch((err) => console.log(err));
-
-        console.log(tags);
     }, []);
 
     const config = {

@@ -2,14 +2,14 @@ import create from 'zustand';
 import useAuthStore from './authStore';
 
 interface UserStore {
-    id: number;
+    userId: number;
     name: string;
     email: string;
     profilePhotoId: number;
     role: string;
 
     setUser: (
-        id: number,
+        userId: number,
         name: string,
         email: string,
         profilePhotoId: number,
@@ -22,14 +22,14 @@ interface UserStore {
 }
 
 const useUserStore = create<UserStore>((set) => ({
-    id: 0,
+    userId: 0,
     name: '',
     email: '',
     profilePhotoId: 0,
     role: '',
 
     setUser: (
-        id: number,
+        userId: number,
         name: string,
         email: string,
         profilePhotoId: number,
@@ -37,7 +37,7 @@ const useUserStore = create<UserStore>((set) => ({
     ) => {
         set((state) => ({
             ...state,
-            id: id,
+            userId: userId,
             name: name,
             email: email,
             profilePhotoId: profilePhotoId,
@@ -48,7 +48,7 @@ const useUserStore = create<UserStore>((set) => ({
     resetUser: () => {
         set((state) => ({
             ...state,
-            id: 0,
+            userId: 0,
             name: '',
             email: '',
             profilePhotoId: 0,

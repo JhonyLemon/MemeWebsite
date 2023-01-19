@@ -33,12 +33,25 @@ const Navbar = () => {
                                 Panel admina
                             </Link>
                         )}
+                        {role === 'MODERATOR' && (
+                            <Link
+                                className="navbar__item--add-post"
+                                to="panelmoderatora"
+                            >
+                                Panel moderatora
+                            </Link>
+                        )}
                         <button
                             className="navbar__item--logout"
                             onClick={() => {
                                 logoutUser();
                                 resetUser();
                                 localStorage.removeItem('accessToken');
+                                localStorage.removeItem('userId');
+                                localStorage.removeItem('userName');
+                                localStorage.removeItem('userEmail');
+                                localStorage.removeItem('userProfilePhotoId');
+                                localStorage.removeItem('userRole');
                                 navigate('/');
                                 window.location.reload();
                             }}

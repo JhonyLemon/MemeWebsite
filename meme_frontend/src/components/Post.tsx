@@ -421,10 +421,13 @@ const Post = ({
                             </form>
                         </>
                     )}
-                    {comments &&
+                    {comments !== undefined && comments.length > 0 ? (
                         comments.map((comment) => {
                             return <Comments key={comment.id} {...comment} />;
-                        })}
+                        })
+                    ) : (
+                        <p className="post__no-comments">Brak komentarzy</p>
+                    )}
                 </>
             )}
         </div>

@@ -6,8 +6,14 @@ import usePhotosStore from '../stores/photosStore';
 import useAuthStore from '../stores/authStore';
 import { useNavigate } from 'react-router-dom';
 import classNames from 'classnames';
-import { faCircleDown, faCircleUp } from '@fortawesome/free-solid-svg-icons';
+import {
+    faCircleDown,
+    faCircleUp,
+    faXmark,
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import useRefreshStore from '../stores/refreshStore';
+import useUserStore from '../stores/userStore';
 
 const Comments = ({
     id,
@@ -18,8 +24,10 @@ const Comments = ({
     commentStatistics,
 }: IComments) => {
     const navigate = useNavigate();
+    const { userId, role } = useUserStore();
     const { isLogged, accessToken } = useAuthStore();
     const { photos } = usePhotosStore();
+    const { commentsRefresh, refreshComments } = useRefreshStore();
 
     const [yourVote, setYourVote] = useState(commentStatistics.yourVote);
     const [upVoteCount, setUpVoteCount] = useState(
@@ -101,6 +109,25 @@ const Comments = ({
         setDidUserVoted(hasVoted);
     };
 
+    const deleteComment = (
+        event: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    ) => {
+        event.preventDefault();
+        axios
+            .delete(`http://localhost:8080/api/v1/comment/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            })
+            .then((res) => {
+                console.log(res);
+                refreshComments(commentsRefresh ? false : true);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    };
+
     return profilePictures != null ? (
         <div className="comments-container">
             <div className="comment">
@@ -110,54 +137,80 @@ const Comments = ({
                         account.profilePhotoId,
                     )}`}
                 />
-                <div className="comment__content">
-                    <p className="comment__content__title">{account.name}</p>
-                    <p className="comment__content__text">{comment}</p>
-                    <div className="comment__content__statistics">
-                        <div
-                            className={classNames(
-                                'comment__content__statistics__wrapper--up',
-                                didUserVoted && yourVote && 'green--comment',
-                            )}
-                        >
-                            <FontAwesomeIcon
-                                icon={faCircleUp}
-                                onClick={() => {
-                                    let tempYourVote: boolean | null = true;
-                                    if (yourVote === true) {
-                                        tempYourVote = null;
-                                    }
-                                    vote(tempYourVote);
-                                    changeVoteNumbers(tempYourVote);
-                                }}
-                            />
-                            <p className="comment__content__statistics__count">
-                                {upVoteCount}
-                            </p>
-                        </div>
-                        <div
-                            className={classNames(
-                                'comment__content__statistics__wrapper--down',
-                                didUserVoted && !yourVote && 'red--comment',
-                            )}
-                        >
-                            <FontAwesomeIcon
-                                icon={faCircleDown}
-                                onClick={() => {
-                                    let tempYourVote: boolean | null = false;
-                                    if (yourVote === false) {
-                                        tempYourVote = null;
-                                    }
-                                    vote(tempYourVote);
-                                    changeVoteNumbers(tempYourVote);
-                                }}
-                            />
+                <div className="comment__wrapper">
+                    <div className="comment__content">
+                        <p className="comment__content__title">
+                            {account.name}
+                        </p>
+                        <p className="comment__content__text">{comment}</p>
+                        <div className="comment__content__statistics">
+                            <div
+                                className={classNames(
+                                    'comment__content__statistics__wrapper--up',
+                                    didUserVoted &&
+                                        yourVote &&
+                                        'green--comment',
+                                )}
+                            >
+                                <FontAwesomeIcon
+                                    icon={faCircleUp}
+                                    onClick={() => {
+                                        let tempYourVote: boolean | null = true;
+                                        if (yourVote === true) {
+                                            tempYourVote = null;
+                                        }
+                                        vote(tempYourVote);
+                                        changeVoteNumbers(tempYourVote);
+                                    }}
+                                />
+                                <p className="comment__content__statistics__count">
+                                    {upVoteCount}
+                                </p>
+                            </div>
+                            <div
+                                className={classNames(
+                                    'comment__content__statistics__wrapper--down',
+                                    didUserVoted && !yourVote && 'red--comment',
+                                )}
+                            >
+                                <FontAwesomeIcon
+                                    icon={faCircleDown}
+                                    onClick={() => {
+                                        let tempYourVote: boolean | null =
+                                            false;
+                                        if (yourVote === false) {
+                                            tempYourVote = null;
+                                        }
+                                        vote(tempYourVote);
+                                        changeVoteNumbers(tempYourVote);
+                                    }}
+                                />
 
-                            <p className="comment__content__statistics__count">
-                                {downVoteCount}
-                            </p>
+                                <p className="comment__content__statistics__count">
+                                    {downVoteCount}
+                                </p>
+                            </div>
                         </div>
                     </div>
+                    {isLogged && role === 'MODERATOR' ? (
+                        <div
+                            className="comment__wrapper__delete"
+                            onClick={deleteComment}
+                        >
+                            <p> Usuń komentarz</p>
+                            <FontAwesomeIcon icon={faXmark} />
+                        </div>
+                    ) : (
+                        account.id === userId && (
+                            <div
+                                className="comment__wrapper__delete"
+                                onClick={deleteComment}
+                            >
+                                <p> Usuń komentarz</p>
+                                <FontAwesomeIcon icon={faXmark} />
+                            </div>
+                        )
+                    )}
                 </div>
             </div>
         </div>

@@ -1,0 +1,7 @@
+@use './common.scss' as *;
+
+.moderator-panel {
+    @extend %container;
+    max-width: 800px;
+    height: fit-content;
+}
