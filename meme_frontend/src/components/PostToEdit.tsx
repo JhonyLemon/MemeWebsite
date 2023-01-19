@@ -7,11 +7,13 @@ import useAuthStore from '../stores/authStore';
 import ITag from '../types/ITag';
 import Select from 'react-dropdown-select';
 import useRefreshStore from '../stores/refreshStore';
+import { useNavigate } from 'react-router-dom';
 
 const PostToEdit = ({ post }: { post: IPost }) => {
     const { accessToken } = useAuthStore();
     const { accountSettingsRefresh, refreshAccountSettings } =
         useRefreshStore();
+    const navigate = useNavigate();
 
     const [editPost, setEditPost] = useState<boolean>(false);
     const [activePost, setPost] = useState<IPost>();
@@ -26,6 +28,8 @@ const PostToEdit = ({ post }: { post: IPost }) => {
     const [displayNewImg, setDisplayNewImg] = useState('');
 
     useEffect(() => {
+        setPostTitle(post.title);
+        setPostDescription(post.firstObject.description);
         setPost(post);
         axios
             .post(
@@ -59,7 +63,7 @@ const PostToEdit = ({ post }: { post: IPost }) => {
                 setNewTags(res.data.tags);
             })
             .catch((err) => console.log(err));
-    }, []);
+    }, [accountSettingsRefresh]);
 
     useEffect(() => {
         newPostImg !== undefined && getBase64(newPostImg);
@@ -107,6 +111,7 @@ const PostToEdit = ({ post }: { post: IPost }) => {
             .then((res) => {
                 console.log(res);
                 refreshAccountSettings(accountSettingsRefresh ? false : true);
+                navigate('/');
             });
 
         console.log(bodyFormData);
